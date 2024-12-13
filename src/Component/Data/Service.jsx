@@ -1,5 +1,5 @@
 import React from "react";
-
+import {Link} from 'react-router-dom';
 
 const Service = () => {
     const services=[
@@ -26,9 +26,9 @@ const Service = () => {
                             </div>
                             <div className="sign_box_cont text-center p-4">
                                 <h4 className="text-xl font-semibold">{Service.title}</h4>
-                                <a href={Service.url} className="btn btn-outline w-28 p-3 uppercase sm:w-52 book_now  text-white px-4 py-2 rounded hover:bg-[#ff7e00]">
+                                <Link to="/pooja" className="btn btn-outline w-28 p-3 uppercase sm:w-52 book_now  text-white px-4 py-2 rounded hover:bg-[#ff7e00]">
                                     Book Now
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     ))

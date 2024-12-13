@@ -1,5 +1,5 @@
 import React from "react";
-
+import {Link} from "react-router-dom";
 const AboutDetails = () => {
     return(
         <>
@@ -19,7 +19,7 @@ const AboutDetails = () => {
                             This acts as a guide to analyzing one’s future, likes, dislikes and events that are likely to occur in one’s life as per interpretations available in astrology.
                         </p>
                         <div class="mt-16 flex w-full items-center justify-center space-x-4 lg:mt-14 lg:justify-start">
-                        <span class="btn btn-outline w-36 p-3 uppercase sm:w-52"><a href="#">Read More</a></span></div>
+                        <span class="btn btn-outline w-28 p-3 uppercase sm:w-52 book_now  text-white px-4 py-2 rounded hover:bg-[#ff7e00] sm:w-52"><Link to="#">Read More</Link></span></div>
                     </div>
                     <div className="bg-gray-100 p-4">
                         <img src="https://deificindia.com/namonamah/assets/image/about_img.jpg" />

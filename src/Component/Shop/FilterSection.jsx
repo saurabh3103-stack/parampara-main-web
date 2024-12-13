@@ -1,13 +1,16 @@
 import React from "react";
 
-const FilterSection = () => {
+const FilterSection = ({categoryData}) => {
+  const category= categoryData;
   const handleCloseSidebar = () => {
     const sidebar = document.getElementById("product-filter");
     sidebar.style.transform = "translateX(-100%)";
   };
-
   return (
-    <div  id="product-filter"   class="nk-open-sidebar absoulute fixed left-0 top-0 z-[199] h-screen w-[300px] -translate-x-full transform space-y-3 overflow-y-auto overflow-x-hidden border border-gray-400 bg-white px-3 pb-16 shadow-xl duration-500 md:relative md:z-0 md:block md:h-full md:w-1/4 md:translate-x-0 md:py-4">
+    <div
+      id="product-filter"
+      className="nk-open-sidebar absolute fixed left-0 top-0 z-[199] h-screen w-[300px] -translate-x-full transform space-y-3 overflow-y-auto overflow-x-hidden border border-gray-400 bg-white px-3 pb-16 shadow-xl duration-500 md:relative md:z-0 md:block md:h-full md:w-1/6 md:translate-x-0 md:py-4 sm:hidden"
+    >
       <div
         className="hover:text-primary block p-2 text-right text-lg md:hidden"
         onClick={handleCloseSidebar}

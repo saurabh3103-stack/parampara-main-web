@@ -27,7 +27,7 @@ const Footer = () => {
                             <a class="nk-terms-policy" href="#!">Privacy Policy</a>.
                             </p>
                         </div>
-                        <div>
+                        {/* <div>
                             <h5 class="nk-title-footer">Social Accounts:</h5>
                             <div class="nk-social-container">
                             <span><a class="nk-hover-link" href="#!"><i class="fab fa-instagram"></i></a></span>
@@ -47,7 +47,7 @@ const Footer = () => {
                             <span><i class="fab fa-cc-discover p-1"></i></span>
                             <span><i class="fab fa-cc-jcb p-1"></i></span>
                             </div>
-                        </div>
+                        </div> */}
                         </div>
                         <div class="space-y-3">
                         <h5 class="nk-footer-nav-title">Company</h5>
@@ -109,7 +109,7 @@ const Footer = () => {
                         </div>
                         </div>
                     </div>
-                    <div class="nk-middle-footer">
+                    <div class="nk-middle-footer mt-4">
                         <div class="nk-app-footer">
                         <h5 class="nk-app-title">Shop faster with our App:</h5>
                         <a class="nk-hover-link" href="#!"><i class="fab fa-google-play fa-2x"></i></a>

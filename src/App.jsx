@@ -7,6 +7,7 @@ import Navbar from '../src/Component/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './Component/Footer';
 import WebRoutes from './WebRoutes';
+
 function App() {
 
   return (

@@ -10057,4 +10057,7 @@
     -webkit-animation-name: slideOutUp;
     animation-name: slideOutUp;
   }
-  
+  .has-error .form-control:focus, html body .form-control:focus {
+    border-color: #6b7280 !important;
+    box-shadow: none;
+}
