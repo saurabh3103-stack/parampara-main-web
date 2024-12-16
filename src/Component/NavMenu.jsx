@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Authentication from "./Authentication";
 
 
+
+
 export default function NabMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
@@ -67,6 +69,11 @@ export default function NabMenu() {
                 <div data-dropdown="#elements-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
                     <span>Contact</span>
+                  </div>
+                </div>
+                <div data-dropdown="#elements-dropdown" className="nk-dropdown-slide ">
+                  <div className="nk-dropdown-menu-link !py-4 ">
+                    <Link to="/register-pandit">Pandit Booking</Link>
                   </div>
                 </div>
               </div>

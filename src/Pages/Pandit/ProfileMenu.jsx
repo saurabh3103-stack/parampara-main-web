@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProfileMenu = () => {
+
+   
     return(
         <>
         <div class="block xl:hidden">

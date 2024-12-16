@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 const Service = () => {
     const services=[
-        {image:'https://deificindia.com/namonamah/assets/image/service/pandit.png', title:'Pooja Booking',url:'javascript:void(0)'},
+        {image:'https://deificindia.com/namonamah/assets/image/service/pandit.png', title:'Pooja Booking',url:'/pooja'},
         {image:'https://deificindia.com/namonamah/assets/image/service/shoping.jpeg', title:'E-Store',url:'javascript:void(0)'},
         {image:'https://deificindia.com/namonamah/assets/image/service/brahman.png', title:'Brahman Bhoj',url:'javascript:void(0)'},
         {image:'https://deificindia.com/namonamah/assets/image/service/bhajan3.png', title:'Bhajan Mandal',url:'javascript:void(0)'},
@@ -26,7 +26,7 @@ const Service = () => {
                             </div>
                             <div className="sign_box_cont text-center p-4">
                                 <h4 className="text-xl font-semibold">{Service.title}</h4>
-                                <Link to="/pooja" className="btn btn-outline w-28 p-3 uppercase sm:w-52 book_now  text-white px-4 py-2 rounded hover:bg-[#ff7e00]">
+                                <Link to={Service.url} className="btn btn-outline w-28 p-3 uppercase sm:w-52 book_now  text-white px-4 py-2 rounded hover:bg-[#ff7e00]">
                                     Book Now
                                 </Link>
                             </div>

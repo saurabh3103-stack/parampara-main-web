@@ -11,6 +11,7 @@ import LocationFetcher from "./Pages/Locationfetch";
 import UserSignIn from "./Pages/Login/UserSignIn";
 import UserSignUp from "./Pages/Login/UserSignUp";
 import UserProfile from "./Pages/User/UserProfile";
+import EditPanditForm from "./Pages/Pandit/EditPanditForm";
 
 const WebRoutes = () => {
     return(
@@ -20,6 +21,7 @@ const WebRoutes = () => {
           <Route path="/pooja" element={<PoojaBooking />} />
           <Route path="/register-pandit" element={<PanditRegister/>}/>
           <Route path="/pandit/profile" element={<Profile/>}/>
+          <Route path="/pandit/edit-profile" element={<EditPanditForm/>}/>
           <Route path="/e-store" element={<EStore/>}/>
           <Route path="/pooja/pooja-details/:id" element={<PoojaDetails/>}/>
           <Route path="/cart" element={<Cart/>}/>

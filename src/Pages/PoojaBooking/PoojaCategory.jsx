@@ -3,7 +3,7 @@ import "../../Pages/PoojaBooking/slider.css";
 
 const PoojaCategory = ({ categoryData, selectedCategory, onCategoryChange }) => {
   const categoryArray = categoryData?.data ? Object.values(categoryData.data) : [];
-  const IMGURL= "http://localhost:3000";
+  const IMGURL= "http://192.168.1.35:3000";
 
   return (
     <div className="hidden border border-gray-400 bg-white p-3 sm:block">

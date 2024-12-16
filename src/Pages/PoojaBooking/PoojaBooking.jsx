@@ -16,8 +16,8 @@ const PoojaBooking = () => {
         { pagename: 'Pooja Service' },
     ];
     const currencySymbol = "₹";
-    const imgUrl = "http://localhost:3000";
-    const ApiUrl = "http://localhost:3000/api";
+    const imgUrl = "http://192.168.1.35:3000";
+    const ApiUrl = "http://192.168.1.35:3000/api";
     const tokken ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
     const [categoryData, setCategoryData] = useState([]);
     const [poojaData, setPoojaData] = useState([]);
