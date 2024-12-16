@@ -487,6 +487,7 @@ const EditPanditForm = () => {
         state: profileData.state || "",
         country: profileData.country || "",
         dob: profileData.dob || "",
+        Pooja_Category: profileData.Pooja_Category || "",
         pincode: profileData.pincode || "",
         skills: profileData.skills || "",
         account_type: profileData.account_type || "normal",
@@ -521,7 +522,8 @@ const EditPanditForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("clicked")
+    console.log(profileData)
+    
 
     try {
       const data = await updatePanditDetails(formData, image, aadharImage); // Call the API service function
@@ -640,6 +642,24 @@ const EditPanditForm = () => {
       className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
     />
   </div>
+
+  <div>
+  <label className="block text-sm font-medium text-gray-700">Pooja Category</label>
+              <select
+                name="Pooja_Category"
+                value={formData.Pooja_Category}
+                onChange={handleChange}
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Select a Pooja Category</option>
+                <option value="Satyanarayan_Pooja">Satyanarayan_Pooja</option>
+                <option value="SunderKand">SunderKand</option>
+                <option value="Navdurga_Pooja">Navdurga_Pooja</option>
+                <option value="Ganesh_Sthapna">Ganesh_Sthapna</option>
+                <option value="Mundan">Mundan</option>
+              </select>
+              </div>
+  
 </div>
 
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
