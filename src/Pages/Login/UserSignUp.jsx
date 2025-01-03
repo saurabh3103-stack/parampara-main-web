@@ -8,7 +8,7 @@ const UserSignUp = () =>{
   const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [password, setPassword] = useState("");
+  // const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
@@ -24,7 +24,7 @@ const UserSignUp = () =>{
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (formData.password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
     } else {
       try {
@@ -129,7 +129,7 @@ const UserSignUp = () =>{
                   className="peer focus:border-primary-600 block w-full appearance-none border-0 border-b-2 border-gray-400 bg-transparent py-1.5 px-0 text-sm text-gray-900 focus:outline-none focus:ring-0"
                   placeholder=" "
                   value={formData.password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handleChange}
                 />
                 <span
                   onClick={togglePasswordVisibility}

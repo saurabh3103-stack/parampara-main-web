@@ -11,6 +11,7 @@ import LocationFetcher from "./Pages/Locationfetch";
 import UserSignIn from "./Pages/Login/UserSignIn";
 import UserSignUp from "./Pages/Login/UserSignUp";
 import UserProfile from "./Pages/User/UserProfile";
+import UserSetting from "./Pages/User/UserSetting";
 
 const WebRoutes = () => {
     return(
@@ -26,6 +27,7 @@ const WebRoutes = () => {
           <Route path="/sign-in" element={<UserSignIn/>}/>
           <Route path="/sign-up" element={<UserSignUp/>}/>
           <Route path="/user/profile" element={<UserProfile/>}/>
+          <Route path="/user/edit" element={<UserSetting/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
         </Routes>
         </>
