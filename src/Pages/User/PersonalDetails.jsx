@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 
 const PersonalDetails = ({userData}) => {
     return(
@@ -8,9 +8,9 @@ const PersonalDetails = ({userData}) => {
                             <div class="flex flex-auto items-center justify-between px-4">
                                 <div class="text-base font-semibold sm:text-lg">Personal Details</div>
                                 <div>
-                                <a href="account-settings.html">
+                                <Link to={'user/edit'}>
                                     <div class="btn-gradient w-28 sm:w-40">Edit Profile</div>
-                                </a>
+                                </Link>
                                 </div>
                             </div>
                             <div class="w-full border-b border-gray-400"></div>

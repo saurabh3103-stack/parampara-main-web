@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import Breadcrumb from "../../Component/Breadcrumb";
-import '../../../src/Pages/PoojaBooking/poojaDetails.css';
 import RelatedPooja from "../../../src/Pages/PoojaBooking/RelatedPooja";
 import ProductImageSlider from "./ProductImageSlider";
 import ProductDiscription from "./ProductDiscription";
@@ -10,6 +9,9 @@ import axios from 'axios';
 import CustomerReview from "../../Component/Data/CustomerReview";
 import TranscationSecurity from "../../Component/TranscationSecurity";
 import StringToHTML from "../../Component/StringtoHtml";
+import { getUserByEmail } from './getUserByEmail';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const PoojaDetails = () => {
     const [isOpen1, setIsOpen1] = useState(false);
@@ -17,7 +19,7 @@ const PoojaDetails = () => {
     const [isOpen3, setIsOpen3] = useState(false);  
     const [isOpen4, setIsOpen4] = useState(false);
     const [isOpen5, setIsOpen5] = useState(false);
-    const [isOpen6, setIsOpen6] = useState(false)
+    const [isOpen6, setIsOpen6] = useState(false);
     const { id } = useParams();
     const currencySymbol = "₹";
     const imgUrl = 'http://localhost:5173/';
@@ -26,7 +28,9 @@ const PoojaDetails = () => {
     const [error, setError] = useState(null);
     const [poojaDetails, setPoojaDetails] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const [userData, setUserData] = useState(null);
+    const [productAmount, setProductAmount] = useState(null); 
+    const [selectedSamagri, setSelectedSamagri] = useState('');
     useEffect(() => {
         const fetchPooja = async () => {
             try {
@@ -43,6 +47,23 @@ const PoojaDetails = () => {
         fetchPooja();
     }, [id]);
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            setLoading(true);
+            const { data, error } = await getUserByEmail();
+
+            if (data) {
+                setUserData(data);
+            } else {
+                setUserData(null);
+                setError(error || "No user data found.");
+            }
+            setLoading(false);
+        };
+        fetchUser();
+    }, []);
+
+    // Prevent rendering until data is loaded
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -54,29 +75,104 @@ const PoojaDetails = () => {
     if (!poojaDetails) {
         return <p>No Pooja found</p>;
     }
+
     const breadcrumbLinks = [
         { label: 'Home', url: '/' },
         { label: 'Pooja', url: '/pooja' },
         { label: poojaDetails.pooja_name },
         { pagename: poojaDetails.pooja_name },
     ];
-    const poojaDiscription = JSON.stringify(poojaDetails)
+
     const generateTimeOptions = () => {
         const times = [];
-        const startHour = 4; 
-        const endHour = 22; 
+        const startHour = 4;
+        const endHour = 22;
         for (let hour = startHour; hour <= endHour; hour++) {
-          const ampm = hour < 12 ? "AM" : "PM";
-          const formattedHour = hour % 12 === 0 ? 12 : hour % 12;   
-          const time = `${formattedHour}:00 ${ampm}`;
-          times.push(time);
+            const ampm = hour < 12 ? "AM" : "PM";
+            const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+            const time = `${formattedHour}:00 ${ampm}`;
+            times.push(time);
         }
         return times;
-      };
-      const timeOptions = generateTimeOptions();
-      const today = new Date().toISOString().split("T")[0]; 
+    };
+
+    const timeOptions = generateTimeOptions();
+    const today = new Date().toISOString().split("T")[0]; 
+
+    const handleAmountChange = (e) => {
+        setProductAmount(e.target.value);
+    };
+
+    const handleSamagriChange = (e) => {
+        setSelectedSamagri(e.target.value);
+        if (e.target.value === "withSamagri") {
+            setProductAmount(poojaDetails.price_withSamagri);
+        } else {
+            setProductAmount(poojaDetails.price_withoutSamagri);
+        }
+    };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            user_id: formData.get('user_id'),
+            username: formData.get('username'),
+            userphone: formData.get('userphone'),
+            productType: formData.get('productType'),
+            product_id: formData.get('product_id'),
+            product_name: formData.get('product_name'),
+            product_amount: productAmount,
+            quantity: formData.get('quantity'),
+            pooja_date: formData.get('pooja_date'),
+            pooja_time: formData.get('pooja_time'),
+        };
+    
+        try {
+            const response = await axios.post(`${ApiUrl}/cart/addCart`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: tokken,
+                },
+            });
+    
+            if (response.data.success) {
+                toast.success("Item added to cart!", {
+                    position: "top-right",
+                    autoClose: 3000,  // 3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            } else {
+                toast.error("Failed to add item to cart.", {
+                    position: "top-right",
+                    autoClose: 3000,  // 3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            toast.error("An error occurred while adding to cart.", {
+                position: "top-right",
+                autoClose: 3000,  // 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+    };
+    
     return (
         <>
+            <ToastContainer />
             <Breadcrumb links={breadcrumbLinks} />
             <section className="content mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
                 <div className="space-y-3 text-sm">
@@ -107,44 +203,56 @@ const PoojaDetails = () => {
                                     <div>
                                         <p><span className="font-semibold">Status:</span> <span className="text-green-500">Available</span></p>
                                     </div>
-                                    <form>
-
-                                        <div class="mb-3">
-                                            <label for="el-email-one" class="mb-2 block text-sm font-medium text-gray-900">Choose Package :</label>
+                                    <form onSubmit={handleSubmit}>
+                                        <div className="mb-3">
+                                            <label htmlFor="el-email-one" className="mb-2 block text-sm font-medium text-gray-900">Choose Package :</label>
                                             {poojaDetails.pooja_Samegristatus === "1" ? 
                                                 <div className="flex items-center space-x-2">
-                                                    <p><span className="font-semibold">With Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withSamagri}&nbsp;<input type="radio" name="poojaSamagri" checked/></p>
-                                                    <p><span className="ml-5 font-semibold sm:ml-10">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;<input type="radio" name="poojaSamagri"/></p>
+                                                    <p>
+                                                        <span className="font-semibold">With Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withSamagri}&nbsp;
+                                                        <input type="radio" name="product_amount" value="withSamagri" onChange={handleSamagriChange} checked={selectedSamagri === "withSamagri"} />
+                                                    </p>
+                                                    <p>
+                                                        <span className="ml-5 font-semibold sm:ml-10">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;
+                                                        <input type="radio" name="product_amount" value="withoutSamagri" onChange={handleSamagriChange} checked={selectedSamagri === "withoutSamagri"} />
+                                                    </p>
                                                 </div>
-                                                :
+                                            :
                                                 <div className="flex items-center space-x-2">
-                                                    <p><span className="font-semibold">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;<input type="radio" name="poojaSamagri" checked/></p>
+                                                    <p><span className="font-semibold">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;<input type="radio" name="poojaSamagri" checked /></p>
                                                 </div>
                                             } 
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="password1" class="mb-2 block text-sm font-medium text-gray-900">Pooja Date :</label>
-                                            <input type="date" id="booking_date"  min={today}  class="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required=""/>
+                                        <div className="mb-3">
+                                            <label className="mb-2 block text-sm font-medium text-gray-900">Pooja Date :</label>
+                                            <input type="date" id="pooja_date" name="pooja_date" min={today} className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required />
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="password1" class="mb-2 block text-sm font-medium text-gray-900">Prefered Time :</label>
-                                            <select id="booking_time" class="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required="" >
+                                        <div className="mb-3">
+                                            <label className="mb-2 block text-sm font-medium text-gray-900">Preferred Time :</label>
+                                            <select id="pooja_time" name="pooja_time" className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required>
                                                 <option>--Choose Time--</option>
                                                 {timeOptions.map((time, index) => (
-                                                    <option key={index} value={time}>
-                                                    {time}
-                                                    </option>
+                                                    <option key={index} value={time}>{time}</option>
                                                 ))}
                                             </select>
                                         </div>
                                         <div className="flex items-center space-x-4 w-3/4">
-                                            <input type="hidden" name="poojaId" value={poojaDetails._id} id="poojaId"/>
-                                            <button onclick="location.href = 'cart.html'" className="bg-green-800 w-3/4 rounded px-3 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out">
+                                            {userData && (
+                                                <>
+                                                    <input type="hidden" name="user_id" value={userData._id} id="user_id" />
+                                                    <input type="hidden" name="username" value={userData.username} id="username" />
+                                                    <input type="hidden" name="userphone" value={userData.mobile} id="userphone" />
+                                                    <input type="hidden" name="useremail" value={userData.email} id="useremail" />
+                                                </>
+                                            )}
+                                            <input type="hidden" name="productType" value="Pooja" id="productType"/>
+                                            <input type="hidden" name="product_name" value={poojaDetails.pooja_name} id="product_name"/>
+                                            <input type="hidden" name="quantity" value="1" id="quantity"/>
+                                            <input type="hidden" name="product_id" value={poojaDetails._id} id="product_id"/>
+                                            <button type="submit" className="bg-green-600 w-3/4 rounded px-3 m-0 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out hover:bg-green-700">
                                                 Add to Cart
                                             </button>
-                                            <button
-                                                onclick="location.href = 'checkout.html'"
-                                                className="border-green text-green hover:bg-green-800 w-3/4 rounded border-2 px-3 py-2 text-sm font-semibold transition duration-300 ease-in-out hover:text-gray-50">
+                                            <button type="submit" className="bg-red-600 w-3/4 rounded px-3 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out hover:bg-red-700">
                                                 Book Now
                                             </button>
                                         </div>
@@ -154,7 +262,6 @@ const PoojaDetails = () => {
                             </div>
                         </div>
                     </div>
-                    {/* Product Description */}
                     <div id="itemInformation">
             
             <div className="mt-5">

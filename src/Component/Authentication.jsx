@@ -1,87 +1,105 @@
-import React, {useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import LoginStatus from "./LoginStatus";
+import { getUserByEmail } from "../Pages/User/GetUserDetails";
+
 const Authentication = () => {
     const navigate = useNavigate();
-    const [isLoggedIn ,setIsLoggedIn] =useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        const token = sessionStorage.getItem("authToken");
-        setIsLoggedIn(!!token); 
-      }, []);
+        const loggedInStatus = sessionStorage.getItem("isLoggedIn");
+        setIsLoggedIn(!!loggedInStatus);
+    }, []);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                setIsLoading(true);
+                const { data, error } = await getUserByEmail();
+                if (error) {
+                    setError("Failed to fetch user details");
+                    setUserData(null);
+                } else {
+                    setUserData(data);
+                }
+            } catch (err) {
+                setError("An error occurred while fetching user details");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (isLoggedIn) {
+            fetchUser();
+        } else {
+            setIsLoading(false);
+        }
+    }, [isLoggedIn]);
+
     const handleLogout = () => {
         sessionStorage.removeItem("authToken");
+        sessionStorage.removeItem("isLoggedIn");
         navigate("/login");
-      };
-    return(
-        <div class="nk-flex-row-2">
-            <div data-dropdown="#account" class="nk-dropdown-slide hover:text-primary-600">
-                    <div class="nk-dropdown-menu-link nk-main-nav">
-                      <span><i class="fas fa-user"></i></span>
-                    </div>
-                    <div id="account" class="nk-dropdown-menu-animated nk-dropdown_menu w-52">
-                      <div class="nk-dropdown-content">
-                      {isLoggedIn ? (
-                        <ul>
-                          <li>
-                            <a class="nk-account-link" href="./account-overview.html">
-                              <span class="nk-account-link-span">Hi, John Doe</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a class="nk-account-a" href="./account-settings.html">
-                              <span class="nk-account-pl"><i class="fas fa-user"></i></span>
-                              <span>Account Setting</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-orders-purchase.html">
-                              <span class="nk-account-pl"><i class="fas fa-shopping-bag"></i></span>
-                              <span>Orders & Purchase</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-orders-purchase.html">
-                              <span class="nk-account-pl"><i class="fas fa-truck"></i></span>
-                              <span>Track Order</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-buy-it-again.html">
-                              <span class="nk-account-pl"><i class="fas fa-redo"></i></span>
-                              <span>Buy It Again</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-wishlist.html">
-                              <span class="nk-account-pl"><i class="fas fa-heart"></i></span>
-                              <span>Wishlist & Saved Items</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-gift-registry.html">
-                              <span class="nk-account-pl"><i class="fas fa-gift"></i></span>
-                              <span>Gifts Registry</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-offers-deals.html">
-                              <span class="nk-account-pl"><i class="fas fa-tags"></i></span>
-                              <span>Offers & Deals</span>
-                            </a>
-                            <a class="nk-account-a" href="./shop-product.html#recently-viewed-items">
-                              <span class="nk-account-pl"><i class="fas fa-file-alt"></i></span>
-                              <span>Recently Viewed Items</span>
-                            </a>
-                            <a class="nk-account-a" href="./account-submit-return.html">
-                              <span class="nk-account-pl"><i class="fas fa-file-upload"></i></span>
-                              <span>Submit Items</span>
-                            </a>
-                            <a class="nk-account-a" href="./faqs.html">
-                              <span class="nk-account-pl"><i class="fas fa-headset"></i></span>
-                              <span>Get Help</span>
-                            </a>
-                            <button class="nk-account-a border-t" onClick={handleLogout}>
-                              <span class="nk-account-pl"><i class="fas fa-sign-out-alt"></i></span>
-                              <span class="text-base">Sign Out</span>
-                            </button>
-                          </li>
-                        </ul>):(
-                        <LoginStatus/>
+    };
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div className="nk-flex-row-2">
+            <div data-dropdown="#account" className="nk-dropdown-slide hover:text-primary-600">
+                <div className="nk-dropdown-menu-link nk-main-nav">
+                    <span><i className="fas fa-user"></i></span>
+                </div>
+                <div id="account" className="nk-dropdown-menu-animated nk-dropdown_menu w-52">
+                    <div className="nk-dropdown-content">
+                        {isLoggedIn ? (
+                            userData && userData.username ? (
+                                <ul>
+                                    <li>
+                                        <Link className="nk-account-link" to={'/user/profile'}>
+                                            <span className="nk-account-link-span">Hi, {userData.username}</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className="nk-account-a" to={'/user/edit'}>
+                                            <span className="nk-account-pl"><i className="fas fa-user"></i></span>
+                                            <span>Account Setting</span>
+                                        </Link>
+                                        <Link className="nk-account-a" to={'/user/order-purchase'}>
+                                            <span className="nk-account-pl"><i className="fas fa-shopping-bag"></i></span>
+                                            <span>Orders & Purchase</span>
+                                        </Link>
+                                        <Link className="nk-account-a" to={'/user/profile'}>
+                                            <span className="nk-account-pl"><i className="fas fa-truck"></i></span>
+                                            <span>Track Order</span>
+                                        </Link>
+                                        <Link className="nk-account-a" to={'/user/wishlist'}>
+                                            <span className="nk-account-pl"><i className="fas fa-heart"></i></span>
+                                            <span>Wishlist & Saved Items</span>
+                                        </Link>
+                                        <button className="nk-account-a border-t" onClick={handleLogout}>
+                                            <span className="nk-account-pl"><i className="fas fa-sign-out-alt"></i></span>
+                                            <span className="text-base">Sign Out</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            ) : (
+                                <div>No user details available</div>
+                            )
+                        ) : (
+                            <LoginStatus />
                         )}
-                      </div>
-                     
+                        {error && <div className="error-message">{error}</div>}
                     </div>
+                </div>
             </div>
         </div>
     );
-}
+};
+
 export default Authentication;

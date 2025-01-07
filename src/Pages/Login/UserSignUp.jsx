@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate,Link } from "react-router-dom"; 
 import axios from "axios";
 
 const UserSignUp = () =>{
@@ -191,28 +191,10 @@ const UserSignUp = () =>{
             <div class="text-sm" style={{marginTop:"1rem"}}>
               <p class="border-t border-gray-200 pt-3">
                 Have an account?
-                <a class="hover:text-blue- font-bold text-blue-500 hover:underline" href="signin.html">Sign In</a>
+                <Link class="hover:text-blue- font-bold text-blue-500 hover:underline" to={'/sign-in'}>Sign In</Link>
               </p>
-            </div>
-            <div class="text-center text-xs" style={{marginTop:"1rem"}}>
-              <p class="pt-1">
-                By continuing you agree to our
-                <a class="text-blue-500 hover:text-blue-600 hover:underline" href="#">Terms of Services</a>, our
-                <a class="text-blue-500 hover:text-blue-600 hover:underline" href="#">Privacy Policy</a>, and
-                <a class="hover:text-blue- text-blue-500 hover:underline" href="#">Cookie Policy</a>.
-              </p>
-              <div class="mt-5 border-t border-gray-200 text-center text-xs">
-                <div class="mt-5">This site is protected by reCAPTCHA and the Google</div>
-                <a href="#" class="font-medium text-blue-500 hover:text-blue-700">Privacy Policy </a>and
-                <a href="#" class="font-medium text-blue-500 hover:text-blue-700">Terms of Service </a>apply.
-              </div>
             </div>
           </div>
-        </div>
-        <div class="mt-3 flex flex-row justify-center space-x-4 py-10 text-xs font-bold text-gray-900">
-          <a class="hover:underline" href="#">Terms of Services</a>
-          <a class="hover:underline" href="#">Privacy Policy</a>
-          <a class="hover:underline" href="#">Contact us</a>
         </div>
       </div>
 

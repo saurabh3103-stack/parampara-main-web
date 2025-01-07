@@ -6,12 +6,12 @@ import { getUserByEmail } from "./GetUserDetails";
 import PersonalDetailsEdit from "./PersonalDetailsEdit";
 import DeactivateAccount from "./DeactivateAccount";
 
-const UserSetting = () => {
+const OrderPurchase = () => {
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    
       useEffect(() => {
         const fetchUser = async () => {
           setLoading(true);
@@ -30,8 +30,8 @@ const UserSetting = () => {
     const breadcrumbLinks = [
         { label: "Home", url: "/" },
         { label: "User", url: "/user/profile" },
-        { label: "Edit Profile", url: "javascript:void(0)" },
-        { pagename: "Edit Profile" },
+        { label: "Orders & Purchase", url: "javascript:void(0)" },
+        { pagename: "Orders & Purchase" },
     ];
     
   if (loading) {
@@ -44,15 +44,12 @@ const UserSetting = () => {
 
     return (
         <>
-        <Breadcrumb links={breadcrumbLinks}/>
-          <div class="mx-auto mt-5 w-full space-y-4 px-4 text-sm xl:max-w-7xl">
-            <UserHeader userData={userData}/>
-            <div id="accOverview" className="animate-nk-acc-tab block space-y-12">
-              <PersonalDetailsEdit userData={userData} />    
-              <DeactivateAccount userId={userData._id} initialStatus={userData.status} />
-              </div>
-          </div> 
+            <Breadcrumb links={breadcrumbLinks}/>
+            <div class="mx-auto mt-5 w-full space-y-4 px-4 text-sm xl:max-w-7xl">
+                <UserHeader userData={userData}/>
+            </div>
         </>
     );
 }
-export default UserSetting;
+
+export default OrderPurchase;

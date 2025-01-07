@@ -1,7 +1,24 @@
 import React from "react";
+import { AppContext } from '../../context/AppContext';
+import { useContext } from 'react';
+import { useState } from "react";
 
-const FilterSection = ({categoryData}) => {
-  const category= categoryData;
+const FilterSection = () => {
+
+  const { filtercategoryID,setFilterCategoryID,categoryData, setCategoryData, } = useContext(AppContext);
+    const categoryArray = categoryData?.data ? Object.values(categoryData.data) : [];
+    
+  
+    const [activeCategory, setActiveCategory] = useState(null);
+  
+    const handleCategoryClick = (categoryId) => {
+        setActiveCategory(categoryId);
+        setFilterCategoryID(categoryId)
+       
+    };
+    console.log(activeCategory)
+
+ 
   const handleCloseSidebar = () => {
     const sidebar = document.getElementById("product-filter");
     sidebar.style.transform = "translateX(-100%)";
@@ -32,65 +49,35 @@ const FilterSection = ({categoryData}) => {
 
       {/* Delivery Filters */}
       <div id="shippingFilter" className="space-y-2">
-        <p className="font-semibold">Delivery:</p>
-        <div className="flex items-center">
-          <input
-            id="freeShippingId"
-            aria-describedby="freeShippingId"
-            type="checkbox"
-            className="nk-checkbox-input"
-          />
-          <label htmlFor="freeShippingId" className="nk-checkbox-label">
-            Free Shipping
-          </label>
-        </div>
-        <div className="flex items-center">
-          <input
-            id="nextDayDeliveryId"
-            aria-describedby="nextDayDeliveryId"
-            type="checkbox"
-            className="nk-checkbox-input"
-          />
-          <label htmlFor="nextDayDeliveryId" className="nk-checkbox-label">
-            Next-Day Delivery
-          </label>
-        </div>
-        <div className="flex items-center">
-          <input
-            id="storePickUpId"
-            aria-describedby="storePickUpId"
-            type="checkbox"
-            className="nk-checkbox-input"
-          />
-          <label htmlFor="storePickUpId" className="nk-checkbox-label">
-            Store Pick Up
-          </label>
-        </div>
-      </div>
+  <p className="font-semibold">Category:</p>
+
+  {/* Map the categoryArray */}
+  {categoryArray.map((category) => (
+    <div
+      key={category._id}
+      className={`flex items-center p-4 rounded-md cursor-pointer transition-colors duration-200 ${
+        activeCategory === category._id
+          ? "bg-red-100 text-red-500 border-red-500"
+          : "bg-gray-100 text-gray-800 border-gray-400"
+      }`}
+      onClick={() => handleCategoryClick(category._id)}
+    >
+      <label
+        htmlFor={`category-${category._id}`}
+        className="nk-checkbox-label"
+      >
+        {category.category} {/* Display the category name */}
+      </label>
+    </div>
+  ))}
+
+   
+</div>
+
+
 
       {/* Category Filters */}
-      <div>
-        <div className="flex items-center justify-between">
-          <span className="font-semibold">Category: </span>
-          <span className="cursor-pointer text-xs text-blue-700 underline">
-            <a href="shop-wide.html"></a>
-          </span>
-        </div>
-        <div className="space-y-1">
-          <p>Fashion & Clothing</p>
-          <p className="cursor-pointer text-blue-700 hover:underline">
-            <span>
-              <i className="fas fa-chevron-left"></i>
-            </span>
-            <a href="shop-grid-left-sidebar.html">
-              Women, Shoes &amp; Accessories
-            </a>
-          </p>
-          <p className="ml-5 cursor-pointer text-blue-700 hover:underline">
-            <a href="shop-grid-left-sidebar.html">Women Clothes</a>
-          </p>
-        </div>
-      </div>
+     
 
       {/* Other Filters (Brands, Colors, Price, etc.) */}
       {/* Repeat the structure as per the HTML provided */}

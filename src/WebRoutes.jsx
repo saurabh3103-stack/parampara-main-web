@@ -12,6 +12,10 @@ import UserSignIn from "./Pages/Login/UserSignIn";
 import UserSignUp from "./Pages/Login/UserSignUp";
 import UserProfile from "./Pages/User/UserProfile";
 import UserSetting from "./Pages/User/UserSetting";
+import ShippingAddress from "./Pages/User/ShippingAddress";
+import WishList from "./Pages/User/WishList";
+import OrderPurchase from "./Pages/User/OrderPurchase";
+import Checkout from "./Pages/ShopPages/Checkout";
 
 const WebRoutes = () => {
     return(
@@ -24,11 +28,16 @@ const WebRoutes = () => {
           <Route path="/e-store" element={<EStore/>}/>
           <Route path="/pooja/pooja-details/:id" element={<PoojaDetails/>}/>
           <Route path="/cart" element={<Cart/>}/>
+          <Route path="/check-out" element={<Checkout/>}/>
           <Route path="/sign-in" element={<UserSignIn/>}/>
           <Route path="/sign-up" element={<UserSignUp/>}/>
           <Route path="/user/profile" element={<UserProfile/>}/>
           <Route path="/user/edit" element={<UserSetting/>}/>
+          <Route path="/user/shipping-billing" element={<ShippingAddress/>}/>
+          <Route path="/user/wishlist" element={<WishList/>}/>
+          <Route path="/user/order-purchase" element={<OrderPurchase/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
+
         </Routes>
         </>
     );

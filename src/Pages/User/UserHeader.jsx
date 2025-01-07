@@ -5,9 +5,7 @@ const UserHeader =({userData}) =>{
 
     return(
         <>
-        <div>
-                        <h1 class="text-xl font-extrabold sm:text-3xl">My Account</h1>
-                    </div>
+            <h1 class="text-xl font-extrabold sm:text-3xl">My Account</h1>    
                     <div class="space-y-3 rounded-lg border border-gray-400 bg-white pt-3 shadow">
                     <div class="flex flex-row justify-between px-4 pb-4 xl:pb-0">
                         <div class="flex flex-auto space-x-1.5 sm:space-x-3">
@@ -15,8 +13,7 @@ const UserHeader =({userData}) =>{
                                 <img
                                     className="border-primary-500 h-full w-full rounded-full border-2 p-[3px]"
                                     src={userData.image ? userData.image : 'https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg'}
-                                    alt=""
-                                    />
+                                    alt=""/>
                             </div>
                             <div>
                             <div class="flex flex-row items-center space-x-1 py-1">
@@ -48,33 +45,21 @@ const UserHeader =({userData}) =>{
                     <div
                     id="accountTabs"
                     class="mx-auto hidden w-full items-center space-x-2 overflow-x-auto whitespace-nowrap px-4 pb-3 text-sm font-semibold xl:inline-flex xl:flex-row xl:flex-nowrap xl:justify-between xl:overflow-x-hidden">
-                    <Link to={'/user/profile'} class="nk-acc-active-tab">
-                        <div>Dashboard</div>
-                    </Link>
-                    <Link to={'/user/edit'} class="nk-account-tab">
-                        <div>Edit Profile</div>
-                    </Link>
-                    <a class="nk-account-tab" href="account-orders-purchase.html">
-                        <div>Orders &amp; Purchase</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-shipping-billing.html">
-                        <div>Shipping &amp; Billing</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-buy-it-again.html">
-                        <div>Buy It Again</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-wishlist.html">
-                        <div>Wishlist &amp; Saved Items</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-gift-registry.html">
-                        <div>Gifts Registry</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-offers-deals.html">
-                        <div>Offers &amp; Deals</div>
-                    </a>
-                    <a class="nk-account-tab" href="account-submit-return.html">
-                        <div>Submit Return</div>
-                    </a>
+                        <Link to={'/user/profile'} class="nk-acc-active-tab">
+                            <div>Dashboard</div>
+                        </Link>
+                        <Link to={'/user/edit'} class="nk-account-tab">
+                            <div>Edit Profile</div>
+                        </Link>
+                        <Link class="nk-account-tab" to={'/user/order-purchase'}>
+                            <div>Orders &amp; Purchase</div>
+                        </Link>
+                        <Link class="nk-account-tab" to={'/user/shipping-billing'}>
+                            <div>Shipping &amp; Billing</div>
+                        </Link>
+                        <Link class="nk-account-tab" to={'/user/wishlist'}>
+                            <div>Wishlist &amp; Saved Items</div>
+                        </Link>
                     </div> 
                     </div>
         </>
