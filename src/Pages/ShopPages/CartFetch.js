@@ -23,9 +23,10 @@ export const fetchUserAndCartDetails = async () => {
       return { user: null, cart: null, error: "User not found." };
     }
     const userData = userResponse.data.data;
-    const cartResponse = await axios.post(
-      `${API_BASE_URL}/cart/get-cart`,
-      { user_id: userData._id },
+    const userID =userData._id;
+    console.log(userID);
+    const cartResponse = await axios.get(
+      `${API_BASE_URL}/cart/get-cart/`+userID,
       {
         headers: {
           Authorization: TOKEN,

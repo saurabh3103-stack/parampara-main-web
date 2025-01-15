@@ -16,6 +16,8 @@ import ShippingAddress from "./Pages/User/ShippingAddress";
 import WishList from "./Pages/User/WishList";
 import OrderPurchase from "./Pages/User/OrderPurchase";
 import Checkout from "./Pages/ShopPages/Checkout";
+import CheckNotificationofSocket from "./Pages/CheckNotificationofSocket";
+import Accordion from "./Pages/Accordion";
 
 const WebRoutes = () => {
     return(
@@ -37,7 +39,9 @@ const WebRoutes = () => {
           <Route path="/user/wishlist" element={<WishList/>}/>
           <Route path="/user/order-purchase" element={<OrderPurchase/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
-
+          {/* Check notifiction */}
+          <Route path="/notification" element={<CheckNotificationofSocket/>}/>
+          <Route path="/accordian" element={<Accordion/>}/>
         </Routes>
         </>
     );

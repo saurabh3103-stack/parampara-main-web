@@ -265,11 +265,11 @@ const PoojaDetails = () => {
                     <div id="itemInformation">
             
             <div className="mt-5">
-                <h1 className="border-b border-gray-400 py-2 text-2xl font-bold">Product Overview</h1>
+                <h5 className="border-b border-gray-400 py-2 text-2xl font-bold">Product Overview</h5>
                     <div className="border-b border-gray-400">
                         <div className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen5(!isOpen5)}>
-                        <h1 className="font-semibold">Pooja &amp; Description</h1>
+                        <h5 className="font-semibold">Pooja &amp; Description</h5>
                         <span
                             className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                             isOpen1 ? "rotate-180" : "rotate-0"
@@ -296,7 +296,7 @@ const PoojaDetails = () => {
                         <div
                         className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen3(!isOpen3)}>
-                        <h1 className="font-semibold">Pooja&nbsp;Samagri</h1>
+                        <h5 className="font-semibold">Pooja&nbsp;Samagri</h5>
                         <span
                             className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                             isOpen3 ? "rotate-180" : "rotate-0"
@@ -322,7 +322,7 @@ const PoojaDetails = () => {
                         <div
                         className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen6(!isOpen6)}>
-                        <h1 className="font-semibold">Shipping &amp; Delivery Information</h1>
+                        <h5 className="font-semibold">Shipping &amp; Delivery Information</h5>
                         <span
                             className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                             isOpen6 ? "rotate-180" : "rotate-0"
@@ -337,7 +337,7 @@ const PoojaDetails = () => {
                             opacity: isOpen6 ? 1 : 0,
                         }}>
                         <div className="p-4 bg-white">
-                            <h1 className="font-semibold">Product Description</h1>
+                            <h5 className="font-semibold">Product Description</h5>
                             <p className="w-3/4">
                                 Originally released in 1982, the Nike Air Force 1 was the first Nike model to feature "Air"
                                 technology. This legendary basketball sneaker wa designed by Bruce Kilgore, and named after
@@ -352,7 +352,7 @@ const PoojaDetails = () => {
                         <div
                         className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen1(!isOpen1)}>
-                        <h1 className="font-semibold">Refund &amp; Return Information</h1>
+                        <h5 className="font-semibold">Refund &amp; Return Information</h5>
                         <span
                             className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                             isOpen1 ? "rotate-180" : "rotate-0"
@@ -367,7 +367,7 @@ const PoojaDetails = () => {
                             opacity: isOpen1 ? 1 : 0,
                         }}>
                         <div className="p-4 bg-white">
-                            <h1 className="font-semibold">Product Description</h1>
+                            <h5 className="font-semibold">Product Description</h5>
                             <p className="w-3/4">
                             Originally released in 1982, the Nike Air Force 1 was the first
                             Nike model to feature "Air" technology. This legendary basketball
@@ -383,7 +383,7 @@ const PoojaDetails = () => {
                         <div
                         className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen2(!isOpen2)}>
-                        <h1 className="font-semibold">Your Protection Plan</h1>
+                        <h5 className="font-semibold">Your Protection Plan</h5>
                         <span
                             className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                             isOpen2 ? "rotate-180" : "rotate-0"
@@ -398,7 +398,7 @@ const PoojaDetails = () => {
                             opacity: isOpen2 ? 1 : 0,
                         }}>
                         <div className="p-4 bg-white">
-                            <h1 className="font-semibold">Product Description</h1>
+                            <h5 className="font-semibold">Product Description</h5>
                             <p className="w-3/4">
                             Originally released in 1982, the Nike Air Force 1 was the first
                             Nike model to feature "Air" technology. This legendary basketball
@@ -415,7 +415,7 @@ const PoojaDetails = () => {
                     <div
                     className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                     onClick={() => setIsOpen4(!isOpen4)}>
-                    <h1 className="font-semibold">Customers Rating & &amp; Reviews</h1>
+                    <h5 className="font-semibold">Customers Rating & &amp; Reviews</h5>
                     <span
                         className={`nk-chevron-icon transition-transform duration-200 ease-in ${
                         isOpen4 ? "rotate-180" : "rotate-0"
@@ -436,8 +436,7 @@ const PoojaDetails = () => {
                     </div>                  
                     </div>
                 </div>
-
-                    {/* Product Description */}
+                {/* Product Description */}
                 </div>
                 <div id="sponsoredItems">
                     <div className="mt-7 space-y-1">
