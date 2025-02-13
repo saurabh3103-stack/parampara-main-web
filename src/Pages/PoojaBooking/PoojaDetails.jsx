@@ -31,6 +31,7 @@ const PoojaDetails = () => {
     const [userData, setUserData] = useState(null);
     const [productAmount, setProductAmount] = useState(null); 
     const [selectedSamagri, setSelectedSamagri] = useState('');
+    const [SamagriStatus , setSamagriStatus] = useState('');
     useEffect(() => {
         const fetchPooja = async () => {
             try {
@@ -104,12 +105,16 @@ const PoojaDetails = () => {
     };
 
     const handleSamagriChange = (e) => {
+       
         setSelectedSamagri(e.target.value);
         if (e.target.value === "withSamagri") {
             setProductAmount(poojaDetails.price_withSamagri);
+            setSamagriStatus(1);
         } else {
             setProductAmount(poojaDetails.price_withoutSamagri);
+            setSamagriStatus(0);
         }
+
     };
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -122,6 +127,7 @@ const PoojaDetails = () => {
             product_id: formData.get('product_id'),
             product_name: formData.get('product_name'),
             product_amount: productAmount,
+            isSamagri:SamagriStatus,
             quantity: formData.get('quantity'),
             pooja_date: formData.get('pooja_date'),
             pooja_time: formData.get('pooja_time'),

@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-
+import { submitOrder } from './OrderPlace';
+import { useNavigate } from 'react-router-dom';
+import {ToastContainer, toast } from 'react-toastify';
 
 const UserOrderDetails = ({ cartItems, currencySymbol }) => {
-  // console.log(JSON.stringify(cartItems, null, 2)); 
+  // console.log(JSON.stringify(cartItems, null, 2));
+  const navigate = useNavigate();
+ 
   const cartUserData = JSON.stringify(cartItems, null, 2);
-  console.log(cartUserData);
-  console.log(cartItems[0].username);
-  const userEmail = sessionStorage.getItem("userEmail");
+  const userEmail = localStorage.getItem("userEmail");
 
   const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [isOfferChecked, setIsOfferChecked] = useState(false);
     const isSubmitEnabled = isTermsChecked && isOfferChecked;
-
     const [formData, setFormData] = useState({
-        name: cartItems[0]?.username || "",
-        phone: cartItems[0]?.userphone || "",
+        cartId:cartItems[0]?._id,
+        userId:cartItems[0]?.user_id|| "",
+        username: cartItems[0]?.username || "",
+        contactNumber: cartItems[0]?.userphone || "",
         email: userEmail || "",
         streetAddress: "",
         aptSuite: "",
@@ -24,6 +27,14 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
         zipCode: "",
         country: "",
         specialNote: "",
+        poojaType: cartItems[0]?.productType || "",
+        poojaId: cartItems[0]?.product_id || "",    
+        poojaName: cartItems[0]?.product_name || "",    
+        amount: cartItems[0]?.product_amount || "",    
+        quantity: cartItems[0]?.quantity || "",    
+        isSamagriIncluded: cartItems[0]?.isSamagri || "",    
+        date: cartItems[0]?.pooja_date || "",    
+        time: cartItems[0]?.pooja_time || "",
     });
 
     const handleChange = (e) => {
@@ -35,18 +46,25 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
     };
     
     const { isLoaded } = useLoadScript({
-        googleMapsApiKey: "AIzaSyCIBgZHeRcE_nXItBTGTM-eNdCNdZoBKPI", // Replace with your API key
+        googleMapsApiKey: "AIzaSyCiLRwm29ghwbDc1MrJ9svjNDg-NmQFx5A", // Replace with your API key
       });
     
       const [showMap, setShowMap] = useState(false);
       const [selectedLocation, setSelectedLocation] = useState(null);
       const [currentLocation, setCurrentLocation] = useState(null);
     
-      const handleSubmit = (e) => {
+      const handleSubmit =async (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted: ", formData);
+        const response = await submitOrder(formData);
+        if (response.success) {
+
+          toast.success('Order submitted successfully!');
+          const order_id=response.orderData.poojaBooking.bookingId
+          navigate('/order-preview/'+order_id);
+        } else {
+          toast.error('Error: ' + response.message);
+        }
       };
-    
       const handleMapClick = async (e) => {
         const { lat, lng } = e.latLng.toJSON();
         setSelectedLocation({ lat, lng });
@@ -111,8 +129,7 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
                 state: "",
                 zip: "",
                 country: "",
-              };
-              
+              };              
               // Extract address components
               addressComponents.forEach((component) => {
                 if (component.types.includes("street_number") || component.types.includes("route")) {
@@ -148,10 +165,15 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
           });
         }
       }, []);
-    
+      const [selectedPayment, setSelectedPayment] = useState('creditcard');
+      const handlePaymentChange = (event) => {
+        setSelectedPayment(event.target.value);
+      };
     
     return (
         <>
+                    <ToastContainer />
+
             <form className="mt-7 space--8" method="post" onSubmit={handleSubmit} style={{ width: "100%" }}>
                 {/* Personal Details Section */}
                 <div className="mt-3 space-y-2 border border-gray-400 bg-white p-5 text-sm">
@@ -166,7 +188,7 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
                                         className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded border-transparent bg-gray-100 p-2.5 text-sm text-gray-900"
                                         type="text"
                                         name="name"
-                                        value={formData.name}
+                                        value={formData.username}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -182,7 +204,7 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
                                     className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded border-transparent bg-gray-100 p-2.5 text-sm text-gray-900"
                                     type="text"
                                     name="phone"
-                                    value={formData.phone}
+                                    value={formData.contactNumber}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -311,7 +333,6 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
                         </div>
                     </div>
                 </div>
-                {/* Terms and Conditions */}
                 <div className="mt-3 space-y-2 border border-gray-400 bg-white p-5 text-sm">
                     <div className="w-full space-y-6">
                         <div className="flex space-x-2 items-center">

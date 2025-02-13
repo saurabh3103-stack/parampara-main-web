@@ -18,6 +18,8 @@ import OrderPurchase from "./Pages/User/OrderPurchase";
 import Checkout from "./Pages/ShopPages/Checkout";
 import CheckNotificationofSocket from "./Pages/CheckNotificationofSocket";
 import Accordion from "./Pages/Accordion";
+import OrderPreview from "./Pages/ShopPages/OrderPreview";
+import BookingReceipt from "./Pages/ShopPages/BookingReceipt";
 
 const WebRoutes = () => {
     return(
@@ -38,10 +40,13 @@ const WebRoutes = () => {
           <Route path="/user/shipping-billing" element={<ShippingAddress/>}/>
           <Route path="/user/wishlist" element={<WishList/>}/>
           <Route path="/user/order-purchase" element={<OrderPurchase/>}/>
+          <Route path="/order-preview/:id" element={<OrderPreview/>}/>
+          <Route path="/order-receipt/:id" element={<BookingReceipt/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
           {/* Check notifiction */}
           <Route path="/notification" element={<CheckNotificationofSocket/>}/>
           <Route path="/accordian" element={<Accordion/>}/>
+
         </Routes>
         </>
     );

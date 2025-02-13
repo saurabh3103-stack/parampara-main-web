@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../Component/Breadcrumb";
 import UserHeader from "./UserHeader";
 import { getUserByEmail } from "./GetUserDetails";
-import PersonalDetailsEdit from "./PersonalDetailsEdit";
-import DeactivateAccount from "./DeactivateAccount";
+import OrderList from "./OrderList";
 
 const OrderPurchase = () => {
     const navigate = useNavigate();
@@ -47,6 +46,7 @@ const OrderPurchase = () => {
             <Breadcrumb links={breadcrumbLinks}/>
             <div class="mx-auto mt-5 w-full space-y-4 px-4 text-sm xl:max-w-7xl">
                 <UserHeader userData={userData}/>
+                <OrderList/>
             </div>
         </>
     );

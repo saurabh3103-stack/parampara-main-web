@@ -12,7 +12,7 @@ const Authentication = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const loggedInStatus = sessionStorage.getItem("isLoggedIn");
+        const loggedInStatus = localStorage.getItem("isLoggedIn");
         setIsLoggedIn(!!loggedInStatus);
     }, []);
     useEffect(() => {
@@ -41,8 +41,8 @@ const Authentication = () => {
     }, [isLoggedIn]);
 
     const handleLogout = () => {
-        sessionStorage.removeItem("authToken");
-        sessionStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("isLoggedIn");
         navigate("/login");
     };
     if (isLoading) {

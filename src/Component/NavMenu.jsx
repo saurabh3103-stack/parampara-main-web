@@ -78,10 +78,10 @@ export default function NabMenu() {
                 </div>
                 <Authentication/>
                 <div>
-                <a href="./account-wishlist.html"><i className="fa fa-heart"></i></a>
+                <a href="/wishlist"><i className="fa fa-heart"></i></a>
                 </div>
                 <div>
-                <a href="./cart.html"><i className="fa fa-cart-shopping"></i></a>
+                <Link to="/cart"><i className="fa fa-cart-shopping"></i></Link>
                 </div>
             </div>
               </div>

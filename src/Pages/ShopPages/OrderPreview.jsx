@@ -1,36 +1,98 @@
 import React, { useEffect, useState } from "react";
-import { fetchUserAndCartDetails } from './CartFetch';
-import UserOrderDetails from "./UserOrderDetails";
+import { fetchUserAndCartDetails } from "./CartFetch";
+import { useParams, useNavigate } from "react-router-dom";
+import OrderDetails from "./OrderDetails";
 
-const Checkout = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const currencySymbol = "₹"; // Currency symbol
+const OrderPreview = () => {
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [orderData, setOrderData] = useState(null);
+    const [deliveryAddress, setDeliveryAddress] = useState({});
+    const [isConfirming, setIsConfirming] = useState(false);
+    const currencySymbol = "₹";
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
 
-    // Fetch cart data
     const fetchData = async () => {
         try {
-            const { cart, error } = await fetchUserAndCartDetails();
-            if (error) {
-                console.error("Error:", error);
-                setError("Failed to fetch cart data");
-            } else {
-                setCartItems(cart); // Set fetched cart data
-            }
+            setLoading(true);
+            const [cartResponse, orderResponse, addressResponse] = await Promise.all([
+                fetchUserAndCartDetails(),
+                fetch(`http://34.131.70.24:3000/api/orders/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                fetch(`http://34.131.70.24:3000/api/order/delivery-address/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+            ]);
+
+            const cartData = await cartResponse.cart;
+            if (cartResponse.error) throw new Error("Failed to fetch cart data");
+
+            if (!orderResponse.ok) throw new Error(`Order fetch error: ${orderResponse.status}`);
+            const orderData = await orderResponse.json();
+
+            if (!addressResponse.ok) throw new Error(`Address fetch error: ${addressResponse.status}`);
+            const addressData = await addressResponse.json();
+
+            setCartItems(cartData);
+            setOrderData(orderData);
+            setDeliveryAddress(addressData);
         } catch (error) {
-            console.error("Error:", error);
-            setError("Failed to fetch cart data");
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchData(); // Fetch cart data when component mounts
-    }, []);
+        fetchData();
+    }, [id]);
 
-    // Handle loading and errors
+        const handleConfirmOrder = async () => {
+        setIsConfirming(true);
+        try {
+            const orderDetails = {
+                bookingId: id,
+                userLat:deliveryAddress.DeliveryAddress?.Latitude,
+                userLong:deliveryAddress.DeliveryAddress?.Longitude,
+                transactionId: "09178297877022097098273169379879",
+                transactionStatus: "Successful",
+                transactionDate: new Date().toISOString(),
+            };
+            const response = await fetch("http://34.131.70.24:3000/api/orders/update-order", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(orderDetails),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // navigate(`/order-receipt/${data.poojaBooking.bookingId}`);
+            } else {
+                alert("Failed to update order.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while updating the order.");
+        } finally {
+            setIsConfirming(false);
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -39,27 +101,26 @@ const Checkout = () => {
         return <div>Error: {error}</div>;
     }
 
-  // Calculate subtotal, shipping, and total dynamically
-  const calculateSubtotal = () => {
-      return cartItems.reduce((acc, item) => acc + item.product_amount * item.quantity, 0);
-  };
+    // Calculate subtotal, shipping, and total dynamically
+    const calculateSubtotal = () => {
+        return cartItems.reduce((acc, item) => acc + item.product_amount * item.quantity, 0);
+    };
 
-  const calculateShipping = () => {
-      // Assuming shipping is a fixed cost, otherwise modify as needed
-      return 4.99;
-  };
+    const calculateShipping = () => {
+        return 4.99;
+    };
 
-  const calculateTax = () => {
-      // Assuming tax is a fixed amount, otherwise modify as needed
-      return 2.99;
-  };
+    const calculateTax = () => {
+        return 2.99;
+    };
 
-  const calculateTotal = () => {
-      return calculateSubtotal() + calculateShipping() + calculateTax();
-  };
+    const calculateTotal = () => {
+        return calculateSubtotal() + calculateShipping() + calculateTax();
+    };
+
     return (
         <>
-            <div className="mx-auto">
+         <div className="mx-auto">
                 <div id="cartdiv">
                     <div className="w-full bg-sky-100">
                         <p className="mx-auto w-full px-4 py-4 text-sm sm:w-full sm:px-6 xl:max-w-7xl">
@@ -72,7 +133,7 @@ const Checkout = () => {
                             {/* Left Column - UserOrderDetails */}
                             <div className="w-full lg:w-2/3">
                                 <div className="flex flex-auto flex-row items-center justify-between text-base font-semibold sm:text-xl">
-                                    <p>Checkout</p>
+                                    <p>Order Preview</p>
                                     <p>
                                         <a href="./">
                                             <span style={{ fontSize: ".9rem", marginRight: ".1rem" }}>
@@ -82,9 +143,9 @@ const Checkout = () => {
                                         </a>
                                     </p>
                                 </div>
-                                <UserOrderDetails cartItems={cartItems} currencySymbol={currencySymbol} />
+                                <OrderDetails previewData={orderData} deliveryAddress={deliveryAddress}/>
                             </div>
-
+                            
                             {/* Right Column - Order Summary */}
                             <div className="w-full sm:w-[350px] lg:w-1/3 lg:ml-6">
                                 <div className="mt-10">
@@ -136,20 +197,16 @@ const Checkout = () => {
                                                 <p className="">Total:</p>
                                                 <p>{currencySymbol}{calculateTotal().toFixed(2)}</p>
                                             </div>
-                                        </div>
-                                        <div className="mt-2">
-                                            <form className="flex items-center space-x-2">
-                                                <div className="w-2/3">
-                                                    <input
-                                                        className="focus:ring-primary focus:border-primary w-full rounded border border-gray-400 bg-gray-100 p-2 outline-none focus:outline-none focus:ring-1"
-                                                        type="text"
-                                                        id="checkout-promo-code"
-                                                        placeholder="Enter Promo code here..." />
-                                                </div>
-                                                <div className="w-1/3">
-                                                    <button className="w-full rounded bg-gray-200 py-2 text-gray-600">Apply</button>
-                                                </div>
-                                            </form>
+                                            <div className="w-100">
+                                                <button
+                                                    className="w-full rounded bg-green-800 py-2 text-white"
+                                                    onClick={handleConfirmOrder}
+                                                    disabled={isConfirming}
+                                                >
+                                                    {isConfirming ? "Confirming..." : "Confirm Order"}
+                                                </button>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -160,8 +217,6 @@ const Checkout = () => {
             </div>
         </>
     );
-};
+}
 
-export default Checkout;
-
-
+export default OrderPreview;

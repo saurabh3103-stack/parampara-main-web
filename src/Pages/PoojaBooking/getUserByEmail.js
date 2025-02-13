@@ -2,9 +2,9 @@
 import axios from "axios";
 
 export const getUserByEmail = async (navigate) => {
-  const APIURL = "http://localhost:3000/api/user/get-user/";
+  const APIURL = "http://34.131.70.24:3000/api/user/get-user/";
   const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
-  const userEmail = sessionStorage.getItem("userEmail");
+  const userEmail = localStorage.getItem("userEmail");
   if (!userEmail) {
     return null; 
   }

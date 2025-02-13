@@ -6,22 +6,19 @@ import "react-toastify/dist/ReactToastify.css";
 
 const UserSignIn = () => {
     const navigate = useNavigate();
-    const APIURL = "http://localhost:3000/api/";
+    const APIURL = "http://34.131.70.24:3000/api/";
     const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState();
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -34,18 +31,15 @@ const UserSignIn = () => {
             },
             data: JSON.stringify(formData),
         };
-    
         try {
             const { data } = await axios(config);
             if (data.status === 1) {
-                // Assuming `data.authToken` contains the generated token
                 const authToken = data.authToken;
-                sessionStorage.setItem("userEmail", formData.email);
-                sessionStorage.setItem("isLoggedIn", true);
-                sessionStorage.setItem("userPassword", formData.password);
-                sessionStorage.setItem("authToken", authToken);
-    
-                console.log("AuthToken stored:", authToken); // Debugging
+                localStorage.setItem("userEmail", formData.email);
+                localStorage.setItem("isLoggedIn", true);
+                localStorage.setItem("userPassword", formData.password);
+                localStorage.setItem("authToken", authToken);
+                console.log("AuthToken stored:", authToken); 
                 toast.success("Login successful!");
                 setTimeout(() => {
                     navigate("/user/profile");
@@ -61,6 +55,7 @@ const UserSignIn = () => {
             setLoading(false);
         }
     };
+    
 
     return (
         <>
