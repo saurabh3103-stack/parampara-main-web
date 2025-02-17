@@ -16,10 +16,14 @@ import ShippingAddress from "./Pages/User/ShippingAddress";
 import WishList from "./Pages/User/WishList";
 import OrderPurchase from "./Pages/User/OrderPurchase";
 import Checkout from "./Pages/ShopPages/Checkout";
-import CheckNotificationofSocket from "./Pages/CheckNotificationofSocket";
+// import CheckNotificationofSocket from "./Pages/CheckNotificationofSocket";
 import Accordion from "./Pages/Accordion";
 import OrderPreview from "./Pages/ShopPages/OrderPreview";
 import BookingReceipt from "./Pages/ShopPages/BookingReceipt";
+import Bhajan from "./Pages/BhajanMandal/Bhajan";
+import SingleBhajanMandal from "./Pages/BhajanMandal/SingleBhajanMandal";
+import BrahmanBhoj from "./Pages/BrahmanBhoj/BrahmanBhoj";
+import ContactUs from "./Pages/Contact/ContactUs";
 
 const WebRoutes = () => {
     return(
@@ -44,9 +48,12 @@ const WebRoutes = () => {
           <Route path="/order-receipt/:id" element={<BookingReceipt/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
           {/* Check notifiction */}
-          <Route path="/notification" element={<CheckNotificationofSocket/>}/>
+          {/* <Route path="/notification" element={<CheckNotificationofSocket/>}/> */}
           <Route path="/accordian" element={<Accordion/>}/>
-
+          <Route path="/bhajan-mandal" element={<Bhajan/>}/>
+          <Route path="/bhajan-mandal/:slug_url"element={<SingleBhajanMandal/>}/>
+          <Route path="/brahman-bhoj" element={<BrahmanBhoj/>}/>
+          <Route path="/contact-us" element={<ContactUs/>}/>
         </Routes>
         </>
     );

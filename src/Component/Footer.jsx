@@ -3,7 +3,7 @@ import '../Component/Footer.css';
 const Footer = () => {
     return(
         <>
-            <footer class="nk-main-footer pb-16 lg:pb-0">
+            <footer class="nk-main-footer pb-16 lg:pb-0" style={{marginTop:0}}>
                 <div class="nk-footer-container">
                     <div class="nk-top-footer">
                         <div class="nk-footer-one">

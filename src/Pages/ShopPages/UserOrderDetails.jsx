@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import { submitOrder } from './OrderPlace';
+import { submitOrder,submitBhajanBooking } from './OrderPlace';
 import { useNavigate } from 'react-router-dom';
 import {ToastContainer, toast } from 'react-toastify';
 
@@ -53,18 +53,26 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
       const [selectedLocation, setSelectedLocation] = useState(null);
       const [currentLocation, setCurrentLocation] = useState(null);
     
-      const handleSubmit =async (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await submitOrder(formData);
-        if (response.success) {
-
-          toast.success('Order submitted successfully!');
-          const order_id=response.orderData.poojaBooking.bookingId
-          navigate('/order-preview/'+order_id);
+        let response;
+        if (formData.poojaType === "Pooja") {
+          response = await submitOrder(formData);
+        } else if (formData.poojaType === "Bhajan Mandal") {
+          response = await submitBhajanBooking(formData);
         } else {
-          toast.error('Error: ' + response.message);
+          toast.error("Invalid Pooja Type!");
+          return;
+        }
+        if (response.success) {
+          toast.success("Order submitted successfully!");
+          const order_id = response.orderData.poojaBooking.bookingId;
+          navigate("/order-preview/" + order_id);
+        } else {
+          toast.error("Error: " + response.message);
         }
       };
+      
       const handleMapClick = async (e) => {
         const { lat, lng } = e.latLng.toJSON();
         setSelectedLocation({ lat, lng });

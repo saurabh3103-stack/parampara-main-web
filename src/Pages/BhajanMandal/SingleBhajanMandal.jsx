@@ -1,52 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { fetchBhajanDetails } from "./BhajanService";
 import Breadcrumb from "../../Component/Breadcrumb";
-import RelatedPooja from "../../../src/Pages/PoojaBooking/RelatedPooja";
-import ProductImageSlider from "./ProductImageSlider";
-import ProductDiscription from "./ProductDiscription";
-import PoojaSamagri from '../../Pages/PoojaBooking/PoojaSamagri';
-import axios from 'axios';
-import CustomerReview from "../../Component/Data/CustomerReview";
+import ProductImageSlider from "../PoojaBooking/ProductImageSlider";
 import TranscationSecurity from "../../Component/TranscationSecurity";
 import StringToHTML from "../../Component/StringtoHtml";
-import { getUserByEmail } from './getUserByEmail';
+import CustomerReview from "../../Component/Data/CustomerReview";
+import RelatedMandali from "./RelatedMandli";
+import { getUserByEmail } from '../PoojaBooking/getUserByEmail.js';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import axios from "axios";
 
-const PoojaDetails = () => {
+const SingleBhajanMandal = () => {
+    const { slug_url } = useParams(); // Get slug_url from URL
+    const [bhajan, setBhajan] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpen3, setIsOpen3] = useState(false);  
     const [isOpen4, setIsOpen4] = useState(false);
     const [isOpen5, setIsOpen5] = useState(false);
     const [isOpen6, setIsOpen6] = useState(false);
-    const { id } = useParams();
+    const [userData, setUserData] = useState(null);
+    const ApiUrl = "http://34.131.70.24:3000/api";
+    const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
     const currencySymbol = "₹";
     const imgUrl = 'http://localhost:5173/';
-    const ApiUrl = 'http://34.131.70.24:3000/api';
-    const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
-    const [error, setError] = useState(null);
-    const [poojaDetails, setPoojaDetails] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [userData, setUserData] = useState(null);
-    const [productAmount, setProductAmount] = useState(null); 
-    const [selectedSamagri, setSelectedSamagri] = useState('');
-    const [SamagriStatus , setSamagriStatus] = useState('');
+
     useEffect(() => {
-        const fetchPooja = async () => {
+        const getBhajanDetails = async () => {
             try {
-                const response = await axios.get(`${ApiUrl}/pooja/pooja/${id}`, {
-                    headers: { Authorization: tokken },
-                });
-                setPoojaDetails(response.data.data);
-                setLoading(false);
+                const response = await fetchBhajanDetails(slug_url);
+                setBhajan(response?.data || null);
             } catch (err) {
-                setError(err.message);
+                setError("Failed to fetch bhajan details");
+                console.error(err);
+            } finally {
                 setLoading(false);
             }
         };
-        fetchPooja();
-    }, [id]);
+
+        if (slug_url) {
+            getBhajanDetails();
+        }
+    }, [slug_url]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -64,26 +62,16 @@ const PoojaDetails = () => {
         fetchUser();
     }, []);
 
-    // Prevent rendering until data is loaded
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
-
-    if (!poojaDetails) {
-        return <p>No Pooja found</p>;
-    }
-
+    // Conditionally generate breadcrumb links
     const breadcrumbLinks = [
         { label: 'Home', url: '/' },
-        { label: 'Pooja', url: '/pooja' },
-        { label: poojaDetails.pooja_name },
-        { pagename: poojaDetails.pooja_name },
+        { label: 'Bhajan Mandal', url: '/bhajan-mandal' },
+        { label: bhajan.bhajan_name, url: '/bhajan-mandal/'+slug_url },
+        { pagename: bhajan.bhajan_name },
     ];
-
     const generateTimeOptions = () => {
         const times = [];
         const startHour = 4;
@@ -96,26 +84,10 @@ const PoojaDetails = () => {
         }
         return times;
     };
-
     const timeOptions = generateTimeOptions();
     const today = new Date().toISOString().split("T")[0]; 
-
-    const handleAmountChange = (e) => {
-        setProductAmount(e.target.value);
-    };
-
-    const handleSamagriChange = (e) => {
-       
-        setSelectedSamagri(e.target.value);
-        if (e.target.value === "withSamagri") {
-            setProductAmount(poojaDetails.price_withSamagri);
-            setSamagriStatus(1);
-        } else {
-            setProductAmount(poojaDetails.price_withoutSamagri);
-            setSamagriStatus(0);
-        }
-
-    };
+    const productAmount = bhajan.bhajan_price;
+    const product_image = bhajan.bhajan_image;
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -127,10 +99,10 @@ const PoojaDetails = () => {
             product_id: formData.get('product_id'),
             product_name: formData.get('product_name'),
             product_amount: productAmount,
-            isSamagri:SamagriStatus,
+            product_image : product_image,
             quantity: formData.get('quantity'),
-            pooja_date: formData.get('pooja_date'),
-            pooja_time: formData.get('pooja_time'),
+            pooja_date: formData.get('booking_date'),
+            pooja_time: formData.get('booking_time'),
         };
     
         try {
@@ -164,7 +136,7 @@ const PoojaDetails = () => {
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
-            toast.error("An error occurred while adding to cart.", {
+            toast.error("Failed to add item to cart.", {
                 position: "top-right",
                 autoClose: 3000,  // 3 seconds
                 hideProgressBar: false,
@@ -175,10 +147,10 @@ const PoojaDetails = () => {
             });
         }
     };
-    
+    console.log(bhajan);
+
     return (
         <>
-            <ToastContainer />
             <Breadcrumb links={breadcrumbLinks} />
             <section className="content mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
                 <div className="space-y-3 text-sm">
@@ -186,15 +158,14 @@ const PoojaDetails = () => {
                         <div className="mt-0 flex flex-col space-y-3 space-x-0 sm:mt-6 sm:flex-row sm:space-y-0 sm:space-x-5">
                             <div className="w-full sm:w-1/2">
                                 <div className="flex flex-col-reverse items-center space-x-0 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-3">
-                                    <ProductImageSlider  slider={poojaDetails.pooja_image}/>
+                                    <ProductImageSlider  slider={bhajan.bhajan_image}/>
                                 </div>
                             </div>
                             <div className="w-full sm:w-1/2">
                                 <div className="space-y-3">
-                                    <h1 className="text-xl font-medium sm:text-3xl">{poojaDetails.pooja_name}</h1>
+                                    <h1 className="text-xl font-medium sm:text-3xl">{bhajan.bhajan_name}</h1>
                                     <div>
-                                        <span className="text-sm font-semibold sm:text-2xl">{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}</span> - 
-                                        &nbsp;<span className="text-sm font-semibold sm:text-2xl">{currencySymbol}&nbsp;{poojaDetails.price_withSamagri}</span>
+                                        <span className="text-sm font-semibold sm:text-2xl">{currencySymbol}&nbsp;{bhajan.bhajan_price}</span> 
                                         <span className="ml-10 bg-green-700 px-3 py-1 text-base font-semibold text-white">Save $30</span>
                                     </div>
                                     <div className="flex flex-row items-center">
@@ -207,35 +178,19 @@ const PoojaDetails = () => {
                                         </div>
                                     </div>
                                     <div>
+                                        <p><span className="font-semibold">Experience:</span> {bhajan.exp_year}</p>
+                                    </div>
+                                    <div>
                                         <p><span className="font-semibold">Status:</span> <span className="text-green-500">Available</span></p>
                                     </div>
                                     <form onSubmit={handleSubmit}>
                                         <div className="mb-3">
-                                            <label htmlFor="el-email-one" className="mb-2 block text-sm font-medium text-gray-900">Choose Package :</label>
-                                            {poojaDetails.pooja_Samegristatus === "1" ? 
-                                                <div className="flex items-center space-x-2">
-                                                    <p>
-                                                        <span className="font-semibold">With Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withSamagri}&nbsp;
-                                                        <input type="radio" name="product_amount" value="withSamagri" onChange={handleSamagriChange} checked={selectedSamagri === "withSamagri"} />
-                                                    </p>
-                                                    <p>
-                                                        <span className="ml-5 font-semibold sm:ml-10">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;
-                                                        <input type="radio" name="product_amount" value="withoutSamagri" onChange={handleSamagriChange} checked={selectedSamagri === "withoutSamagri"} />
-                                                    </p>
-                                                </div>
-                                            :
-                                                <div className="flex items-center space-x-2">
-                                                    <p><span className="font-semibold">Without Samagri: </span>{currencySymbol}&nbsp;{poojaDetails.price_withoutSamagri}&nbsp;<input type="radio" name="poojaSamagri" checked /></p>
-                                                </div>
-                                            } 
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="mb-2 block text-sm font-medium text-gray-900">Pooja Date :</label>
-                                            <input type="date" id="pooja_date" name="pooja_date" min={today} className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required />
+                                            <label className="mb-2 block text-sm font-medium text-gray-900">Bhajan Date :</label>
+                                            <input type="date" id="booking_date" name="booking_date" min={today} className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required />
                                         </div>
                                         <div className="mb-3">
                                             <label className="mb-2 block text-sm font-medium text-gray-900">Preferred Time :</label>
-                                            <select id="pooja_time" name="pooja_time" className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required>
+                                            <select id="booking_time" name="booking_time" className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" required>
                                                 <option>--Choose Time--</option>
                                                 {timeOptions.map((time, index) => (
                                                     <option key={index} value={time}>{time}</option>
@@ -251,10 +206,10 @@ const PoojaDetails = () => {
                                                     <input type="hidden" name="useremail" value={userData.email} id="useremail" />
                                                 </>
                                             )}
-                                            <input type="hidden" name="productType" value="Pooja" id="productType"/>
-                                            <input type="hidden" name="product_name" value={poojaDetails.pooja_name} id="product_name"/>
+                                            <input type="hidden" name="productType" value="Bhajan Mandali" id="productType"/>
+                                            <input type="hidden" name="product_name" value={bhajan.bhajan_name} id="product_name"/>
                                             <input type="hidden" name="quantity" value="1" id="quantity"/>
-                                            <input type="hidden" name="product_id" value={poojaDetails._id} id="product_id"/>
+                                            <input type="hidden" name="product_id" value={bhajan._id} id="product_id"/>
                                             <button type="submit" className="bg-green-600 w-3/4 rounded px-3 m-0 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out hover:bg-green-700">
                                                 Add to Cart
                                             </button>
@@ -262,70 +217,40 @@ const PoojaDetails = () => {
                                                 Book Now
                                             </button>
                                         </div>
-                                    </form>
+                                    </form> 
                                     <TranscationSecurity/>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="itemInformation">
-            
-            <div className="mt-5">
-                <h5 className="border-b border-gray-400 py-2 text-2xl font-bold">Product Overview</h5>
-                    
+                    <div id="itemInformation">    
+                    <div className="mt-5">
+                    <h5 className="border-b border-gray-400 py-2 text-2xl font-bold mb-0">Product Overview</h5>
                     <div className="border-b border-gray-400">
                         <div className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                        onClick={() => setIsOpen5(!isOpen5)}>
-                        <h5 className="font-semibold">Pooja &amp; Description</h5>
-                        <span
-                            className={`nk-chevron-icon transition-transform duration-200 ease-in ${
-                            isOpen1 ? "rotate-180" : "rotate-0"
-                            }`}>
-                            <i className="fas fa-chevron-down"></i>
-                        </span>
-                        </div>
-                        <div
-                        className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                        style={{
-                            maxHeight: isOpen5 ? "300px" : "0",
-                            opacity: isOpen5 ? 1 : 0,
-                        }}>
-                            <div className="p-4 bg-white">
-                                <p className="w-3/4">
-                                    <StringToHTML htmlString={poojaDetails.long_discription}/>
-                                </p>
+                            onClick={() => setIsOpen5(!isOpen5)}>
+                            <h5 className="font-semibold">Pooja &amp; Description</h5>
+                            <span
+                                className={`nk-chevron-icon transition-transform duration-200 ease-in ${
+                                isOpen1 ? "rotate-180" : "rotate-0"
+                                }`}>
+                                <i className="fas fa-chevron-down"></i>
+                            </span>
+                            </div>
+                            <div
+                            className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
+                            style={{
+                                maxHeight: isOpen5 ? "300px" : "0",
+                                opacity: isOpen5 ? 1 : 0,
+                            }}>
+                                <div className="p-4 bg-white">
+                                    <p className="w-3/4">
+                                        <StringToHTML htmlString={bhajan.long_discription}/>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {
-                    poojaDetails.pooja_Samegristatus === "1" ? 
-                    <div className="border-b border-gray-400">
-                        <div
-                        className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                        onClick={() => setIsOpen3(!isOpen3)}>
-                        <h5 className="font-semibold">Pooja&nbsp;Samagri</h5>
-                        <span
-                            className={`nk-chevron-icon transition-transform duration-200 ease-in ${
-                            isOpen3 ? "rotate-180" : "rotate-0"
-                            }`}>
-                            <i className="fas fa-chevron-down"></i>
-                        </span>
-                        </div>
-                        <div className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                        style={{
-                            maxHeight: isOpen3 ? "300px" : "0",
-                            opacity: isOpen3 ? 1 : 0,
-                        }}>
-                        <div className="p-4 bg-white">
-                            <PoojaSamagri poojaId={poojaDetails._id}/>
-                        </div>
-                        </div>
-                    </div>
-                    :
-                    <>
-                    </>
-                    }
-                    <div className="border-b border-gray-400">
+                        <div className="border-b border-gray-400">
                         <div
                         className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                         onClick={() => setIsOpen6(!isOpen6)}>
@@ -417,8 +342,7 @@ const PoojaDetails = () => {
                         </div>
                         </div>
                     </div>
-                           
-                <div className="border-b border-gray-400">
+                    <div className="border-b border-gray-400">
                     <div
                     className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
                     onClick={() => setIsOpen4(!isOpen4)}>
@@ -440,10 +364,10 @@ const PoojaDetails = () => {
                             <CustomerReview/>
                         </div>
                         </div>
-                    </div>                  
+                    </div>  
                     </div>
-                </div>
-                {/* Product Description */}
+
+                    </div>
                 </div>
                 <div id="sponsoredItems">
                     <div className="mt-7 space-y-1">
@@ -456,10 +380,11 @@ const PoojaDetails = () => {
                         </div>
                     </div>
                 </div>
-                <RelatedPooja />
+                <RelatedMandali category={bhajan.bhajan_category
+}/>
             </section>
         </>
     );
 };
 
-export default PoojaDetails;
+export default SingleBhajanMandal;

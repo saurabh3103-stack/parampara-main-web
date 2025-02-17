@@ -32,7 +32,6 @@ const Authentication = () => {
                 setIsLoading(false);
             }
         };
-
         if (isLoggedIn) {
             fetchUser();
         } else {

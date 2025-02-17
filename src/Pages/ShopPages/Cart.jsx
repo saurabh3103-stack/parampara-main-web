@@ -7,7 +7,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹";
-
+  const imgUrl = 'http://34.131.70.24:3000';
   const fetchData = async () => {
     try {
       const { cart, error } = await fetchUserAndCartDetails();
@@ -81,7 +81,7 @@ const Cart = () => {
                               <div className="mx-auto flex w-full sm:w-1/2 sm:justify-center lg:items-start lg:justify-start xl:w-1/3">
                                 <img
                                   className="h-24 w-24 rounded border-2 border-gray-400 object-cover"
-                                  src="./assets/img/products/fashion/shoes/3.jpg"
+                                  src={imgUrl+item.product_image}
                                   alt=""
                                 />
                               </div>

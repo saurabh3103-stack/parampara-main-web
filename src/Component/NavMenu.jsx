@@ -21,52 +21,52 @@ export default function NabMenu() {
                 </div>
                 <div data-dropdown="#listHomepages" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <a href="/">Home</a>
+                    <Link to="/">Home</Link>
                   </div>
                 </div>
                 <div data-dropdown="#shop-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>About Us</span>
+                    <Link to='/about-us'>About Us</Link>
                   </div>
                 </div>
                 <div data-dropdown="#pages-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>Horoscope</span>
+                    <Link to='horoscope'>Horoscope</Link>
                   </div>
                 </div>
 
                 <div data-dropdown="#list-nav-headers" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>E-Store</span>
+                    <Link to='e-store'>E-Store</Link>
                   </div>
                 
                 </div>
                 <div data-dropdown="#elements-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>Service</span>
+                    <Link to='service'>Service</Link>
                     <span style={{paddingLeft:"7px"}}><i class="fas fa-chevron-down"></i></span>
                   </div>
                   <div id="pages-dropdown" className="nk-dropdown_menu nk-dropdown-menu-animated my-2 w-[200px]">
                     <span className="nk-top-dropdown-triangle -left-[187px]"></span>
                     <div className="nk-dropdown-content" >
-                      <a className="nk-dropdown-nav-link" href="/pooja">Pooja Booking</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Brahman Bhoj</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Bhajan Mandal</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Temple Donation</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Daily Pandit</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Puja at Temple</a>
-                      <a className="nk-dropdown-nav-link" href="javascript:void(0)">Darshan Booking</a>
+                      <Link className="nk-dropdown-nav-link" to="/pooja">Pooja Booking</Link>
+                      <Link className="nk-dropdown-nav-link" to="/brahman-bhoj">Brahman Bhoj</Link>
+                      <Link className="nk-dropdown-nav-link" to="/bhajan-mandal">Bhajan Mandal</Link>
+                      <Link className="nk-dropdown-nav-link" to="javascript:void(0)">Temple Donation</Link>
+                      <Link className="nk-dropdown-nav-link" to="javascript:void(0)">Daily Pandit</Link>
+                      <Link className="nk-dropdown-nav-link" to="javascript:void(0)">Puja at Temple</Link>
+                      <Link className="nk-dropdown-nav-link" to="javascript:void(0)">Darshan Booking</Link>
                     </div>
                   </div>
                 </div>  
                 <div data-dropdown="#elements-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>Virtual Services</span>
+                    <Link to='/'>Virtual Services</Link>
                   </div>
                 </div>
                 <div data-dropdown="#elements-dropdown" className="nk-dropdown-slide ">
                   <div className="nk-dropdown-menu-link !py-4 ">
-                    <span>Contact</span>
+                    <Link to='/contact-us'>Contact Us</Link>
                   </div>
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function NabMenu() {
                 </div>
                 <Authentication/>
                 <div>
-                <a href="/wishlist"><i className="fa fa-heart"></i></a>
+                <Link to="/wishlist"><i className="fa fa-heart"></i></Link>
                 </div>
                 <div>
                 <Link to="/cart"><i className="fa fa-cart-shopping"></i></Link>

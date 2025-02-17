@@ -7,7 +7,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹"; // Currency symbol
-
+  const imgUrl = 'http://34.131.70.24:3000';
     // Fetch cart data
     const fetchData = async () => {
         try {
@@ -95,7 +95,7 @@ const Checkout = () => {
                                                 <div className="w-1/4 rounded">
                                                     <img
                                                         className="border-primary w-full border-2"
-                                                        src="./assets/img/products/fashion/shoes/3.jpg"
+                                                        src={imgUrl+item.product_image}
                                                         alt="Image Error"
                                                     />
                                                 </div>
