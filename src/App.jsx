@@ -11,8 +11,7 @@ import WebRoutes from './WebRoutes';
 function App() {
 
   return (
-    <>
-    
+    <>   
      <Router>
       <Navbar/>
         <WebRoutes/>

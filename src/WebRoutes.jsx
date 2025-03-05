@@ -27,6 +27,7 @@ import ContactUs from "./Pages/Contact/ContactUs";
 import EStoreProductDetails from "./Pages/EStore/EStoreProductDetails";
 
 const WebRoutes = () => {
+  
     return(
         <>
         <Routes>

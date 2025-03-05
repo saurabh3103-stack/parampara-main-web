@@ -16,12 +16,17 @@ const OrderPreview = () => {
     const currencySymbol = "₹";
     
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
-
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [cartResponse, orderResponse, addressResponse] = await Promise.all([
-                fetchUserAndCartDetails(),
+    
+            // Fetch cart details properly
+            const cartResponse = await fetchUserAndCartDetails();
+            if (!cartResponse || cartResponse.error) throw new Error("Failed to fetch cart data");
+            const cartData = cartResponse.cart || []; // Ensure cartData is an array
+    
+            // Fetch order and delivery address simultaneously
+            const [orderResponse, addressResponse] = await Promise.all([
                 fetch(`http://localhost:3000/api/orders/${id}`, {
                     method: "GET",
                     headers: {
@@ -37,16 +42,14 @@ const OrderPreview = () => {
                     },
                 }),
             ]);
-
-            const cartData = await cartResponse.cart;
-            if (cartResponse.error) throw new Error("Failed to fetch cart data");
-
+    
             if (!orderResponse.ok) throw new Error(`Order fetch error: ${orderResponse.status}`);
             const orderData = await orderResponse.json();
-
+    
             if (!addressResponse.ok) throw new Error(`Address fetch error: ${addressResponse.status}`);
             const addressData = await addressResponse.json();
-
+    
+            // Update state
             setCartItems(cartData);
             setOrderData(orderData);
             setDeliveryAddress(addressData);
@@ -56,66 +59,82 @@ const OrderPreview = () => {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchData();
-    }, [id]);
-    const fetchMadali = async (orderData = {}) => {
-        try {
-            setLoading(true);
-            if (!orderData.bookingDetails?.mandaliId) {
-                throw new Error("Mandali ID is missing.");
-            }
-            const id = orderData.bookingDetails.mandaliId;
-            const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (!mandaliResponse.ok) {
-                throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
-            }
-            const mandaliData = await mandaliResponse.json();
-            setMandaliData(mandaliData.data);
-            if (mandaliData.length > 0) {
-                console.log("FCM Token:", mandaliData[0]?.data?.bhajan_owner?.fcm_tokken ?? "No FCM Token found");
-            }
-        } catch (error) {
-            console.error("Fetch Mandali Error:", error);
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
     
-    // Call the function inside useEffect
     useEffect(() => {
-        if (orderData) {
-            fetchMadali(orderData);
+        if (id && token) {  // Ensure id and token are available
+            fetchData();
         }
-    }, [orderData]); // Runs when `orderData` changes
-    // console.log(MandaliData.bhajan_owner.fcm_tokken);
-    const orderType =orderData.bookingDetails?.Type;
+    }, [id, token]);
+    console.log(orderData);
+    const orderType = orderData?.bookingDetails?.Type || "N/A";
+    if(orderType === "Bhajan Mandali"){
+        const fetchMadali = async (orderData = {}) => {
+            try {
+                setLoading(true);
+                if (!orderData.bookingDetails?.mandaliId) {
+                    throw new Error("Mandali ID is missing.");
+                }
+                const id = orderData.bookingDetails.mandaliId;
+                const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!mandaliResponse.ok) {
+                    throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
+                }
+                const mandaliData = await mandaliResponse.json();
+                setMandaliData(mandaliData.data);
+                if (mandaliData.length > 0) {
+                    console.log("FCM Token:", mandaliData[0]?.data?.bhajan_owner?.fcm_tokken ?? "No FCM Token found");
+                }
+            } catch (error) {
+                console.error("Fetch Mandali Error:", error);
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };  
+        useEffect(() => {
+            if (orderData) {
+                fetchMadali(orderData);
+            }
+            if (id && token) {  // Ensure id and token are available
+                fetchData();
+            }
+        }, [orderData,id, token]); // Runs when `orderData` changes
+    }else{
+
+    }
+        // console.log(orderData);
     const handleConfirmOrder = async () => {
         setIsConfirming(true);
         try {
-            const orderDetails = {
-                bookingId: id,
-                fcm_tokken:MandaliData.bhajan_owner.fcm_tokken,
-                userLat: deliveryAddress?.DeliveryAddress?.Latitude,
-                userLong: deliveryAddress?.DeliveryAddress?.Longitude,
-                transactionId: "09178297877022097098273169379879",
-                transactionStatus: "Successful",
-                transactionDate: new Date().toISOString(),
-            };
-
             let updateUrl;
+            let orderDetails;
             if (orderType === "Pooja") {
-                updateUrl = "http://localhost:3000/api/order/update-order";
+                updateUrl = "http://localhost:3000/api/orders/update-order";
+                orderDetails = {
+                    bookingId: id,
+                    userLat: deliveryAddress?.DeliveryAddress?.Latitude,
+                    userLong: deliveryAddress?.DeliveryAddress?.Longitude,
+                    transactionId: "09178297877022097098273169379879",
+                    transactionStatus: "Successful",
+                    transactionDate: new Date().toISOString(),
+                };
             } else if (orderType === "Bhajan Mandali") {
                 updateUrl = "http://localhost:3000/api/order/update-mandali-order";
+                orderDetails = {
+                    bookingId: id,
+                    fcm_tokken:MandaliData.bhajan_owner.fcm_tokken,
+                    userLat: deliveryAddress?.DeliveryAddress?.Latitude,
+                    userLong: deliveryAddress?.DeliveryAddress?.Longitude,
+                    transactionId: "09178297877022097098273169379879",
+                    transactionStatus: "Successful",
+                    transactionDate: new Date().toISOString(),
+                };
             } else {
                 throw new Error("Unknown order type");
             }
