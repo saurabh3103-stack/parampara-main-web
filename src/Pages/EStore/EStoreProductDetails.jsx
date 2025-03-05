@@ -12,7 +12,7 @@ import RelatedPooja from "../PoojaBooking/RelatedPooja";
 const EStoreProductDetails = () => {
     const { id } = useParams(); 
     const currencySymbol = "₹";
-    const imgUrl = "http://localhost:3000";
+    const imgUrl = "http://192.168.1.39:3000";
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState(null);
     const [userData, setUserData] = useState(null);

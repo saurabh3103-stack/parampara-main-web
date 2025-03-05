@@ -20,7 +20,7 @@ const Bhajan = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { filtercategoryID, setFilterCategoryID, categoryData, setCategoryData } = useContext(AppContext);
 
-    const imgUrl = "http://localhost:3000"; // Define your image URL
+    const imgUrl = "http://192.168.1.39:3000"; // Define your image URL
     const currencySymbol = "₹"; // Define your currency symbol
 
     useEffect(() => {

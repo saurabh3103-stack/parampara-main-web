@@ -3,7 +3,7 @@ import CustomerReview from "../../Component/Data/CustomerReview";
 
 const ProductDiscription = ({ poojaDetails }) => { 
     const poojaData = poojaDetails;
-    console.log(poojaData);
+    
     const imgUrl= 'http://localhost:5173/';
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);

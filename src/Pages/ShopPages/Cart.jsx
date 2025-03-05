@@ -7,7 +7,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹";
-  const imgUrl = 'http://localhost:3000';
+  const imgUrl = 'http://192.168.1.39:3000';
   const fetchData = async () => {
     try {
       const { cart, error } = await fetchUserAndCartDetails();
