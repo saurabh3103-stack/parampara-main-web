@@ -60,15 +60,13 @@ const OrderPreview = () => {
     useEffect(() => {
         fetchData();
     }, [id]);
-
-    const fetchMadali = async () => {
+    const fetchMadali = async (orderData = {}) => {
         try {
-            setLoading(true);    
-            if (!orderData?.bookingDetails?.mandaliId) {
+            setLoading(true);
+            if (!orderData.bookingDetails?.mandaliId) {
                 throw new Error("Mandali ID is missing.");
             }
             const id = orderData.bookingDetails.mandaliId;
-    
             const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${id}`, {
                 method: "GET",
                 headers: {
@@ -80,7 +78,10 @@ const OrderPreview = () => {
                 throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
             }
             const mandaliData = await mandaliResponse.json();
-            setMandaliData(mandaliData);
+            setMandaliData(mandaliData.data);
+            if (mandaliData.length > 0) {
+                console.log("FCM Token:", mandaliData[0]?.data?.bhajan_owner?.fcm_tokken ?? "No FCM Token found");
+            }
         } catch (error) {
             console.error("Fetch Mandali Error:", error);
             setError(error.message);
@@ -88,18 +89,21 @@ const OrderPreview = () => {
             setLoading(false);
         }
     };
-    console.log(MandaliData);
     
-    // Call `fetchMadali` inside `useEffect`
+    // Call the function inside useEffect
     useEffect(() => {
-        fetchMadali();
+        if (orderData) {
+            fetchMadali(orderData);
+        }
     }, [orderData]); // Runs when `orderData` changes
-    
+    // console.log(MandaliData.bhajan_owner.fcm_tokken);
+    const orderType =orderData.bookingDetails?.Type;
     const handleConfirmOrder = async () => {
         setIsConfirming(true);
         try {
             const orderDetails = {
                 bookingId: id,
+                fcm_tokken:MandaliData.bhajan_owner.fcm_tokken,
                 userLat: deliveryAddress?.DeliveryAddress?.Latitude,
                 userLong: deliveryAddress?.DeliveryAddress?.Longitude,
                 transactionId: "09178297877022097098273169379879",
