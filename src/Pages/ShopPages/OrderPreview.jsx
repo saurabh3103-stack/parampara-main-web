@@ -12,19 +12,20 @@ const OrderPreview = () => {
     const [orderData, setOrderData] = useState(null);
     const [deliveryAddress, setDeliveryAddress] = useState({});
     const [isConfirming, setIsConfirming] = useState(false);
-    const [MandaliData,setMandaliData]=useState({});
+    const [MandaliData, setMandaliData] = useState({});
     const currencySymbol = "₹";
-    
+
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
+
     const fetchData = async () => {
         try {
             setLoading(true);
-    
+
             // Fetch cart details properly
             const cartResponse = await fetchUserAndCartDetails();
             if (!cartResponse || cartResponse.error) throw new Error("Failed to fetch cart data");
             const cartData = cartResponse.cart || []; // Ensure cartData is an array
-    
+
             // Fetch order and delivery address simultaneously
             const [orderResponse, addressResponse] = await Promise.all([
                 fetch(`http://localhost:3000/api/orders/${id}`, {
@@ -42,78 +43,52 @@ const OrderPreview = () => {
                     },
                 }),
             ]);
-    
+
             if (!orderResponse.ok) throw new Error(`Order fetch error: ${orderResponse.status}`);
             const orderData = await orderResponse.json();
-    
+
             if (!addressResponse.ok) throw new Error(`Address fetch error: ${addressResponse.status}`);
             const addressData = await addressResponse.json();
-    
+
             // Update state
             setCartItems(cartData);
             setOrderData(orderData);
             setDeliveryAddress(addressData);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    useEffect(() => {
-        if (id && token) {  // Ensure id and token are available
-            fetchData();
-        }
-    }, [id, token]);
-    console.log(orderData);
-    const orderType = orderData?.bookingDetails?.Type || "N/A";
-    if(orderType === "Bhajan Mandali"){
-        const fetchMadali = async (orderData = {}) => {
-            try {
-                setLoading(true);
-                if (!orderData.bookingDetails?.mandaliId) {
-                    throw new Error("Mandali ID is missing.");
-                }
-                const id = orderData.bookingDetails.mandaliId;
-                const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${id}`, {
+
+            // Fetch Mandali data if order type is "Bhajan Mandali"
+            if (orderData.bookingDetails?.Type === "Bhajan Mandali") {
+                const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${orderData.bookingDetails.mandaliId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                if (!mandaliResponse.ok) {
-                    throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
-                }
+
+                if (!mandaliResponse.ok) throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
                 const mandaliData = await mandaliResponse.json();
                 setMandaliData(mandaliData.data);
-                if (mandaliData.length > 0) {
-                    console.log("FCM Token:", mandaliData[0]?.data?.bhajan_owner?.fcm_tokken ?? "No FCM Token found");
-                }
-            } catch (error) {
-                console.error("Fetch Mandali Error:", error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
             }
-        };  
-        useEffect(() => {
-            if (orderData) {
-                fetchMadali(orderData);
-            }
-            if (id && token) {  // Ensure id and token are available
-                fetchData();
-            }
-        }, [orderData,id, token]); // Runs when `orderData` changes
-    }else{
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    }
-        // console.log(orderData);
+    useEffect(() => {
+        if (id && token) {  // Ensure id and token are available
+            fetchData();
+        }
+    }, [id, token]);
+
     const handleConfirmOrder = async () => {
         setIsConfirming(true);
         try {
             let updateUrl;
             let orderDetails;
+            const orderType = orderData?.bookingDetails?.Type || "N/A";
+
             if (orderType === "Pooja") {
                 updateUrl = "http://localhost:3000/api/orders/update-order";
                 orderDetails = {
@@ -128,7 +103,7 @@ const OrderPreview = () => {
                 updateUrl = "http://localhost:3000/api/order/update-mandali-order";
                 orderDetails = {
                     bookingId: id,
-                    fcm_tokken:MandaliData.bhajan_owner.fcm_tokken,
+                    fcm_tokken: MandaliData.bhajan_owner?.fcm_tokken,
                     userLat: deliveryAddress?.DeliveryAddress?.Latitude,
                     userLong: deliveryAddress?.DeliveryAddress?.Longitude,
                     transactionId: "09178297877022097098273169379879",
@@ -171,9 +146,10 @@ const OrderPreview = () => {
     const calculateShipping = () => 4.99;
     const calculateTax = () => 2.99;
     const calculateTotal = () => calculateSubtotal() + calculateShipping() + calculateTax();
+
     return (
         <>
-         <div className="mx-auto">
+            <div className="mx-auto">
                 <div id="cartdiv">
                     <div className="w-full bg-sky-100">
                         <p className="mx-auto w-full px-4 py-4 text-sm sm:w-full sm:px-6 xl:max-w-7xl">
@@ -196,9 +172,9 @@ const OrderPreview = () => {
                                         </a>
                                     </p>
                                 </div>
-                                <OrderDetails previewData={orderData} deliveryAddress={deliveryAddress}/>
+                                <OrderDetails previewData={orderData} deliveryAddress={deliveryAddress} />
                             </div>
-                            
+
                             {/* Right Column - Order Summary */}
                             <div className="w-full sm:w-[350px] lg:w-1/3 lg:ml-6">
                                 <div className="mt-10">
@@ -219,8 +195,8 @@ const OrderPreview = () => {
                                                     <p><span className="font-semibold">Booking Date:</span> {new Date(item.pooja_date).toLocaleDateString()}</p>
                                                     <p><span className="font-semibold">Booking Time:</span> {item.pooja_time}</p>
                                                     <div className="flex items-center justify-between">
-                                                      <p className="font-semibold">Shipping:</p>
-                                                      <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
+                                                        <p className="font-semibold">Shipping:</p>
+                                                        <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
                                                     </div>
                                                     <div className="flex flex-row items-center justify-between">
                                                         <div><span className="font-semibold"></span> </div>
@@ -259,7 +235,6 @@ const OrderPreview = () => {
                                                     {isConfirming ? "Confirming..." : "Confirm Order"}
                                                 </button>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                 </div>
