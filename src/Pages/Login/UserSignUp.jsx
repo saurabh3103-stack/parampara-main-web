@@ -3,7 +3,7 @@ import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 
 const UserSignUp = () =>{
-  const APIURL = "http://34.131.70.24:3000/api/";
+  const APIURL = "http://localhost:3000/api/";
   const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
   const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState(false);

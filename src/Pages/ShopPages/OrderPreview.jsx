@@ -12,7 +12,9 @@ const OrderPreview = () => {
     const [orderData, setOrderData] = useState(null);
     const [deliveryAddress, setDeliveryAddress] = useState({});
     const [isConfirming, setIsConfirming] = useState(false);
+    const [MandaliData,setMandaliData]=useState({});
     const currencySymbol = "₹";
+    
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
 
     const fetchData = async () => {
@@ -20,14 +22,14 @@ const OrderPreview = () => {
             setLoading(true);
             const [cartResponse, orderResponse, addressResponse] = await Promise.all([
                 fetchUserAndCartDetails(),
-                fetch(`http://34.131.70.24:3000/api/orders/${id}`, {
+                fetch(`http://localhost:3000/api/orders/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 }),
-                fetch(`http://34.131.70.24:3000/api/order/delivery-address/${id}`, {
+                fetch(`http://localhost:3000/api/order/delivery-address/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -59,18 +61,62 @@ const OrderPreview = () => {
         fetchData();
     }, [id]);
 
-        const handleConfirmOrder = async () => {
+    const fetchMadali = async () => {
+        try {
+            setLoading(true);    
+            if (!orderData?.bookingDetails?.mandaliId) {
+                throw new Error("Mandali ID is missing.");
+            }
+            const id = orderData.bookingDetails.mandaliId;
+    
+            const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!mandaliResponse.ok) {
+                throw new Error(`Mandali fetch error: ${mandaliResponse.status}`);
+            }
+            const mandaliData = await mandaliResponse.json();
+            setMandaliData(mandaliData);
+        } catch (error) {
+            console.error("Fetch Mandali Error:", error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    console.log(MandaliData);
+    
+    // Call `fetchMadali` inside `useEffect`
+    useEffect(() => {
+        fetchMadali();
+    }, [orderData]); // Runs when `orderData` changes
+    
+    const handleConfirmOrder = async () => {
         setIsConfirming(true);
         try {
             const orderDetails = {
                 bookingId: id,
-                userLat:deliveryAddress.DeliveryAddress?.Latitude,
-                userLong:deliveryAddress.DeliveryAddress?.Longitude,
+                userLat: deliveryAddress?.DeliveryAddress?.Latitude,
+                userLong: deliveryAddress?.DeliveryAddress?.Longitude,
                 transactionId: "09178297877022097098273169379879",
                 transactionStatus: "Successful",
                 transactionDate: new Date().toISOString(),
             };
-            const response = await fetch("http://34.131.70.24:3000/api/orders/update-order", {
+
+            let updateUrl;
+            if (orderType === "Pooja") {
+                updateUrl = "http://localhost:3000/api/order/update-order";
+            } else if (orderType === "Bhajan Mandali") {
+                updateUrl = "http://localhost:3000/api/order/update-mandali-order";
+            } else {
+                throw new Error("Unknown order type");
+            }
+
+            const response = await fetch(updateUrl, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -80,8 +126,7 @@ const OrderPreview = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                // navigate(`/order-receipt/${data.poojaBooking.bookingId}`);
+                navigate(`/order-receipt/${orderDetails.bookingId}`);
             } else {
                 alert("Failed to update order.");
             }
@@ -93,31 +138,16 @@ const OrderPreview = () => {
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    // Calculate subtotal, shipping, and total dynamically
     const calculateSubtotal = () => {
         return cartItems.reduce((acc, item) => acc + item.product_amount * item.quantity, 0);
     };
 
-    const calculateShipping = () => {
-        return 4.99;
-    };
-
-    const calculateTax = () => {
-        return 2.99;
-    };
-
-    const calculateTotal = () => {
-        return calculateSubtotal() + calculateShipping() + calculateTax();
-    };
-
+    const calculateShipping = () => 4.99;
+    const calculateTax = () => 2.99;
+    const calculateTotal = () => calculateSubtotal() + calculateShipping() + calculateTax();
     return (
         <>
          <div className="mx-auto">

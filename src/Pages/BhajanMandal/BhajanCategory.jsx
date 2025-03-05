@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "../../Pages/PoojaBooking/slider.css";
 
 const BhajanCategory = ({categoryData, onCategoryChange }) => {
-    const IMGURL = "http://34.131.70.24:3000";
+    const IMGURL = "http://localhost:3000";
 
     
     const [categories, setCategories] = useState([]);

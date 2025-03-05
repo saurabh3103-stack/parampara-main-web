@@ -3,7 +3,7 @@ import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const Slider = () => {
-  const APIURL = "http://34.131.70.24:3000/api/slider/get-slider"; // Your API URL
+  const APIURL = "http://localhost:3000/api/slider/get-slider"; // Your API URL
   const [sliders, setSliders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

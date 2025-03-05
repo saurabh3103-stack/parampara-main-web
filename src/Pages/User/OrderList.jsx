@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const OrderList = () => {
     const [orderData, setOrderData] = useState(null); // Use null initially
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
-    const APIURL = 'http://34.131.70.24:3000/api/orders/user';
+    const APIURL = 'http://localhost:3000/api/orders/user';
 
     const fetchOrders = async () => {
         try {

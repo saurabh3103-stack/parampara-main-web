@@ -55,21 +55,23 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
     
       const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Form Data:", formData);
         let response;
         if (formData.poojaType === "Pooja") {
           response = await submitOrder(formData);
-        } else if (formData.poojaType === "Bhajan Mandal") {
-          response = await submitBhajanBooking(formData);
-        } else {
-          toast.error("Invalid Pooja Type!");
-          return;
-        }
-        if (response.success) {
           toast.success("Order submitted successfully!");
           const order_id = response.orderData.poojaBooking.bookingId;
           navigate("/order-preview/" + order_id);
+        } else if (formData.poojaType === "Bhajan Mandali") {
+          console.log(formData);
+          response = await submitBhajanBooking(formData);
+          console.log(response);
+          toast.success("Order submitted successfully!");
+          const order_id = response.orderData.bhajanbooking.bookingId;
+          navigate("/order-preview/" + order_id);
         } else {
-          toast.error("Error: " + response.message);
+          toast.error("Invalid Pooja Type!");
+          return;
         }
       };
       

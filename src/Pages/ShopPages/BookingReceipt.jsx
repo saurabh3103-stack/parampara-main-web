@@ -13,7 +13,7 @@ const BookingReceipt = () => {
     // Fetch order details
     const fetchOrderData = async () => {
         try {
-            const response = await fetch(`http://34.131.70.24:3000/api/orders/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/orders/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ const BookingReceipt = () => {
     // Fetch delivery address
     const fetchDeliveryAddress = async () => {
         try {
-            const response = await fetch(`http://34.131.70.24:3000/api/order/delivery-address/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/order/delivery-address/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

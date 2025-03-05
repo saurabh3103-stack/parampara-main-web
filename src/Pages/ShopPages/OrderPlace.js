@@ -4,7 +4,7 @@ export const submitOrder = async (formData) => {
   try {
     console.log(formData);
       // Step 1: Submit Order
-      const orderResponse = await fetch('http://34.131.70.24:3000/api/order/pooja-booking', {
+      const orderResponse = await fetch('http://localhost:3000/api/order/pooja-booking', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const submitOrder = async (formData) => {
 
       console.log("Submitting Address:", addressData);
 
-      const addressResponse = await fetch('http://34.131.70.24:3000/api/order/delivery-address', {
+      const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export const submitOrder = async (formData) => {
       if (!addressResponse.ok) {
           return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
       }
-      const cartClearResponse = await fetch(`http://34.131.70.24:3000/api/cart/remove/${formData.cartId}`, {
+      const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${formData.cartId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -72,22 +72,34 @@ export const submitOrder = async (formData) => {
 export const submitBhajanBooking = async (formData) => {
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
     try {
-      console.log(formData);
+    const {
+        poojaId: mandaliId,
+        poojaName: mandaliName,
+        poojaType: mandaliType,
+        ...rest
+    } = formData;
+    const updatedFormData = {
+        ...rest,
+        mandaliId,
+        mandaliName,
+        mandaliType
+    };
+    console.log(updatedFormData);
         // Step 1: Submit Order
-        const orderResponse = await fetch('http://34.131.70.24:3000/api/order/pooja-booking', {
+        const orderResponse = await fetch('http://localhost:3000/api/order/bhajan-mandali', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(updatedFormData),
         });
         const orderData = await orderResponse.json();
         if (!orderResponse.ok) {
             return { success: false, message: orderData.message || 'Failed to place order' };
         }
         // Step 2: If order is successful, submit the delivery address
-        const orderId = orderData.poojaBooking.bookingId; // Ensure you extract the correct order ID
+        const orderId = orderData.bhajanbooking.bookingId; // Ensure you extract the correct order ID
         const addressData = {
             OrderId: orderId,
             DeliveryAddress: {
@@ -104,7 +116,7 @@ export const submitBhajanBooking = async (formData) => {
             }
         };
         console.log("Submitting Address:", addressData);
-        const addressResponse = await fetch('http://34.131.70.24:3000/api/order/delivery-address', {
+        const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,7 +128,7 @@ export const submitBhajanBooking = async (formData) => {
         if (!addressResponse.ok) {
             return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
         }
-        const cartClearResponse = await fetch(`http://34.131.70.24:3000/api/cart/remove/${formData.cartId}`, {
+        const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${formData.cartId}`, {
           method: 'DELETE',
           headers: {
               'Authorization': `Bearer ${token}`,
@@ -124,13 +136,13 @@ export const submitBhajanBooking = async (formData) => {
       });
       const cartClearData = await cartClearResponse.json();
       if (!cartClearResponse.ok) {
-          return { success: false, message: cartClearData.message || 'Failed to clear cart' };
+          return { success: false, message: cartClearData.message || 'Failed to clear cart',orderData, addressDataResponse };
       }
       return { success: true, orderData, addressDataResponse };
   
     } catch (error) {
         console.error('Error:', error);
-        return { success: false, message: error.message };
+        return { success: true, message: error.message, orderData, addressDataResponse };
     }
   };
   

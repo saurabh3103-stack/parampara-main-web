@@ -7,7 +7,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹"; // Currency symbol
-  const imgUrl = 'http://34.131.70.24:3000';
+  const imgUrl = 'http://localhost:3000';
     // Fetch cart data
     const fetchData = async () => {
         try {

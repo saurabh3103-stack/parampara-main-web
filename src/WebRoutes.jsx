@@ -24,6 +24,7 @@ import Bhajan from "./Pages/BhajanMandal/Bhajan";
 import SingleBhajanMandal from "./Pages/BhajanMandal/SingleBhajanMandal";
 import BrahmanBhoj from "./Pages/BrahmanBhoj/BrahmanBhoj";
 import ContactUs from "./Pages/Contact/ContactUs";
+import EStoreProductDetails from "./Pages/EStore/EStoreProductDetails";
 
 const WebRoutes = () => {
     return(
@@ -46,6 +47,7 @@ const WebRoutes = () => {
           <Route path="/user/order-purchase" element={<OrderPurchase/>}/>
           <Route path="/order-preview/:id" element={<OrderPreview/>}/>
           <Route path="/order-receipt/:id" element={<BookingReceipt/>}/>
+          <Route path="/product/:id" element={<EStoreProductDetails/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
           {/* Check notifiction */}
           {/* <Route path="/notification" element={<CheckNotificationofSocket/>}/> */}
