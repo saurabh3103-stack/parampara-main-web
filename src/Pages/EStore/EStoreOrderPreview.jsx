@@ -1,62 +1,114 @@
 import React, { useEffect, useState } from "react";
-import { fetchUserAndCartDetails } from './CartFetch';
-import UserOrderDetails from "./UserOrderDetails";
+import { fetchUserAndCartDetails } from "./EStoreService";
+import { useParams, useNavigate } from "react-router-dom";
+import EStoreOrderDetails from "./EStoreOrderDetails";
 
-const Checkout = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const currencySymbol = "₹"; // Currency symbol
-  const imgUrl = 'http://34.131.10.8:3000';
-    // Fetch cart data
+const EStoreOrderPreview = () => {
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [orderData, setOrderData] = useState(null);
+    const [deliveryAddress, setDeliveryAddress] = useState({});
+    const [isConfirming, setIsConfirming] = useState(false);
+    const currencySymbol = "₹";
+
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
+
     const fetchData = async () => {
         try {
-            const { cart, error } = await fetchUserAndCartDetails();
-            if (error) {
-                console.error("Error:", error);
-                setError("Failed to fetch cart data");
-            } else {
-                setCartItems(cart); // Set fetched cart data
-            }
+            setLoading(true);
+            // Fetch order and delivery address simultaneously
+            const [orderResponse, addressResponse] = await Promise.all([
+                fetch(`http://34.131.10.8:3000/api/e-store/orders/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                fetch(`http://34.131.10.8:3000/api/order/delivery-address/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+            ]);
+
+            if (!orderResponse.ok) throw new Error(`Order fetch error: ${orderResponse.status}`);
+            const orderData = await orderResponse.json();
+
+            if (!addressResponse.ok) throw new Error(`Address fetch error: ${addressResponse.status}`);
+            const addressData = await addressResponse.json();
+            console.log(orderData.order.orderDetails);
+            // Update state
+            setCartItems(orderData.order.orderDetails);
+            setOrderData(orderData);
+            setDeliveryAddress(addressData);
         } catch (error) {
-            console.error("Error:", error);
-            setError("Failed to fetch cart data");
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchData(); // Fetch cart data when component mounts
-    }, []);
+        if (id && token) {  // Ensure id and token are available
+            fetchData();
+        }
+    }, [id, token]);
 
-    // Handle loading and errors
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const handleConfirmOrder = async () => {
+        setIsConfirming(true);
+        try {
+            // Safely access combinedPaymentId using optional chaining
+            const combinedPaymentId = orderData?.order?.combinedPaymentId;
+            if (!combinedPaymentId) throw new Error("Combined Payment ID not found");
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+            const updateUrl = `http://34.131.10.8:3000/api/e-store/update-order/${combinedPaymentId}`; // Use the order ID in the URL
+            const orderDetails = {
+                transactionId: "TXN123456", // Replace with actual transaction ID if available
+                transactionStatus: "completed", // Replace with actual transaction status if available
+                transactionDate: new Date().toISOString(), // Use current date or actual transaction date
+            };
 
-  // Calculate subtotal, shipping, and total dynamically
-  const calculateSubtotal = () => {
-      return cartItems.reduce((acc, item) => acc + item.product_amount * item.quantity, 0);
-  };
+            const response = await fetch(updateUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(orderDetails),
+            });
 
-  const calculateShipping = () => {
-      // Assuming shipping is a fixed cost, otherwise modify as needed
-      return 4.99;
-  };
+            if (response.ok) {
+                console.log('Order updated successfully');
+                // Navigate to the order receipt page or show a success message
+                navigate(`/e-store/order-receipt/${id}`);
+            } else {
+                alert("Failed to update order.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while updating the order.");
+        } finally {
+            setIsConfirming(false);
+        }
+    };
 
-  const calculateTax = () => {
-      // Assuming tax is a fixed amount, otherwise modify as needed
-      return 2.99;
-  };
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-  const calculateTotal = () => {
-      return calculateSubtotal() + calculateShipping() + calculateTax();
-  };
+    const calculateSubtotal = () => {
+        return cartItems.reduce((acc, item) => acc + item.amount * item.quantity, 0);
+    };
+
+    const calculateShipping = () => 4.99;
+    const calculateTax = () => 2.99;
+    const calculateTotal = () => calculateSubtotal() + calculateShipping() + calculateTax();
+
     return (
         <>
             <div className="mx-auto">
@@ -72,7 +124,7 @@ const Checkout = () => {
                             {/* Left Column - UserOrderDetails */}
                             <div className="w-full lg:w-2/3">
                                 <div className="flex flex-auto flex-row items-center justify-between text-base font-semibold sm:text-xl">
-                                    <p>Checkout</p>
+                                    <p>Order Preview</p>
                                     <p>
                                         <a href="./">
                                             <span style={{ fontSize: ".9rem", marginRight: ".1rem" }}>
@@ -82,7 +134,7 @@ const Checkout = () => {
                                         </a>
                                     </p>
                                 </div>
-                                <UserOrderDetails cartItems={cartItems} currencySymbol={currencySymbol} />
+                                <EStoreOrderDetails previewData={orderData} deliveryAddress={deliveryAddress} />
                             </div>
 
                             {/* Right Column - Order Summary */}
@@ -95,22 +147,21 @@ const Checkout = () => {
                                                 <div className="w-1/4 rounded">
                                                     <img
                                                         className="border-primary w-full border-2"
-                                                        src={imgUrl+item.product_image}
+                                                        src="./assets/img/products/fashion/shoes/3.jpg"
                                                         alt="Image Error"
                                                     />
                                                 </div>
                                                 <div className="w-3/4 space-y-1">
                                                     <p>{item.product_name}</p>
                                                     <p className="font-semibold text-green-600">In Stock</p>
-                                                    <p><span className="font-semibold">Booking Date:</span> {new Date(item.pooja_date).toLocaleDateString()}</p>
-                                                    <p><span className="font-semibold">Booking Time:</span> {item.pooja_time}</p>
+                                                    <p><span className="font-semibold">Quantity:</span> {item.quantity}</p>
                                                     <div className="flex items-center justify-between">
-                                                      <p className="font-semibold">Shipping:</p>
-                                                      <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
+                                                        <p className="font-semibold">Shipping:</p>
+                                                        <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
                                                     </div>
                                                     <div className="flex flex-row items-center justify-between">
                                                         <div><span className="font-semibold"></span> </div>
-                                                        <div>{currencySymbol}{item.product_amount}</div>
+                                                        <div>{currencySymbol}{item.amount}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,20 +187,15 @@ const Checkout = () => {
                                                 <p className="">Total:</p>
                                                 <p>{currencySymbol}{calculateTotal().toFixed(2)}</p>
                                             </div>
-                                        </div>
-                                        <div className="mt-2">
-                                            <form className="flex items-center space-x-2">
-                                                <div className="w-2/3">
-                                                    <input
-                                                        className="focus:ring-primary focus:border-primary w-full rounded border border-gray-400 bg-gray-100 p-2 outline-none focus:outline-none focus:ring-1"
-                                                        type="text"
-                                                        id="checkout-promo-code"
-                                                        placeholder="Enter Promo code here..." />
-                                                </div>
-                                                <div className="w-1/3">
-                                                    <button className="w-full rounded bg-gray-200 py-2 text-gray-600">Apply</button>
-                                                </div>
-                                            </form>
+                                            <div className="w-100">
+                                                <button
+                                                    className="w-full rounded bg-green-800 py-2 text-white"
+                                                    onClick={handleConfirmOrder}
+                                                    disabled={isConfirming}
+                                                >
+                                                    {isConfirming ? "Confirming..." : "Confirm Order"}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -160,8 +206,6 @@ const Checkout = () => {
             </div>
         </>
     );
-};
+}
 
-export default Checkout;
-
-
+export default EStoreOrderPreview;

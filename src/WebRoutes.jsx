@@ -25,6 +25,10 @@ import SingleBhajanMandal from "./Pages/BhajanMandal/SingleBhajanMandal";
 import BrahmanBhoj from "./Pages/BrahmanBhoj/BrahmanBhoj";
 import ContactUs from "./Pages/Contact/ContactUs";
 import EStoreProductDetails from "./Pages/EStore/EStoreProductDetails";
+import EStoreCart from "./Pages/EStore/EStoreCart";
+import EStoreCheckOut from "./Pages/EStore/EStoreCheckOut";
+import EStoreOrderPreview from "./Pages/EStore/EStoreOrderPreview";
+import EStoreOrderReceipt from "./Pages/EStore/EStoreOrderReceipt";
 
 const WebRoutes = () => {
   
@@ -48,7 +52,11 @@ const WebRoutes = () => {
           <Route path="/user/order-purchase" element={<OrderPurchase/>}/>
           <Route path="/order-preview/:id" element={<OrderPreview/>}/>
           <Route path="/order-receipt/:id" element={<BookingReceipt/>}/>
-          <Route path="/product/:id" element={<EStoreProductDetails/>}/>
+          <Route path="/e-store/product/:id" element={<EStoreProductDetails/>}/>
+          <Route path="/e-store/cart"element={<EStoreCart/>}/>
+          <Route path="/e-store/check-out" element={<EStoreCheckOut/>}/>
+          <Route path="/e-store/order-preview/:id" element={<EStoreOrderPreview/>}/>
+          <Route path="/e-store/order-receipt/:id" element={<EStoreOrderReceipt/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
           {/* Check notifiction */}
           {/* <Route path="/notification" element={<CheckNotificationofSocket/>}/> */}

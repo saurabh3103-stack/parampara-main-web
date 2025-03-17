@@ -13,8 +13,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 const EStore = () => {
     const currencySymbol = "₹";
-    const imgUrl = "http://localhost:3000";
-    const ApiUrl = "http://localhost:3000/api";
+    const imgUrl = "http://34.131.10.8:3000/";
+    const ApiUrl = "http://34.131.10.8:3000/api";
     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
 
     const breadcrumbLinks = [
@@ -122,7 +122,7 @@ const EStore = () => {
                                     <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
                                       <img
                                         class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                        src={item.featuredImage}
+                                        src={imgUrl+item.featuredImage}
                                         alt="Item 1"/>
                                       <div
                                         class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100">
@@ -148,7 +148,7 @@ const EStore = () => {
                                         <div class="space-y-1">
                                           <div class="mt-2">
                                             <h5 class="line-clamp-1 cursor-pointer font-normal text-blue-700 hover:underline">
-                                              <Link to={'/product/'+item.slug}>
+                                              <Link to={'/e-store/product/'+item.slug}>
                                               {item.name}</Link>
                                             </h5>
                                           </div>

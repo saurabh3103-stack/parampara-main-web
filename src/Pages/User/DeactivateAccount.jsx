@@ -38,7 +38,7 @@ const DeactivateAccount = ({ userId, initialStatus }) => {
 
     try {
       const response = await axios.put(
-        "http://localhost:3000/api/user/update-status",
+        "http://34.131.10.8:3000/api/user/update-status",
         { userId, status: "inactive" },
         {
           headers: {

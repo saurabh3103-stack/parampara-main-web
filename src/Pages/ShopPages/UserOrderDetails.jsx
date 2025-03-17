@@ -10,7 +10,6 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
  
   const cartUserData = JSON.stringify(cartItems, null, 2);
   const userEmail = localStorage.getItem("userEmail");
-
   const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [isOfferChecked, setIsOfferChecked] = useState(false);
     const isSubmitEnabled = isTermsChecked && isOfferChecked;
@@ -60,21 +59,19 @@ const UserOrderDetails = ({ cartItems, currencySymbol }) => {
         if (formData.poojaType === "Pooja") {
           response = await submitOrder(formData);
           toast.success("Order submitted successfully!");
-          const order_id = response.orderData.poojaBooking.bookingId;
-          navigate("/order-preview/" + order_id);
+          navigate("/order-preview/" + response.orderData.poojaBooking.bookingId);
         } else if (formData.poojaType === "Bhajan Mandali") {
           console.log(formData);
           response = await submitBhajanBooking(formData);
           console.log(response);
           toast.success("Order submitted successfully!");
-          const order_id = response.orderData.bhajanbooking.bookingId;
-          navigate("/order-preview/" + order_id);
+          // const order_id = response.orderData.bhajanbooking.bookingId;
+          navigate("/order-preview/" + response.orderData.bhajanbooking.bookingId);
         } else {
           toast.error("Invalid Pooja Type!");
           return;
         }
       };
-      
       const handleMapClick = async (e) => {
         const { lat, lng } = e.latLng.toJSON();
         setSelectedLocation({ lat, lng });

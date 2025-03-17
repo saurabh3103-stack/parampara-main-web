@@ -28,14 +28,14 @@ const OrderPreview = () => {
 
             // Fetch order and delivery address simultaneously
             const [orderResponse, addressResponse] = await Promise.all([
-                fetch(`http://localhost:3000/api/orders/${id}`, {
+                fetch(`http://34.131.10.8:3000/api/orders/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 }),
-                fetch(`http://localhost:3000/api/order/delivery-address/${id}`, {
+                fetch(`http://34.131.10.8:3000/api/order/delivery-address/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const OrderPreview = () => {
 
             // Fetch Mandali data if order type is "Bhajan Mandali"
             if (orderData.bookingDetails?.Type === "Bhajan Mandali") {
-                const mandaliResponse = await fetch(`http://localhost:3000/api/bhajanMandal/single_bhajan/${orderData.bookingDetails.mandaliId}`, {
+                const mandaliResponse = await fetch(`http://34.131.10.8:3000/api/bhajanMandal/single_bhajan/${orderData.bookingDetails.mandaliId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const OrderPreview = () => {
                     transactionDate: new Date().toISOString(),
                 };
             } else if (orderType === "Bhajan Mandali") {
-                updateUrl = "http://localhost:3000/api/order/update-mandali-order";
+                updateUrl = "http://34.131.10.8:3000/api/order/update-mandali-order";
                 orderDetails = {
                     bookingId: id,
                     fcm_tokken: MandaliData.bhajan_owner?.fcm_tokken,
@@ -113,7 +113,6 @@ const OrderPreview = () => {
             } else {
                 throw new Error("Unknown order type");
             }
-
             const response = await fetch(updateUrl, {
                 method: "PUT",
                 headers: {
@@ -124,7 +123,8 @@ const OrderPreview = () => {
             });
 
             if (response.ok) {
-                navigate(`/order-receipt/${orderDetails.bookingId}`);
+                console.log('Order success');
+                // navigate(`/order-receipt/${orderDetails.bookingId}`);
             } else {
                 alert("Failed to update order.");
             }

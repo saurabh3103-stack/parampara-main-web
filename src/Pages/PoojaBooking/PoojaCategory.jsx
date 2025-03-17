@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useState } from "react";
 
 const PoojaCategory = ({  selectedCategory,  }) => {
-    const IMGURL= "http://localhost:3000";
+    const IMGURL= "http://34.131.10.8:3000";
  
   const { filtercategoryID,setFilterCategoryID,categoryData, setCategoryData, } = useContext(AppContext);
   const categoryArray = categoryData?.data ? Object.values(categoryData.data) : [];

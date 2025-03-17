@@ -1,38 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { fetchUserAndCartDetails } from './CartFetch';
+import { fetchUserAndCartDetails } from './EStoreService';
 
-const Cart = () => {
+const EStoreCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹";
-  const imgUrl = 'http://34.131.10.8:3000';
+  const imgUrl = 'http://34.131.10.8:3000/';
   const fetchData = async () => {
     try {
       const { cart, error } = await fetchUserAndCartDetails();
+      console.log(cart);
       if (error) {
         console.error("Error:", error);
         setError("Failed to fetch cart data");
+        setCartItems([]); // Set cartItems to an empty array on error
       } else {
-        setCartItems(cart); // Set the fetched cart data into state
+        setCartItems(cart || []); // Ensure cart is an array
       }
     } catch (error) {
       console.error("Error:", error);
       setError("Failed to fetch cart data");
+      setCartItems([]); // Set cartItems to an empty array on error
     } finally {
-      setLoading(false); // Stop loading once the data is fetched
+      setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData(); // Fetch cart data when the component mounts
   }, []);
-
   // Function to remove an item from the cart
   const handleRemoveItem = (itemId) => {
     setCartItems(cartItems.filter(item => item._id !== itemId));
   };
+  console.log("Cart Items "+cartItems);
 
   return (
     <>
@@ -56,13 +58,12 @@ const Cart = () => {
                   </p>
                 </div>
                 {/* <div className="mt-3 space-y-2 border border-gray-400 bg-white p-5 text-sm"> */}
-                  {loading ? (
-                    <p>Loading cart...</p>
-                  ) : error ? (
-                    <p>{error}</p>
-                  ) : (
-                    <>
-                        {cartItems.map((item) => (
+                    {loading ? (
+                        <p>Loading cart...</p>
+                        ) : cartItems.length === 0 ? (
+                        <p>Your cart is empty.</p>
+                        ) : (
+                        cartItems.map((item) => (
                           <>
                         <div className="mt-3 space-y-2 border border-gray-400 bg-white p-5 text-sm">
                           <div className="space-y-3">
@@ -90,10 +91,8 @@ const Cart = () => {
                                   <a className="text-sky-600 hover:underline" href="./shop-product.html">{item.product_name}</a>
                                 </p>
                                 <p className="font-semibold text-green-600">In Stock</p>
-                                <p><span className="font-semibold">Pooja Type:</span> {item.product_name}</p>
-                                <p><span className="font-semibold">Booking Date:</span> {new Date(item.pooja_date).toLocaleDateString()}</p>
-                                <p><span className="font-semibold">Booking Time:</span> {item.pooja_time}</p>
-                                
+                                <p><span className="font-semibold">Price:</span> {currencySymbol} {item.product_amount.toFixed(2)}</p> 
+                                <p><span className="font-semibold">Total:</span> {currencySymbol} {(item.product_amount * item.quantity).toFixed(2)}</p>
                               </div>
                             </div>
                               <div className="flex flex-wrap space-y-3 sm:flex-col sm:space-y-2 lg:w-1/2 xl:flex-row">
@@ -111,8 +110,7 @@ const Cart = () => {
                                       <span className="text-green-400">Get it by Monday, Jul 7</span> <br />
                                       When your order by 8:00 Today</p>
                                       <p><span className="font-semibold">Quantity:</span> {item.quantity}</p> 
-                                      <p><span className="font-semibold">Price:</span> {currencySymbol} {item.product_amount.toFixed(2)}</p> 
-                                      <p><span className="font-semibold">Total:</span> {currencySymbol} {(item.product_amount * item.quantity).toFixed(2)}</p>
+                                     
                                       </div>
                                   </div>
                                   </div>
@@ -129,8 +127,7 @@ const Cart = () => {
                             </div>
                           </div>
                           </>
-                        ))}
-                    </>
+                        ))
                   )}
                 {/* </div/> */}
               </div>
@@ -191,7 +188,7 @@ const Cart = () => {
                     </div>
                   </div>
                   <div className="pt-3">
-                    <Link to={'/check-out'}>
+                    <Link to={'/e-store/check-out'}>
                       <div className="btn-gradient btn-full">Checkout</div>
                     </Link>
                   </div>
@@ -207,4 +204,4 @@ const Cart = () => {
   );
 }
 
-export default Cart;
+export default EStoreCart;

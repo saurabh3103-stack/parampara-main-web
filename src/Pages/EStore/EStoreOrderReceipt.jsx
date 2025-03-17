@@ -1,27 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 
-const BookingReceipt = () => {
+const EStoreOrderReceipt = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [bookingData, setBookingData] = useState(null);
+    const [orderData, setOrderData] = useState(null);
+    const [deliveryAddress, setDeliveryAddress] = useState(null);
     const currencySymbol = "₹";
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8'; // Replace with your actual token
 
-    // Fetch booking details
-    const fetchBookingData = async () => {
+    // Fetch order and delivery address details
+    const fetchOrderData = async () => {
         try {
-            const response = await fetch(`http://34.131.10.8:3000/api/orders/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            const data = await response.json();
-            setBookingData(data);
+            const [orderResponse, addressResponse] = await Promise.all([
+                fetch(`http://34.131.10.8:3000/api/e-store/orders/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }),
+                fetch(`http://34.131.10.8:3000/api/order/delivery-address/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }),
+            ]);
+
+            if (!orderResponse.ok) throw new Error(`Order fetch error: ${orderResponse.status}`);
+            const orderData = await orderResponse.json();
+
+            if (!addressResponse.ok) throw new Error(`Address fetch error: ${addressResponse.status}`);
+            const addressData = await addressResponse.json();
+
+            setOrderData(orderData.order);
+            setDeliveryAddress(addressData.DeliveryAddress);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -30,12 +46,12 @@ const BookingReceipt = () => {
     };
 
     useEffect(() => {
-        fetchBookingData();
+        fetchOrderData();
     }, [id]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
-    if (!bookingData) return <p>No data found</p>;
+    if (!orderData) return <p>No data found</p>;
 
     return (
         <>
@@ -43,13 +59,13 @@ const BookingReceipt = () => {
                 <div className="mx-auto flex w-full flex-col items-center sm:w-7/12">
                     <div className="mb-8 space-y-2 rounded border border-gray-400 bg-white px-3 py-5 text-left text-sm shadow-lg">
                         <div className="flex flex-col justify-start space-y-2 border-b border-gray-400 pb-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-                            <h1 className="text-left text-base font-semibold">Booking Id: {bookingData.bookingId}</h1>
+                            <h1 className="text-left text-base font-semibold">Order Id: {orderData.orderId}</h1>
                             <div className="cursor-pointer whitespace-nowrap text-left text-xs underline">Print Receipt</div>
                         </div>
                         <div>
                             <p>
-                                The booking confirmation will be sent shortly via email to
-                                <span className="font-semibold"> {bookingData.userDetails.email}</span>
+                                The order confirmation will be sent shortly via email to
+                                <span className="font-semibold"> {orderData.userDetails.email}</span>
                             </p>
                         </div>
                         <div>
@@ -66,50 +82,44 @@ const BookingReceipt = () => {
                                         </div>
                                     </div>
                                     <p className="pt-1 text-xs text-gray-400">
-                                        Total amount will be reserved on your credit card and will be charged once the booking is confirmed.
+                                        Total amount will be reserved on your credit card and will be charged once the order is confirmed.
                                     </p>
                                 </div>
                             </div>
                             <div className="mt-5 flex flex-col space-y-2 space-x-0 sm:flex-row sm:space-y-0 sm:space-x-4">
                                 <div className="w-full sm:w-1/2">
-                                    <h1 className="text-left text-base font-semibold">Booking Details</h1>
+                                    <h1 className="text-left text-base font-semibold">Order Details</h1>
                                     <p className="text-sm">
-                                        <span className="font-semibold">{bookingData.bookingDetails.mandaliName}</span> <br />
-                                        Type: {bookingData.bookingDetails.Type} <br />
-                                        Booking Status: {bookingData.bookingStatus === 1 ? "Confirmed" : "Pending"} <br />
-                                        Created At: {new Date(bookingData.createdAt).toLocaleString()} <br />
+                                        <span className="font-semibold">Order Status:</span> {orderData.orderStatus === 1 ? "Confirmed" : "Pending"} <br />
+                                        <span className="font-semibold">Created At:</span> {new Date(orderData.createdAt).toLocaleString()} <br />
                                     </p>
                                 </div>
                                 <div className="w-full sm:w-1/2">
-                                    <h1 className="text-left text-base font-semibold">Schedule</h1>
-                                    <p>
-                                        Time: {bookingData.schedule.time} <br />
-                                        Date: {new Date(bookingData.schedule.date).toLocaleDateString()}
+                                    <h1 className="text-left text-base font-semibold">Delivery Address</h1>
+                                    <p className="text-sm">
+                                        {deliveryAddress?.addressLine1}, {deliveryAddress?.addressLine2} <br />
+                                        {deliveryAddress?.city}, {deliveryAddress?.state} <br />
+                                        {deliveryAddress?.postalCode}, {deliveryAddress?.country} <br />
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-3 hidden w-full items-center justify-between py-3 text-sm sm:flex">
-                        <div>
-                            <a className="hover:underline" href="./">
-                                <span>
-                                    <svg className="svg-inline--fa fa-chevron-left" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
-                                        <path fill="currentColor" d="M224 480c-8.188 0-16.38-3.125-22.62-9.375l-192-192c-12.5-12.5-12.5-32.75 0-45.25l192-192c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l169.4 169.4c12.5 12.5 12.5 32.75 0 45.25C240.4 476.9 232.2 480 224 480z"></path>
-                                    </svg>
-                                </span> Continue Shopping
-                            </a>
-                        </div>
-                        <div><a className="hover:underline" href="./">Go Home</a></div>
-                    </div>
+
                 </div>
                 <div className="mx-auto flex w-full flex-col items-center sm:w-5/12">
                     <div className="mb-8 w-full space-y-2 rounded border border-gray-400 bg-white px-3 py-5 text-sm shadow-lg">
-                        <h1 className="border-b border-gray-400 pb-2 text-center text-base font-semibold">Booking Summary</h1>
+                        <h1 className="border-b border-gray-400 pb-2 text-center text-base font-semibold">Order Summary</h1>
                         <div className="w-full space-y-2 pt-3">
+                            {orderData.orderDetails.map((item) => (
+                                <div key={item.productId} className="flex items-center justify-between">
+                                    <p className="font-semibold">{item.productName} (x{item.quantity})</p>
+                                    <p>{currencySymbol}{item.amount * item.quantity}</p>
+                                </div>
+                            ))}
                             <div className="flex items-center justify-between">
-                                <p className="font-semibold">Subtotal <span className="font-normal">({bookingData.paymentDetails.quantity} items)</span> :</p>
-                                <p>{currencySymbol}{bookingData.paymentDetails.amount}</p>
+                                <p className="font-semibold">Subtotal:</p>
+                                <p>{currencySymbol}{orderData.paymentDetails.totalAmount}</p>
                             </div>
                             <div className="flex items-center justify-between">
                                 <p className="font-semibold">Tax:</p>
@@ -117,7 +127,7 @@ const BookingReceipt = () => {
                             </div>
                             <div className="flex items-center justify-between border-t border-b border-gray-400 py-2 text-lg font-semibold">
                                 <p className="">Total:</p>
-                                <p>{currencySymbol}{bookingData.paymentDetails.amount}</p>
+                                <p>{currencySymbol}{orderData.paymentDetails.totalAmount}</p>
                             </div>
                         </div>
                     </div>
@@ -127,4 +137,4 @@ const BookingReceipt = () => {
     );
 };
 
-export default BookingReceipt;
+export default EStoreOrderReceipt;

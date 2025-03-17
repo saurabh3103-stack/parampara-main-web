@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchUserAndCartDetails } from './CartFetch';
-import UserOrderDetails from "./UserOrderDetails";
+import { fetchUserAndCartDetails } from './EStoreService';
+import EStoeUserOrderDetails from "./EStoeUserOrderDetails";
 
-const Checkout = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const currencySymbol = "₹"; // Currency symbol
-  const imgUrl = 'http://34.131.10.8:3000';
+const EStoreCheckOut = () => {
+    const [cartItems, setCartItems] = useState([]); // Initialize as an empty array
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const currencySymbol = "₹"; // Currency symbol
+    const imgUrl = 'http://34.131.10.8:3000';
     // Fetch cart data
     const fetchData = async () => {
         try {
@@ -15,48 +15,48 @@ const Checkout = () => {
             if (error) {
                 console.error("Error:", error);
                 setError("Failed to fetch cart data");
+                setCartItems([]); // Ensure cartItems is an empty array
             } else {
-                setCartItems(cart); // Set fetched cart data
+                setCartItems(cart || []); // Set fetched cart data or default to empty array
             }
         } catch (error) {
             console.error("Error:", error);
             setError("Failed to fetch cart data");
+            setCartItems([]); // Ensure cartItems is an empty array
         } finally {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchData(); // Fetch cart data when component mounts
     }, []);
-
     // Handle loading and errors
     if (loading) {
         return <div>Loading...</div>;
     }
-
     if (error) {
         return <div>Error: {error}</div>;
     }
 
-  // Calculate subtotal, shipping, and total dynamically
-  const calculateSubtotal = () => {
-      return cartItems.reduce((acc, item) => acc + item.product_amount * item.quantity, 0);
-  };
+    // Calculate subtotal, shipping, and total dynamically
+    const calculateSubtotal = () => {
+        return cartItems.reduce((acc, item) => acc + (item.product_amount || 0) * (item.quantity || 1), 0);
+    };
 
-  const calculateShipping = () => {
-      // Assuming shipping is a fixed cost, otherwise modify as needed
-      return 4.99;
-  };
+    const calculateShipping = () => {
+        // Assuming shipping is a fixed cost, otherwise modify as needed
+        return 4.99;
+    };
 
-  const calculateTax = () => {
-      // Assuming tax is a fixed amount, otherwise modify as needed
-      return 2.99;
-  };
+    const calculateTax = () => {
+        // Assuming tax is a fixed amount, otherwise modify as needed
+        return 2.99;
+    };
 
-  const calculateTotal = () => {
-      return calculateSubtotal() + calculateShipping() + calculateTax();
-  };
+    const calculateTotal = () => {
+        return calculateSubtotal() + calculateShipping() + calculateTax();
+    };
+
     return (
         <>
             <div className="mx-auto">
@@ -82,7 +82,7 @@ const Checkout = () => {
                                         </a>
                                     </p>
                                 </div>
-                                <UserOrderDetails cartItems={cartItems} currencySymbol={currencySymbol} />
+                                <EStoeUserOrderDetails cartItems={cartItems} currencySymbol={currencySymbol} />
                             </div>
 
                             {/* Right Column - Order Summary */}
@@ -95,18 +95,16 @@ const Checkout = () => {
                                                 <div className="w-1/4 rounded">
                                                     <img
                                                         className="border-primary w-full border-2"
-                                                        src={imgUrl+item.product_image}
+                                                        src={imgUrl + item.product_image}
                                                         alt="Image Error"
                                                     />
                                                 </div>
                                                 <div className="w-3/4 space-y-1">
                                                     <p>{item.product_name}</p>
                                                     <p className="font-semibold text-green-600">In Stock</p>
-                                                    <p><span className="font-semibold">Booking Date:</span> {new Date(item.pooja_date).toLocaleDateString()}</p>
-                                                    <p><span className="font-semibold">Booking Time:</span> {item.pooja_time}</p>
                                                     <div className="flex items-center justify-between">
-                                                      <p className="font-semibold">Shipping:</p>
-                                                      <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
+                                                        <p className="font-semibold">Shipping:</p>
+                                                        <p className="text-lightBlue-600 cursor-pointer text-xs hover:underline">Two-Day Delivery</p>
                                                     </div>
                                                     <div className="flex flex-row items-center justify-between">
                                                         <div><span className="font-semibold"></span> </div>
@@ -144,7 +142,8 @@ const Checkout = () => {
                                                         className="focus:ring-primary focus:border-primary w-full rounded border border-gray-400 bg-gray-100 p-2 outline-none focus:outline-none focus:ring-1"
                                                         type="text"
                                                         id="checkout-promo-code"
-                                                        placeholder="Enter Promo code here..." />
+                                                        placeholder="Enter Promo code here..."
+                                                    />
                                                 </div>
                                                 <div className="w-1/3">
                                                     <button className="w-full rounded bg-gray-200 py-2 text-gray-600">Apply</button>
@@ -162,6 +161,4 @@ const Checkout = () => {
     );
 };
 
-export default Checkout;
-
-
+export default EStoreCheckOut;

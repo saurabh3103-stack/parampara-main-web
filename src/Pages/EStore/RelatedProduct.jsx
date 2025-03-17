@@ -1,25 +1,26 @@
 import React from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { fetchPoojaByCategory } from "./PoojaService";
+import { fetchProductByCategory } from "./EStoreService";
 import { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
-const RelatedPooja = ({currentPoojaData}) =>{
+const RelatedProduct = ({product}) =>{
     
  const [poojaData, setPoojaData] = useState([]);
 
-     useEffect(() => {
-               const loadBhajans = async () => {
-                   try {
-                       const data = await fetchPoojaByCategory();
-                       setPoojaData(data?.data || []);
-                   } catch (error) {
-                       console.error("Failed to load bhajans", error);
-                   }
-               };
-               loadBhajans();
-           }, []);
-         
-
+ useEffect(() => {
+    if (product?.category) { 
+        const loadBhajans = async () => {
+            try {
+                const data = await fetchProductByCategory(product.category);
+                setPoojaData(data?.data || []);
+            } catch (error) {
+                console.error("Failed to load pooja data", error);
+            }
+        };
+        loadBhajans();
+    }
+}, [product?.category]); // Dependency added
+console.log(poojaData);
     return(
         <>
             <section className="bg-white px-5 rashi_wrapper" id="zodiac_Sign" style={{background:"#fff"}}>
@@ -39,7 +40,7 @@ const RelatedPooja = ({currentPoojaData}) =>{
                         onSlideChange={() => console.log('slide change')}onSwiper={(swiper) => console.log(swiper)}>
                        {poojaData.map(pooja => {
     // Check if the current pooja is not the same as the currentPoojaData
-    if (currentPoojaData._id !== pooja._id) {
+    if (product._id !== pooja._id) {
         return (
             <SwiperSlide key={pooja._id}>
                 <div className="group rounded border-gray-400 pb-0 lg:pb-3">
@@ -129,4 +130,4 @@ const RelatedPooja = ({currentPoojaData}) =>{
     );
 }
 
-export default RelatedPooja;
+export default RelatedProduct;
