@@ -1,0 +1,49 @@
+.skeleton-wrapper {
+    padding: 20px;
+  }
+  
+  .skeleton-item {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-image {
+    background-color: #e9ecef;
+  }
+  
+  .skeleton-title {
+    height: 30px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-rating {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-price {
+    height: 30px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-package {
+    height: 100px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-form {
+    height: 150px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .skeleton-buttons {
+    height: 50px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }

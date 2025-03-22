@@ -21,3 +21,14 @@ export const fetchPoojaByCategory = async (categoryId) => {
       throw err;
     }
   };
+
+export const fetchPujaDetails = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/pooja/pooja/${id}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Error fetching bhajans by category:", err);
+    throw err;}
+}

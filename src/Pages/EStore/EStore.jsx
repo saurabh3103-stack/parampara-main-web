@@ -1,222 +1,217 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import Breadcrumb from "../../Component/Breadcrumb";
-import Filter from "../../Component/Shop/Filter";
-import FilterSection from "../../Component/EStore/FilterSection";
 import { AppContext } from "../../context/AppContext";
 import { fetchBhajanByCategory } from "./EStoreService";
-import SortBhajan from "../BhajanMandal/SortBhajan";
 import Pagination from "../../Component/Shop/Pagination";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PoojaTopBanner from "../PoojaBooking/PoojaTopBanner";
+import EStoreCategoryFilter from "../../Component/EStore/EStoreCategoryFilter";
+import EStoreFilterLeft from "../../Component/EStore/EStoreFilterLeft";
+import EStoreFilterRight from "../../Component/EStore/EStoreFilterRight"; // Import the renamed component
+import { useMobile } from "../../hooks/use-mobile";
 
 const EStore = () => {
-    const currencySymbol = "₹";
-    const imgUrl = "http://34.131.10.8:3000/";
-    const ApiUrl = "http://34.131.10.8:3000/api";
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
+  const currencySymbol = "₹";
+  const imgUrl = "http://34.131.10.8:3000/";
+  const ApiUrl = "http://34.131.10.8:3000/api";
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const { filtercategoryID, setFilterCategoryID, categoryData, setCategoryData } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [view, setView] = useState("grid");
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState("popularity"); // State for sorting
+  const isMobile = useMobile();
 
-    const breadcrumbLinks = [
-        { label: "Home", url: "/" },
-        { label: "E-Store", url: "/e-store" },
-        { pagename: "E-Store" },
-    ];
+  // State for filters
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [selectedRatings, setSelectedRatings] = useState([]);
+  const [productStatus, setProductStatus] = useState([]);
 
-    const { categoryData, setCategoryData, filtercategoryID } = useContext(AppContext);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [products, setProducts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [productAmount, setProductAmount] = useState("");
-    const [SamagriStatus, setSamagriStatus] = useState(false);
-
-    useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const response = await axios.get(`${ApiUrl}/product/categories/active`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setCategoryData(response.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadCategories();
-    }, [setCategoryData]);
-
-    useEffect(() => {
-        if (!loading) {
-            const loadProducts = async () => {
-                try {
-                    const data = await fetchBhajanByCategory(filtercategoryID === "All" ? null : filtercategoryID);
-                    setProducts(data?.data || []);
-                } catch (error) {
-                    console.error("Failed to load products", error);
-                }
-            };
-            loadProducts();
-        }
-    }, [filtercategoryID, loading]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = {
-            user_id: formData.get('user_id'),
-            username: formData.get('username'),
-            userphone: formData.get('userphone'),
-            productType: formData.get('productType'),
-            product_id: formData.get('product_id'),
-            product_name: formData.get('product_name'),
-            product_amount: formData.get('product_ammount'),
-            isSamagri: SamagriStatus,
-            quantity: formData.get('quantity'),
-        };
-
-        try {
-            const response = await axios.post(`${ApiUrl}/cart/addCart`, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (response.data.success) {
-                toast.success("Item added to cart!");
-            } else {
-                toast.error("Failed to add item to cart.");
-            }
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            toast.error("An error occurred while adding to cart.");
-        }
-    };
-
-    const handleSearchChange = (searchTerm) => {
-        console.log("Search term:", searchTerm);
-    };
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-    return (
-        <>
-            <Breadcrumb links={breadcrumbLinks} />
-            <div id="shop-grid-left" className="mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                <Filter />
-                <div className="mt-5 flex flex-col space-x-0 text-sm md:flex-row md:space-x-4">
-                    <FilterSection categoryData={categoryData} />
-                    <div className="w-full space-y-3 sm:ml-0 md:w-3/4">
-                        {products.length > 0 ? (
-                            <>
-                            <div className="w-full flex flex-wrap border border-gray-400 bg-white">
-                                <SortBhajan handleSearchChange={handleSearchChange} />
-                                <div class="my-5 grid grid-cols-2 gap-y-8 gap-x-2.5 px-3 sm:grid-cols-3 md:grid-cols-3 lg:gap-x-5 xl:grid-cols-4">
-                                {products.map((item, index) => (
-                                    <div key={index} class="group rounded border-gray-400 pb-0 lg:pb-3">
-                                    {console.log(item)}
-                                    <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                      <img
-                                        class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                        src={imgUrl+item.featuredImage}
-                                        alt="Item 1"/>
-                                      <div
-                                        class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100">
-                                        <div
-                                          class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3">
-                                          <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                            <a href="./account-wishlist.html">
-                                              <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                                <i class="far fa-heart"></i>
-                                              </span>
-                                            </a>
-                                            <div
-                                              data-modal-toggle="nk-modal-quick-view"
-                                              class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                              <i class="fa-regular fa-eye"></i>
-                                            </div>
-                                        </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <div class="xs:text-sm text-left text-xs">
-                                        <div class="space-y-1">
-                                          <div class="mt-2">
-                                            <h5 class="line-clamp-1 cursor-pointer font-normal text-blue-700 hover:underline">
-                                              <Link to={'/e-store/product/'+item.slug}>
-                                              {item.name}</Link>
-                                            </h5>
-                                          </div>
-                                          <div class="font-semibold">
-                                            <span class="text-lg text-gray-900">{currencySymbol}{item.sellingPrice}</span>&nbsp;
-                                            <span class="text-xs text-gray-400 line-through">{currencySymbol}{item.price}</span>
-                                          </div>
-                                          <div>
-                                            <a
-                                              class="flex items-center justify-between"
-                                              href="./shop-product.html#customers-rating-reviews">
-                                              <span class="text-yellow-400">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                              </span>
-                                              <span class="text-xs text-blue-700 hover:underline">(39)</span>
-                                            </a>
-                                          </div>
-                                          <div class="text-xs font-semibold text-green-500">
-                                            <p>Get it in 2 days</p>
-                                          </div>
-                                          <div>
-                                            <p>
-                                              <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days
-                                            </p>
-                                          </div>
-                                          <div class="py-1">
-                                            <a href="./cart.html"><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                            </a>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                                </div>
-                            </div>
-                            <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                />
-                            </>
-                            
-                        ) : (
-                            <div className="w-full border border-gray-400 bg-white">
-                                <SortBhajan handleSearchChange={handleSearchChange} />
-                            <div className="flex flex-col items-center justify-center mt-12 space-y-6">
-                                <img
-                                    src="https://cdn.dribbble.com/userupload/2905353/file/original-2022966da1fc3718d3feddfdc471ae47.png?resize=400x0"
-                                    alt="No Data Found"
-                                    className="w-72 max-w-full"
-                                />
-                                <h2 className="text-2xl font-semibold text-gray-700">No Product Found!</h2>
-                                <p className="text-center text-gray-500">
-                                    Please try selecting a different category or come back later.
-                                </p>
-                            </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </>
+  // Handlers for filters
+  const handleRatingChange = (rating) => {
+    setSelectedRatings((prev) =>
+      prev.includes(rating) ? prev.filter((r) => r !== rating) : [...prev, rating]
     );
+  };
+
+  const handleProductStatusChange = (status) => {
+    setProductStatus((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
+  };
+
+  const applyFilters = () => {
+    console.log("Applying Filters:", { priceRange, selectedRatings, productStatus });
+  };
+
+  // Fetch Categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await axios.get(`${ApiUrl}/product/categories/active`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCategoryData(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCategories();
+  }, [setCategoryData]);
+
+  // Fetch Products based on selected category
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchBhajanByCategory(filtercategoryID === "All" ? null : filtercategoryID);
+        setProducts(data?.data || []);
+      } catch (error) {
+        setError("Failed to load products");
+        console.error("Failed to load products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, [filtercategoryID]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Format price
+  const formatPrice = (price) => {
+    return `${currencySymbol}${price}`;
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <PoojaTopBanner />
+      <div className="flex flex-col md:flex-row gap-6 mt-6">
+        {/* Left Side Filters */}
+        <div className={`w-full md:w-64 ${isMobile && !showFilters ? "hidden" : "block"}`}>
+          <EStoreCategoryFilter
+            filtercategoryID={filtercategoryID}
+            setFilterCategoryID={setFilterCategoryID}
+            categoryData={categoryData}
+          />
+          <EStoreFilterLeft
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            selectedRatings={selectedRatings}
+            handleRatingChange={handleRatingChange}
+            productStatus={productStatus}
+            handleProductStatusChange={handleProductStatusChange}
+            applyFilters={applyFilters}
+          />
+        </div>
+
+        {/* Right Side Filters and Product Listing */}
+        <div className="flex-1">
+          {/* EStoreFilterRight Component */}
+          <EStoreFilterRight
+            view={view}
+            setView={setView}
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            isMobile={isMobile}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+          />
+
+          {/* Product Grid */}
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="w-16 h-16 border-4 border-t-orange-500 border-orange-200 rounded-full animate-spin"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-600">{error}</div>
+          ) : products.length === 0 ? (
+            <div className="flex flex-col items-center justify-center mt-12 space-y-6">
+              <img
+                src="https://cdn.dribbble.com/userupload/2905353/file/original-2022966da1fc3718d3feddfdc471ae47.png?resize=400x0"
+                alt="No Data Found"
+                className="w-72 max-w-full"
+              />
+              <h2 className="text-2xl font-semibold text-gray-700">No Products Found!</h2>
+              <p className="text-center text-gray-500">
+                Please try selecting a different category or come back later.
+              </p>
+            </div>
+          ) : (
+            <div
+              className={
+                view === "grid"
+                  ? "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  : "grid gap-4 grid-cols-1"
+              }
+            >
+              {paginatedProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className={
+                    view === "list"
+                      ? "border rounded-lg overflow-hidden flex flex-col md:flex-row bg-white shadow-md"
+                      : "border rounded-lg overflow-hidden bg-white shadow-md"
+                  }
+                >
+                  <div className={view === "list" ? "relative w-full md:w-1/3" : "relative"}>
+                    <img
+                      src={`${imgUrl}${product.featuredImage}`}
+                      alt={product.name}
+                      width={300}
+                      height={300}
+                      className="w-full h-auto aspect-square object-cover"
+                    />
+                  </div>
+
+                  <div className={view === "list" ? "p-4 flex flex-col md:w-2/3" : "p-4 flex flex-col"}>
+                    <div className="text-sm text-gray-500 mb-1">{product.category}</div>
+                    <h3 className="font-medium text-lg mb-2 line-clamp-2">
+                      <Link to={`/e-store/product/${product.slug}`}>{product.name}</Link>
+                    </h3>
+
+                    <div className="flex items-center mb-4">
+                      <span className="text-lg font-bold">{formatPrice(product.sellingPrice)}</span>
+                      <span className="text-xs text-gray-400 line-through ml-2">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+
+                    <button className="mt-auto w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md">
+                      ADD TO CART
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default EStore;

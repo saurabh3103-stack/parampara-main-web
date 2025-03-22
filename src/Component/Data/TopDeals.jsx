@@ -1,19 +1,34 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from 'swiper/react';
 const TopDeals = () =>{
-
+    const titleVariants = {
+        hidden: { opacity: 0, y: -20 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.6,
+            ease: "easeOut",
+          },
+        },
+      }
     return(
         <>
             <section className="bg-white px-5 rashi_wrapper" id="zodiac_Sign" >
                 <div className="mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                <div class="flex flex-col justify-center sm:justify-between md:flex-row md:items-center">
-              <div>
-                <h1 class="text-base font-bold md:text-2xl">Top Deals</h1>
-                <p class="text-sm text-gray-500">See what is new this week.</p>
-              </div>
-              <div id="new-arrival-tabs" class="hidden justify-center md:flex md:flex-row md:space-x-4 md:text-sm">
-                <div data-filter-link="all" class="new-active cursor-pointer">View All</div>
-              </div>
+                <div class="justify-center sm:justify-between md:flex-row md:items-center">
+                <motion.div className="text-center mb-12" initial="hidden" animate="visible" variants={titleVariants}>
+            <div className="inline-block mb-3">
+                <span className="block h-1.5 w-12 bg-orange-500 rounded-full mb-1.5 mx-auto"></span>
+                <span className="block h-1.5 w-24 bg-orange-500 rounded-full"></span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-2">Top Deals
+            </h2>
+            <p className="max-w-2xl mx-auto mt-4 text-gray-600">
+            Explore our wide range of spiritual services designed to meet all your devotional needs
+            </p>
+            </motion.div>
             </div>
                     <Swiper 
                         autoplay={{ delay: 2500, disableOnInteraction: true, }}

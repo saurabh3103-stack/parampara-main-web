@@ -2,12 +2,15 @@ import React from "react";
 import AboutDetails from "../../Component/Data/AboutDetails";
 import Service from "../../Component/Data/Service";
 import VirtualService from "../../Component/Data/VirtualService";
-import LatestProduct from "../../Component/Data/LatestProduct";
+import PoojaEssential from "../../Component/Data/PoojaEssential";
 import TopDeals from "../../Component/Data/TopDeals";
 import PromotionalBanner from "../../Component/PromotionalBanner";
 import Achievement from "../../Component/Achievement";
 import HeroSlider from "./hero-slider";
-import PanditBookingPage from "./PanditBookingPage";
+import AvailableCities from "../../Component/Data/AvailableCities";
+import FeaturedPoojas from "./FeaturedPoojas";
+import WhyChooseUs from "../../Component/WhyChooseUs";
+import Horoscope from "./Horoscope";
 
 const HomePage = () => {
     return(
@@ -15,14 +18,17 @@ const HomePage = () => {
             <div className="relative">
                 <HeroSlider />
             </div>
-            <PanditBookingPage/>
             <AboutDetails/>
+            <AvailableCities/>
             <Service/>
             <Achievement/>
+            <FeaturedPoojas/>
             <VirtualService/>
-            <LatestProduct/>
+            <PoojaEssential/>
             <PromotionalBanner/>
+            <Horoscope/>
             <TopDeals/>
+            <WhyChooseUs/>
         </>
     );
 }

@@ -79,3 +79,16 @@
   padding-left: 6rem;
   padding-right: 6rem;
 }
+:global(.service-swiper) {
+  padding: 30px 0;
+}
+:global(.service-swiper .swiper-slide) {
+  width: 85%;
+  max-width: 320px;
+}
+:global(.service-swiper .swiper-pagination-bullet) {
+  background: #f97316;
+}
+:global(.service-swiper .swiper-pagination) {
+  bottom: 0px;
+}

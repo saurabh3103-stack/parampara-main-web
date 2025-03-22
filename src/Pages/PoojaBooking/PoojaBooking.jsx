@@ -1,210 +1,263 @@
-import React, { useState, useEffect } from "react";
-import Breadcrumb from '../../Component/Breadcrumb';
-import Filter from "../../Component/Shop/Filter";
-import FilterSection from "../../Component/Shop/FilterSection";
+import { useState, useEffect } from "react";
+import { useMobile } from "../../hooks/use-mobile";
 import PoojaCategory from "./PoojaCategory";
-import SortPooja from "./SortPooja";
-import Pagination from "../../Component/Shop/Pagination";
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
-import { useContext } from 'react';
+import PoojaTopBanner from './PoojaTopBanner';
+import PoojaFilterLeft from "./PoojaFilterLeft";
+import PoojaRightFilter from "./PoojaRightFilter";
+import Pagination from "../../Component/Pagination";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
-const PoojaBooking = () => {
-    const breadcrumbLinks = [
-        { label: 'Home', url: '/' },
-        { label: 'Pooja Service', url: '/pooja' },
-        { pagename: 'Pooja Service' },
-    ];
-    const currencySymbol = "₹";
-    const imgUrl = "http://34.131.10.8:3000";
-    const ApiUrl = "http://34.131.10.8:3000/api";
-    const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
-    const {categoryData, setCategoryData,filtercategoryID } = useContext(AppContext);
-    const [poojaData, setPoojaData] = useState([]); 
-    const [filterPoojaData, setFilteredPoojaData] = useState([]); 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const itemsPerPage = 12;
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get(`${ApiUrl}/pooja/category/web`, {
-                    headers: { Authorization: tokken },
-                });
-                setCategoryData(response.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchCategories();
-    }, []);
+// Main PoojaBooking Component
+export default function PoojaBooking() {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [view, setView] = useState("grid");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null); // Default to null for "All Categories"
+  const [categoryData, setCategoryData] = useState([]);
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [selectedRatings, setSelectedRatings] = useState([]);
+  const [productStatus, setProductStatus] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [sortBy, setSortBy] = useState("popularity");
+  const [itemsPerPage, setItemsPerPage] = useState("12");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const isMobile = useMobile();
+  const currencySymbol = "₹";
+  const imgUrl = "http://34.131.10.8:3000";
+  const ApiUrl = "http://34.131.10.8:3000/api";
+  const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${ApiUrl}/pooja/category/web`, {
+          headers: { Authorization: tokken },
+        });
+        setCategoryData(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-    useEffect(() => {
-        const fetchPooja = async () => {
-            try {
-                const response = await axios.get(`${ApiUrl}/pooja/all-poojaUser`, {
-                    headers: { Authorization: tokken },
-                });
-                if (response.data.status === 1 && Array.isArray(response.data.data)) {
-                    console.log(response.data.data);
-                    setPoojaData(response.data.data);
-                    setFilteredPoojaData(response.data.data); 
-                } else {
-                    setError('No Pooja Found');
-                    setPoojaData([]); 
-                    setFilteredPoojaData([]); 
-                }
-            } catch (err) {
-                setError(err.message);
-                setPoojaData([]); 
-                setFilteredPoojaData([]); 
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPooja();
-    }, []);
-
-    const handleCategoryChange = async (categoryId) => {
-        setSelectedCategory(categoryId);
-        setLoading(true);
-        try {
-            const url = categoryId === null
-                ? `${ApiUrl}/pooja/all-poojaUser`
-                : `${ApiUrl}/pooja/all-poojaUser/${categoryId}`;
-
-            const response = await axios.get(url, {
-                headers: { Authorization: tokken },
-            });
-            setPoojaData(response.data.data); 
-            setFilteredPoojaData(response.data.data); 
-        } catch (err) {
-            setFilteredPoojaData([]);
-            setError(err.message);
-        } finally {
-            setLoading(false);
+  useEffect(() => {
+    const fetchPooja = async () => {
+      try {
+        const response = await axios.get(`${ApiUrl}/pooja/all-poojaUser`, {
+          headers: { Authorization: tokken },
+        });
+        if (response.data.status === 1 && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+          setFilteredProducts(response.data.data);
+        } else {
+          setError('No Pooja Found');
+          setProducts([]);
+          setFilteredProducts([]);
         }
-        setCurrentPage(1);
+      } catch (err) {
+        setError(err.message);
+        setProducts([]);
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchPooja();
+  }, []);
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-    const filteredPoojaData = Array.isArray(poojaData)
-        ? poojaData.filter(item =>
-            item.pooja_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.short_discription.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        : [];
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredPoojaData.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredPoojaData.length / itemsPerPage);
+  // Apply filters
+  useEffect(() => {
+    applyFilters();
+  }, [selectedCategory, priceRange, selectedRatings, productStatus, selectedBrands, sortBy]);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+  const applyFilters = () => {
+    let filtered = [...products];
 
-    console.log(currentItems)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
-    const filteredPoojas =
-    filtercategoryID === null
-      ? currentItems
-      : currentItems.filter(
-          (pooja) => pooja.pooja_category === filtercategoryID
-        );
-    return (
-        <>
-            <section>
-                <Breadcrumb links={breadcrumbLinks} />
-                <div id="shop-grid-left" className="mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                    <Filter />
-                    <div className="mt-5 flex flex-col space-x-0 text-sm md:flex-row md:space-x-4">
-                        <FilterSection categoryData={categoryData} />
-                        <div className="w-full space-y-3 sm:ml-0 md:w-3/4">
-                            <PoojaCategory categoryData={categoryData} selectedCategory={selectedCategory} 
-                                onCategoryChange={handleCategoryChange} />
-                                {filteredPoojas.length > 0 ? (
-                                    <div className="w-full border border-gray-400 bg-white">
-                                        <SortPooja handleSearchChange={handleSearchChange} />
-                                        <div className="w-full border-b border-gray-400">
-                                            <div className="p-5">
-                                                {filteredPoojas.map((item, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="group flex flex-col space-x-0 py-3 sm:flex-row sm:space-x-6">
-                                                        <div className="relative mx-auto w-full sm:h-52 sm:w-2/6 lg:w-1/4">
-                                                            <img
-                                                                className="h-full w-full object-contain"
-                                                                src={imgUrl + item.pooja_image}
-                                                                alt={item.pooja_name || "Pooja Image"}
-                                                            />
-                                                        </div>
-                                                        <div className="w-full space-y-1 sm:w-4/6 sm:space-y-2 lg:w-3/4">
-                                                            <Link to={`/pooja/pooja-details/${item.slug_url}`}>
-                                                                <span className="line-clamp-1 cursor-pointer text-sm text-blue-900">
-                                                                    {item.pooja_name}
-                                                                </span>
-                                                            </Link>
-                                                            <div className="font-semibold">
-                                                                <span className="price-value text-lg text-gray-900">
-                                                                    {currencySymbol}
-                                                                    {item.price_withoutSamagri} -{" "}
-                                                                </span>
-                                                                <span className="price-value text-lg text-gray-900">
-                                                                    {currencySymbol}
-                                                                    {item.price_withSamagri}
-                                                                </span>
-                                                            </div>
-                                                            <div className="xs:flex hidden items-center space-x-2 text-xs sm:space-x-5 sm:text-sm">
-                                                                <p>{item.short_discription}</p>
-                                                            </div>
-                                                            <div className="flex flex-col items-center space-x-0 sm:flex-row sm:flex-nowrap sm:space-x-4">
-                                                                <div className="w-full py-1 sm:w-1/2">
-                                                                    <Link to={`/pooja/pooja-details/${item.slug_url}`} ><span className="btn btn-bg-slide btn-full">View</span></Link>
-                                                                </div>
-                                                                <div className="w-full py-1 sm:w-1/2">
-                                                                    <Link to={'javascript:void(0)'}><span className="btn btn-full btn-outline">Book Now</span></Link>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    </div>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center mt-12 space-y-6">
-                                            <img
-                                                src="https://cdn.dribbble.com/userupload/2905353/file/original-2022966da1fc3718d3feddfdc471ae47.png?resize=400x0"
-                                                alt="No Data Found"
-                                                className="w-72 max-w-full"
-                                            />
-                                            <h2 className="text-2xl font-semibold text-gray-700">Hey, No Pooja Found!</h2>
-                                            <p className="text-center text-gray-500">
-                                                Please try selecting a different category or come back later.
-                                            </p>
-                                        </div>
-                                    )}
-                        </div>
+    // Category filter
+    if (selectedCategory) {
+      filtered = filtered.filter((product) => product.pooja_category === selectedCategory);
+    }
+
+    // Price range filter
+    if (priceRange.min && priceRange.max) {
+      filtered = filtered.filter((product) => {
+        const price = product.price_withoutSamagri || product.price_withSamagri;
+        return price >= Number(priceRange.min) && price <= Number(priceRange.max);
+      });
+    }
+
+    // Rating filter
+    if (selectedRatings.length > 0) {
+      filtered = filtered.filter((product) => selectedRatings.includes(product.rating));
+    }
+
+    // Product status filter
+    if (productStatus.length > 0) {
+      filtered = filtered.filter((product) => {
+        if (productStatus.includes("In stock") && product.inStock) return true;
+        if (productStatus.includes("Out of stock") && !product.inStock) return true;
+        if (productStatus.includes("On sale") && product.onSale) return true;
+        return false;
+      });
+    }
+
+    // Sort products
+    switch (sortBy) {
+      case "price-low-high":
+        filtered.sort((a, b) => (a.price_withoutSamagri || a.price_withSamagri) - (b.price_withoutSamagri || b.price_withSamagri));
+        break;
+      case "price-high-low":
+        filtered.sort((a, b) => (b.price_withoutSamagri || b.price_withSamagri) - (a.price_withoutSamagri || a.price_withSamagri));
+        break;
+      case "name-a-z":
+        filtered.sort((a, b) => a.pooja_name.localeCompare(b.pooja_name));
+        break;
+      case "name-z-a":
+        filtered.sort((a, b) => b.pooja_name.localeCompare(a.pooja_name));
+        break;
+      default:
+        // Default sort by popularity (id in this case)
+        filtered.sort((a, b) => a.id - b.id);
+    }
+
+    setFilteredProducts(filtered);
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Format price
+  const formatPrice = (price) => {
+    return `${currencySymbol}${price}`;
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <PoojaTopBanner />
+      <div className="flex flex-col md:flex-row gap-6 mt-6">
+        {/* Left Side Filters */}
+        <div className={`w-full md:w-64 ${isMobile && !showFilters ? "hidden" : "block"}`}>
+          <PoojaCategory selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+          <PoojaFilterLeft
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            selectedRatings={selectedRatings}
+            handleRatingChange={(rating) =>
+              setSelectedRatings((prev) =>
+                prev.includes(rating) ? prev.filter((r) => r !== rating) : [...prev, rating]
+              )
+            }
+            productStatus={productStatus}
+            handleProductStatusChange={(status) =>
+              setProductStatus((prev) =>
+                prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+              )
+            }
+            selectedBrands={selectedBrands}
+            handleBrandChange={(brand) =>
+              setSelectedBrands((prev) =>
+                prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+              )
+            }
+            applyFilters={applyFilters}
+          />
+        </div>
+
+        {/* Right Side Filters and Product Listing */}
+        <div className="flex-1">
+          <PoojaRightFilter
+            view={view}
+            setView={setView}
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            isMobile={isMobile}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+          />
+
+          {/* Product Grid */}
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>Error: {error}</div>
+          ) : (
+            <div
+              className={
+                view === "grid"
+                  ? "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  : "grid gap-4 grid-cols-1"
+              }
+            >
+              {paginatedProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className={
+                    view === "list"
+                      ? "border rounded-lg overflow-hidden flex flex-col md:flex-row bg-white shadow-md"
+                      : "border rounded-lg overflow-hidden bg-white shadow-md"
+                  }
+                >
+                  <div className={view === "list" ? "relative w-full md:w-1/3" : "relative"}>
+                    <img
+                      src={`${imgUrl}${product.pooja_image}`}
+                      alt={product.pooja_name}
+                      width={300}
+                      height={300}
+                      className="w-full h-auto aspect-square object-cover"
+                    />
+                    {product.onSale && (
+                      <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-md text-xs font-semibold">
+                        SALE!
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={view === "list" ? "p-4 flex flex-col md:w-2/3" : "p-4 flex flex-col"}>
+                    <div className="text-sm text-gray-500 mb-1">{product.pooja_category}</div>
+                    <h3 className="font-medium text-lg mb-2 line-clamp-2">
+                      <Link to={`/pooja/pooja-details/${product.slug_url}`}>{product.pooja_name}</Link>
+                    </h3>
+
+                    <div className="flex items-center mb-4">
+                      {product.salePrice ? (
+                        <>
+                          <span className="text-lg font-bold text-red-600">{formatPrice(product.price_withoutSamagri)}</span>
+                          <span className="ml-2 text-gray-500 line-through">{formatPrice(product.price_withSamagri)}</span>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold">{formatPrice(product.price_withoutSamagri)}</span>
+                      )}
                     </div>
-                </div>
-            </section>
-        </>
-    );
-};
 
-export default PoojaBooking;
+                    <button className="mt-auto w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md">
+                      SELECT DATE(S)
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

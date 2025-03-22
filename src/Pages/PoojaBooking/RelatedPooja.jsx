@@ -1,132 +1,98 @@
 import React from "react";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { fetchPoojaByCategory } from "./PoojaService";
-import { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
-const RelatedPooja = ({currentPoojaData}) =>{
-    
- const [poojaData, setPoojaData] = useState([]);
+import { Heart, Star } from "lucide-react";
 
-     useEffect(() => {
-               const loadBhajans = async () => {
-                   try {
-                       const data = await fetchPoojaByCategory();
-                       setPoojaData(data?.data || []);
-                   } catch (error) {
-                       console.error("Failed to load bhajans", error);
-                   }
-               };
-               loadBhajans();
-           }, []);
-         
+const RelatedPooja = ({ currentPujaId }) => {
+  const relatedProducts = [
+    {
+      id: 1,
+      title: "Sunderkand Paath",
+      price: 11999,
+      image: "/placeholder.svg",
+      rating: 4.8,
+      reviews: 87,
+    },
+    {
+      id: 2,
+      title: "Satyanarayan Puja",
+      price: 8999,
+      image: "/placeholder.svg",
+      rating: 4.7,
+      reviews: 156,
+    },
+    {
+      id: 3,
+      title: "Navgraha Shanti Puja",
+      price: 15999,
+      image: "/placeholder.svg",
+      rating: 4.9,
+      reviews: 92,
+    },
+  ];
 
-    return(
-        <>
-            <section className="bg-white px-5 rashi_wrapper" id="zodiac_Sign" style={{background:"#fff"}}>
-                <div className="mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                <div class="flex flex-col justify-center sm:justify-between md:flex-row md:items-center">
-              <div>
-                <h1 class="text-base font-bold md:text-2xl mb-4 ">Related Pooja</h1>
-              </div>
-              <div id="new-arrival-tabs" class="hidden justify-center md:flex md:flex-row md:space-x-4 md:text-sm">
-                <div data-filter-link="all" class="new-active cursor-pointer">View All</div>
-              </div>
+  return (
+    <div className="mt-12">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">Related Items</h2>
+        <button className="text-primary text-sm flex items-center">
+          <i className="bi bi-info-circle mr-1"></i>
+          <span>Sponsored</span>
+        </button>
+      </div>
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {relatedProducts.map((product) => (
+          <div key={product.id} className="border rounded-lg overflow-hidden group bg-white shadow-sm">
+            {/* Image Section */}
+            <div className="relative">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-auto object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
+              />
+              <button className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full h-8 w-8 p-0 flex items-center justify-center">
+                <Heart className="h-4 w-4 text-gray-600" />
+              </button>
             </div>
-                    <Swiper 
-                        autoplay={{ delay: 2500, disableOnInteraction: true, }}
-                        spaceBetween={50}
-                        slidesPerView={5}
-                        onSlideChange={() => console.log('slide change')}onSwiper={(swiper) => console.log(swiper)}>
-                       {poojaData.map(pooja => {
-    // Check if the current pooja is not the same as the currentPoojaData
-    if (currentPoojaData._id !== pooja._id) {
-        return (
-            <SwiperSlide key={pooja._id}>
-                <div className="group rounded border-gray-400 pb-0 lg:pb-3">
-                    <div className="relative w-full cursor-pointer lg:h-[16.25rem]">
-                        <img
-                            className="mx-auto my-auto h-full w-full object-contain text-xs"
-                            src={pooja.pooja_image || 'default-image.jpg'} // Fallback image if none provided
-                            alt={pooja.pooja_name}
-                        />
-                        <div className="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100">
-                            <div className="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3">
-                                <div className="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span className="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                            <i className="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        className="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <Link to={`/pooja/pooja-details/${pooja.slug_url}`} className="flex items-center justify-center h-full w-full">
-                                            <i className="fa-regular fa-eye"></i>
-                                        </Link>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="xs:text-sm text-left text-xs">
-                            <div className="space-y-1">
-                                <div className="mt-2">
-                                    <h5 className="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <Link to={`/pooja/pooja-details/${pooja.slug_url}`} >{pooja.pooja_name}</Link>
-                                    </h5>
-                                </div>
-                                <div className="font-semibold">
-                                    <span className="text-lg text-gray-900">₹{pooja.price_withSamagri}</span>
-                                    <span className="text-xs text-gray-400 line-through">₹{pooja.price_withoutSamagri}</span>
-                                </div>
-                                <div>
-                                    <a
-                                        className="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span className="text-yellow-400">
-                                            {/* Assuming you want to show a fixed star rating */}
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                        </span>
-                                        <span className="text-xs text-blue-700 hover:underline">(0)</span>
-                                    </a>
-                                </div>
-                                <div className="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                </div>
-                                <div>
-                                    <p>
-                                        <span className="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span className="cursor-pointer font-semibold text-blue-900 hover:underline">Your Location</span>
-                                    </p>
-                                </div>
-                                <div className="py-1">
-                                    <a href="cart.html">
-                                        <span className="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+            {/* Product Details */}
+            <div className="p-4">
+              <div className="text-sm text-gray-500 mb-1">Puja Services</div>
+              <h3 className="font-medium text-lg mb-2 truncate">{product.title}</h3>
+
+              {/* Rating & Reviews */}
+              <div className="flex items-center mb-2">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                  <span className="ml-1 text-xs text-gray-600">({product.rating})</span>
                 </div>
-            </SwiperSlide>
-        );
-    }
-    return null; // Return null if the condition is not met
-})}
-                        
-                    </Swiper>
-                </div>
-            </section>  
-        </>
-    );
-}
+                <span className="mx-1 text-gray-300">|</span>
+                <span className="text-xs text-gray-600">{product.reviews} Reviews</span>
+              </div>
+
+              {/* Price */}
+              <div className="flex items-center mb-4">
+                <span className="text-lg font-bold">₹{product.price.toLocaleString()}</span>
+              </div>
+
+              {/* Select Button */}
+              <button className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">
+                SELECT OPTIONS
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default RelatedPooja;

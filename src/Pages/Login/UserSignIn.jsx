@@ -1,152 +1,222 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+"use client";
+
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { toast,ToastContainer } from "react-toastify";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-const UserSignIn = () => {
-    const navigate = useNavigate();
-    const APIURL = "http://34.131.10.8:3000/api/";
-    const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
-    const [formData, setFormData] = useState({ email: "", password: "" });
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [responseMessage, setResponseMessage] = useState();
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+export default function UserSignIn() {
+  const navigate = useNavigate();
+  const APIURL = "http://34.131.10.8:3000/api/";
+  const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [wrongPassword, setWrongPassword] = useState(false); // State to track wrong password
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setWrongPassword(false); // Reset wrong password state on new submission
+    const config = {
+      method: "post",
+      url: APIURL + "user/login",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: TOKEN,
+      },
+      data: JSON.stringify(formData),
     };
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const config = {
-            method: "post",
-            url: APIURL + "user/login",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: TOKEN,
-            },
-            data: JSON.stringify(formData),
-        };
-        try {
-            const { data } = await axios(config);
-            if (data.status === 1) {
-                const authToken = data.authToken;
-                localStorage.setItem("userEmail", formData.email);
-                localStorage.setItem("isLoggedIn", true);
-                localStorage.setItem("userPassword", formData.password);
-                localStorage.setItem("authToken", authToken);
-                console.log("AuthToken stored:", authToken); 
-                toast.success("Login successful!");
-                setTimeout(() => {
-                    navigate("/user/profile");
-                }, 500);
-            } else {
-                setResponseMessage("Invalid credentials. Please try again.");
-                toast.error("Invalid credentials. Please try again.");
-            }
-        } catch (error) {
-            console.error("Login Failed:", error.response?.data || error.message);
-            toast.error("Login failed. Please check your credentials.");
-        } finally {
-            setLoading(false);
-        }
-    };
-    
 
-    return (
-        <>
-            <ToastContainer />
-            <div class="mx-auto mt-12 flex w-full flex-col items-center justify-center px-4 sm:mt-16 sm:max-w-md">
-                <div class="w-[290px] rounded border border-gray-300 bg-white shadow-lg sm:w-[350px]">
-                    <div class="my-8 space-y-2 text-center">
-                        <h1 class="old text-2xl">Sign In</h1>
-                        <p class="text-sm">Welcome Back!</p>
-                    </div>
-                    <div class="space-y-8 px-3 pb-10">
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                            <div className="relative z-0 w-full">
-                                <input
-                                    id="email"
-                                    type="text"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    className="peer focus:border-primary-600 block w-full appearance-none border-0 border-b-2 border-gray-400 bg-transparent py-1.5 px-0 text-sm text-gray-900 focus:outline-none focus:ring-0"
-                                    placeholder=" "
-                                    required/>
-                                <label className="peer-focus:text-primary-600 absolute top-2 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75">
-                                    Email address <span className="font-semibold text-red-600">*</span>
-                                </label>
-                            </div>
+    try {
+      const { data } = await axios(config);
+      if (data.status === 1) {
+        const authToken = data.authToken;
+        localStorage.setItem("userEmail", formData.email);
+        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("userPassword", formData.password);
+        localStorage.setItem("authToken", authToken);
+        console.log("AuthToken stored:", authToken);
+        toast.success("Login successful!");
+        setTimeout(() => {
+          navigate("/"); // Navigate to home page on success
+        }, 500);
+      } else if (data.status === 0) {
+        setWrongPassword(true); // Set wrong password state to true
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login Failed:", error.response?.data || error.message);
+      toast.error("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                            <div className="relative z-0 w-full">
-                                <input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    className="peer focus:border-primary-600 block w-full appearance-none border-0 border-b-2 border-gray-400 bg-transparent py-1.5 px-0 text-sm text-gray-900 focus:outline-none focus:ring-0"
-                                    placeholder=" "
-                                    required/>
-                                <span
-                                    className="hover:text-primary-800 absolute inset-y-0 right-0 float-right flex cursor-pointer items-center p-1 pr-3 pl-3 text-xs"
-                                    onClick={togglePasswordVisibility}>
-                                    {showPassword ? "Hide" : "Show"}
-                                </span>
-                                <label className="peer-focus:text-primary-600 absolute top-2 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75">
-                                    Password <span className="font-semibold text-red-600">*</span>
-                                </label>
-                            </div>
+  return (
+    <div className="w-full max-w-md mx-auto py-8">
+    <ToastContainer/>
+      <div className="rounded-lg border border-amber-200 bg-gradient-to-b from-amber-50 to-orange-50 shadow-lg overflow-hidden">
+        <div className="relative">
+          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=500')] bg-cover bg-center opacity-20"></div>
+          <div className="relative py-4 flex flex-col items-center justify-center space-y-2 bg-gradient-to-r from-orange-500/10 to-red-500/10">
+            <h1 className="text-2xl font-bold text-orange-800 font-serif">
+              Sign In
+            </h1>
+            <p className="text-sm text-orange-700">Welcome Back, Devotee!</p>
+          </div>
+        </div>
 
-                            <div className="flex justify-between text-sm">
-                                <div className="flex items-center">
-                                    <input
-                                        id="checkout-remember-me"
-                                        type="checkbox"
-                                        className="nk-checkbox-input"/>
-                                    <label
-                                        className="nk-checkbox-label">
-                                        Remember me
-                                    </label>
-                                </div>
-                                <div>
-                                    <span>
-                                        <a className="text-blue-500 hover:text-blue-700"
-                                            href="forgetpassword-email.html">
-                                            Forget Password?
-                                        </a>
-                                    </span>
-                                </div>
-                            </div>
-                            <button  type="submit" className="btn-gradient btn-full"  disabled={loading}>
-                                {loading ? "Signing In..." : "Sign In"}
-                            </button>
-                            <div className="flex w-full flex-row items-center">
-                                <span className="w-2/5 border-b"></span>
-                                <span className="w-1/5 text-center">or</span>
-                                <span className="w-2/5 border-b"></span>
-                            </div>
-                        </form>
-                        <button
-                        class="focus:shadow-outline focus:border-primary-800 focus:bg-primary-800 focus:ring-primary-500 flex w-full flex-row justify-center rounded-md border border-blue-400 py-3 text-sm ring-offset-2 transition duration-300 ease-in-out hover:border-transparent hover:bg-blue-700 hover:text-gray-50 focus:text-white focus:outline-none focus:ring-2" style={{marginTop:"1rem"}}>
-                        <span class="mr-2"> <i class="fab fa-google"></i></span>
-                        Sign In with Google
-                        </button>
-                        <div class="text-xs sm:text-sm" style={{marginTop:"1rem"}}>
-                        <p class="border-t border-gray-200 pt-3">
-                            Don't have an account?
-                            <Link to={'/sign-up'} class="hover:text-blue- font-bold text-blue-500 hover:underline">Create Account</Link>
-                        </p>
-                        </div>
-                    </div>
-                </div>
+        <div className="p-6 space-y-6">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-orange-800"
+              >
+                Email Address <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-orange-500" />
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-amber-200 bg-amber-50 focus:border-orange-300 focus:ring-orange-300"
+                  placeholder="your.email@example.com"
+                  required
+                />
+              </div>
             </div>
-        </>
-    );
+
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-orange-800"
+              >
+                Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-orange-500" />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-amber-200 bg-amber-50 focus:border-orange-300 focus:ring-orange-300"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-2.5 text-orange-500 hover:text-orange-700"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {wrongPassword && ( // Show wrong password message if status is 0
+                <p className="text-sm text-red-500 mt-2">
+                  Wrong password. Please try again.
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-amber-300 text-orange-600 focus:ring-orange-500"
+                />
+                <label
+                  htmlFor="remember"
+                  className="text-sm text-orange-700"
+                >
+                  Remember me
+                </label>
+              </div>
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-orange-600 hover:text-orange-800 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-2.5 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Signing In...
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
+
+          <div className="flex items-center justify-center">
+            <div className="flex-grow h-px bg-amber-200"></div>
+            <span className="px-3 text-sm text-orange-700">or</span>
+            <div className="flex-grow h-px bg-amber-200"></div>
+          </div>
+
+          <button
+            type="button"
+            className="w-full flex items-center justify-center py-2.5 border border-amber-300 text-orange-700 hover:bg-orange-100 hover:text-orange-800 rounded-md"
+          >
+            <svg
+              className="mr-2 h-4 w-4"
+              aria-hidden="true"
+              focusable="false"
+              data-prefix="fab"
+              data-icon="google"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 488 512"
+            >
+              <path
+                fill="currentColor"
+                d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+              ></path>
+            </svg>
+            Sign in with Google
+          </button>
+
+          <div className="text-center pt-4 border-t border-amber-200">
+            <p className="text-sm text-orange-700">
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-medium text-orange-600 hover:text-orange-800 hover:underline"
+              >
+                Create Account
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-export default UserSignIn;

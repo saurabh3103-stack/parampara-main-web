@@ -148,7 +148,7 @@ export const submitOrder = async (formData) => {
             OrderId: orderId,
             userId: formData.userId,
             DeliveryAddress: {
-                AddressLine1: formData.aptSuite || "",
+                AddressLine1: formData.address || "",
                 AddressLine2: formData.streetAddress || "",
                 Landmark: formData.landmark || "",
                 Location: formData.streetAddress,

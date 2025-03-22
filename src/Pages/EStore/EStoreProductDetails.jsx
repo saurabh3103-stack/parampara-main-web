@@ -1,359 +1,279 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchProductDetails } from "./EStoreService";
-import Breadcrumb from "../../Component/Breadcrumb";
 import { ToastContainer, toast } from "react-toastify";
-import ProductImageGallery from "../PoojaBooking/ProductImageSlider";
-import TranscationSecurity from "../../Component/TranscationSecurity";
-import { getUserByEmail } from '../PoojaBooking/getUserByEmail';
+import { getUserByEmail } from "../PoojaBooking/getUserByEmail";
 import CustomerReview from "../../Component/Data/CustomerReview";
 import RelatedProduct from "./RelatedProduct";
 import axios from "axios";
+import { Calendar, ChevronRight, Clock, Home, MapPin, Truck, Info, Star } from "lucide-react";
+import StringToHTML from "../../Component/StringtoHtml";
+import TranscationSecurity from "../../Component/TranscationSecurity";
 
 const EStoreProductDetails = () => {
-    const { id } = useParams();
-    const currencySymbol = "₹";
-    const imgUrl = "http://34.131.10.8:3000/";
-    const [loading, setLoading] = useState(true);
-    const [product, setProduct] = useState(null);
-    const [userData, setUserData] = useState(null);
-    const [error, setError] = useState(null);
-    const [isOpen1, setIsOpen1] = useState(false);
-    const [isOpen2, setIsOpen2] = useState(false);
-    const [isOpen3, setIsOpen3] = useState(false);
-    const [isOpen4, setIsOpen4] = useState(false);
-    const [isOpen5, setIsOpen5] = useState(false);
-    const [isOpen6, setIsOpen6] = useState(false);
+  const { id } = useParams();
+  const currencySymbol = "₹";
+  const imgUrl = "http://34.131.10.8:3000/";
+  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+  const [isOpen5, setIsOpen5] = useState(false);
+  const [isOpen6, setIsOpen6] = useState(false);
+  const [quantity, setQuantity] = useState(1); // State for quantity
 
-    useEffect(() => {
-        const loadProduct = async () => {
-            try {
-                const data = await fetchProductDetails(id);
-                setProduct(data?.data || {});
-            } catch (error) {
-                console.error("Failed to load product", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadProduct();
-    }, [id]);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            setLoading(true);
-            const { data, error } = await getUserByEmail();
-
-            if (data) {
-                setUserData(data);
-            } else {
-                setUserData(null);
-                setError(error || "No user data found.");
-            }
-            setLoading(false);
-        };
-        fetchUser();
-    }, []);
-    const handleAddToCart = async (e) => {
-        e.preventDefault();
-        if (!userData || !product) {
-            toast.error("User or product data is missing.");
-            return;
-        }
-        const cartData = {
-            user_id: userData._id,
-            username: userData.username,
-            userphone: userData.mobile,
-            product_id: product._id,
-            product_name: product.name,
-            product_image: product.featuredImage[0], // Assuming the first image is the main image
-            product_amount: product.sellingPrice,
-            quantity: 1, // Default quantity
-            productType: "Pooja", // Assuming the product type is "Pooja"
-        };
-
-        try {
-            const response = await axios.post(
-                "http://34.131.10.8:3000/api/product/add-cart",
-                cartData,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8`, // Assuming the token is stored in localStorage
-                    },
-                }
-            );
-            console.log(response);
-            if (response.status === 200) {
-                toast.success("Product added to cart successfully!");
-            } else {
-                toast.error("Failed to add product to cart.");
-            }
-        } catch (error) {
-            console.error("Error adding product to cart:", error);
-            toast.error("An error occurred while adding the product to cart.");
-        }
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const data = await fetchProductDetails(id);
+        setProduct(data?.data || {});
+      } catch (error) {
+        console.error("Failed to load product", error);
+        setError("Failed to load product details.");
+      } finally {
+        setLoading(false);
+      }
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Form submitted!");
+    loadProduct();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      const { data, error } = await getUserByEmail();
+
+      if (data) {
+        setUserData(data);
+      } else {
+        setUserData(null);
+        setError(error || "No user data found.");
+      }
+      setLoading(false);
     };
-    if (loading) {
-        return <p>Loading product details...</p>;
+    fetchUser();
+  }, []);
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    if (!userData || !product) {
+      toast.error("User or product data is missing.");
+      return;
     }
+    const cartData = {
+      user_id: userData._id,
+      username: userData.username,
+      userphone: userData.mobile,
+      product_id: product._id,
+      product_name: product.name,
+      product_image: product.featuredImage[0], // Assuming the first image is the main image
+      product_amount: product.sellingPrice,
+      quantity: quantity, // Use the selected quantity
+      productType: "Product", // Assuming the product type is "Product"
+    };
 
-    if (!product) {
-        return <p>Product not found.</p>;
+    try {
+      const response = await axios.post(
+        "http://34.131.10.8:3000/api/product/add-cart",
+        cartData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8`, // Assuming the token is stored in localStorage
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Product added to cart successfully!");
+      } else {
+        toast.error("Failed to add product to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      toast.error("An error occurred while adding the product to cart.");
     }
+  };
 
-    const breadcrumbLinks = [
-        { label: "Home", url: "/" },
-        { label: "E-Store", url: "/e-store" },
-        { label: product?.name || "Unknown Product", url: `/product/${product?.slug || ""}` },
-        { pagename: product?.name || "Unknown Product" },
-    ];
+  if (loading) return <p>Loading product details...</p>;
+  if (error) return <p>{error}</p>;
+  if (!product) return <p>Product not found.</p>;
 
-    return (
-        <>
-            <ToastContainer />
-            <Breadcrumb links={breadcrumbLinks} />
-            <section className="content mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                <div className="space-y-3 text-sm">
-                    <div id="topItemdiv">
-                        <div className="mt-0 flex flex-col space-y-3 space-x-0 sm:mt-6 sm:flex-row sm:space-y-0 sm:space-x-5">
-                            <div className="w-full sm:w-1/2">
-                                <div className="flex flex-col-reverse items-center space-x-0 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-3">
-                                    <ProductImageGallery slider={product?.featuredImage || []} />
-                                </div>
-                            </div>
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <ToastContainer />
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center text-sm mb-6">
+        <Link to="/" className="flex items-center text-gray-500 hover:text-gray-700">
+          <Home className="h-4 w-4 mr-1" />
+          Home
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
+        <Link to="/e-store" className="text-gray-500 hover:text-gray-700">
+          E-Store
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
+        <span className="text-gray-900 font-medium">{product.name}</span>
+      </nav>
 
-                            <div className="w-full sm:w-1/2">
-                                <div className="space-y-3">
-                                    <h1 className="text-xl font-medium sm:text-3xl">{product.name}</h1>
-                                    <div>
-                                        <span className="text-sm font-semibold sm:text-2xl">{currencySymbol}&nbsp;{product.sellingPrice}</span> -
-                                        <span className="ml-10 bg-green-700 px-3 py-1 text-base font-semibold text-white">Save $30</span>
-                                    </div>
-                                    <div className="flex flex-row items-center">
-                                        <div className="inline-flex space-x-1">
-                                            <span className="text-yellow-400"><i className="fas fa-star"></i> </span>
-                                            <span>(4.9)</span>
-                                        </div>
-                                        <div className="ml-5 flex flex-auto items-center space-x-2 sm:ml-5">
-                                            <span><a href="#customers-rating-reviews">123 Reviews</a></span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <p><span className="font-semibold">Model: </span>NKS1234LS</p>
-                                        <p><span className="ml-5 font-semibold sm:ml-10">SKU: </span>0123456789</p>
-                                    </div>
-                                    <div>
-                                        <p><span className="font-semibold">Status:</span> <span className="text-green-500">In Stock</span></p>
-                                    </div>
-                                    <div>
-                                        <span className="mr-5">
-                                            <select
-                                                className="w-24 rounded border border-gray-400 py-1 px-2 outline-none"
-                                                id="select-qty-product"
-                                                required
-                                            >
-                                                <option value="">Qty 1</option>
-                                                <option value="">Qty 2</option>
-                                                <option value="">Qty 3</option>
-                                                <option value="">Qty 4</option>
-                                                <option value="">Qty 5</option>
-                                            </select>
-                                        </span>
-                                    </div>
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="flex items-center space-x-4 w-3/4">
-                                            {userData && (
-                                                <>
-                                                    <input type="hidden" name="user_id" value={userData._id} id="user_id" />
-                                                    <input type="hidden" name="username" value={userData.username} id="username" />
-                                                    <input type="hidden" name="userphone" value={userData.mobile} id="userphone" />
-                                                    <input type="hidden" name="useremail" value={userData.email} id="useremail" />
-                                                </>
-                                            )}
-                                            <input type="hidden" name="productType" value="Pooja" id="productType" />
-                                            <input type="hidden" name="product_name" value={product.pooja_name} id="product_name" />
-                                            <input type="hidden" name="quantity" value="1" id="quantity" />
-                                            <input type="hidden" name="product_id" value={product._id} id="product_id" />
-                                            <button
-                                                type="button"
-                                                onClick={handleAddToCart}
-                                                className="bg-green-600 w-3/4 rounded px-3 m-0 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out hover:bg-green-700"
-                                            >
-                                                Add to Cart
-                                            </button>
-                                            <button type="submit" className="bg-red-600 w-3/4 rounded px-3 py-2 text-sm font-semibold text-gray-50 transition duration-300 ease-in-out hover:bg-red-700">
-                                                Book Now
-                                            </button>
-                                        </div>
-                                    </form>
-                                    <TranscationSecurity />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      {/* Product Details Section */}
+      <section className="grid md:grid-cols-2 gap-8">
+        {/* Product Image Section */}
+        <div className="bg-gray-50 rounded-lg overflow-hidden">
+          <div className="relative aspect-square">
+            <img
+              src={imgUrl + product.featuredImage}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
 
-                    <div id="itemInformation">
-                        <div className="mt-5">
-                            <h5 className="border-b border-gray-400 py-2 text-2xl font-bold">Product Overview</h5>
-
-                            <div className="border-b border-gray-400">
-                                <div className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                                    onClick={() => setIsOpen5(!isOpen5)}>
-                                    <h5 className="font-semibold">Description</h5>
-                                    <span
-                                        className={`nk-chevron-icon transition-transform duration-200 ease-in ${isOpen5 ? "rotate-180" : "rotate-0"
-                                            }`}>
-                                        <i className="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-                                <div
-                                    className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                                    style={{
-                                        maxHeight: isOpen5 ? "300px" : "0",
-                                        opacity: isOpen5 ? 1 : 0,
-                                    }}>
-                                    <div className="p-4 bg-white">
-                                        <p className="w-3/4">
-                                            {/* <StringToHTML htmlString={poojaDetails.long_discription}/> */}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-gray-400">
-                                <div
-                                    className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                                    onClick={() => setIsOpen6(!isOpen6)}>
-                                    <h5 className="font-semibold">Shipping &amp; Delivery Information</h5>
-                                    <span
-                                        className={`nk-chevron-icon transition-transform duration-200 ease-in ${isOpen6 ? "rotate-180" : "rotate-0"
-                                            }`}>
-                                        <i className="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-                                <div
-                                    className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                                    style={{
-                                        maxHeight: isOpen6 ? "300px" : "0",
-                                        opacity: isOpen6 ? 1 : 0,
-                                    }}>
-                                    <div className="p-4 bg-white">
-                                        <h5 className="font-semibold">Product Description</h5>
-                                        <p className="w-3/4">
-                                            Originally released in 1982, the Nike Air Force 1 was the first Nike model to feature "Air"
-                                            technology. This legendary basketball sneaker wa designed by Bruce Kilgore, and named after
-                                            the aircraft carries, the Air Force One. The Air Force 1 is Nike's most popular sneaker to
-                                            date, has been produced in nearly 2,000 different colorways, and available in low, mid, and
-                                            high-top models.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-gray-400">
-                                <div
-                                    className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                                    onClick={() => setIsOpen1(!isOpen1)}>
-                                    <h5 className="font-semibold">Refund &amp; Return Information</h5>
-                                    <span
-                                        className={`nk-chevron-icon transition-transform duration-200 ease-in ${isOpen1 ? "rotate-180" : "rotate-0"
-                                            }`}>
-                                        <i className="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-                                <div
-                                    className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                                    style={{
-                                        maxHeight: isOpen1 ? "300px" : "0",
-                                        opacity: isOpen1 ? 1 : 0,
-                                    }}>
-                                    <div className="p-4 bg-white">
-                                        <h5 className="font-semibold">Product Description</h5>
-                                        <p className="w-3/4">
-                                            Originally released in 1982, the Nike Air Force 1 was the first
-                                            Nike model to feature "Air" technology. This legendary basketball
-                                            sneaker was designed by Bruce Kilgore and named after the
-                                            aircraft carrier, the Air Force One. The Air Force 1 is Nike's
-                                            most popular sneaker to date, with nearly 2,000 different
-                                            colorways.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-gray-400">
-                                <div
-                                    className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                                    onClick={() => setIsOpen2(!isOpen2)}>
-                                    <h5 className="font-semibold">Your Protection Plan</h5>
-                                    <span
-                                        className={`nk-chevron-icon transition-transform duration-200 ease-in ${isOpen2 ? "rotate-180" : "rotate-0"
-                                            }`}>
-                                        <i className="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-                                <div
-                                    className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                                    style={{
-                                        maxHeight: isOpen2 ? "300px" : "0",
-                                        opacity: isOpen2 ? 1 : 0,
-                                    }}>
-                                    <div className="p-4 bg-white">
-                                        <h5 className="font-semibold">Product Description</h5>
-                                        <p className="w-3/4">
-                                            Originally released in 1982, the Nike Air Force 1 was the first
-                                            Nike model to feature "Air" technology. This legendary basketball
-                                            sneaker was designed by Bruce Kilgore and named after the
-                                            aircraft carrier, the Air Force One. The Air Force 1 is Nike's
-                                            most popular sneaker to date, with nearly 2,000 different
-                                            colorways.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="border-b border-gray-400">
-                                <div
-                                    className="nk-item-accordion flex cursor-pointer items-center justify-between py-4 px-2 transition duration-75 hover:bg-gray-100"
-                                    onClick={() => setIsOpen4(!isOpen4)}>
-                                    <h5 className="font-semibold">Customers Rating & &amp; Reviews</h5>
-                                    <span
-                                        className={`nk-chevron-icon transition-transform duration-200 ease-in ${isOpen4 ? "rotate-180" : "rotate-0"
-                                            }`}>
-                                        <i className="fas fa-chevron-down"></i>
-                                    </span>
-                                </div>
-                                <div
-                                    className="nk-item-info overflow-hidden transition-all duration-300 ease-in-out"
-                                    style={{
-                                        maxHeight: isOpen4 ? "100%" : "0",
-                                        opacity: isOpen4 ? 1 : 0,
-                                    }}>
-                                    <div className="p-4 bg-white">
-                                        <CustomerReview />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        {/* Product Information Section */}
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-4">{product.name}</h1>
+          <div className="flex items-center mb-4">
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-5 w-5 ${
+                    i < Math.floor(product?.rating || 4)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-muted stroke-muted-foreground"
+                  }`}
+                />
+              ))}
+              <span className="ml-2 text-sm font-medium">({product?.rating || 4.9})</span>
+            </div>
+            <span className="mx-2 text-gray-300">|</span>
+            <span className="text-sm text-gray-600">{product?.reviews || 123} Reviews</span>
+          </div>
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-2xl font-bold">{currencySymbol}{product.sellingPrice}</span>
+            <span className="bg-green-700 px-3 py-1 text-base font-semibold text-white">Save $30</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <p>
+              <span className="font-semibold">Model: </span>NKS1234LS
+            </p>
+            <p>
+              <span className="ml-5 font-semibold sm:ml-10">SKU: </span>0123456789
+            </p>
+          </div>
+          <div>
+            <p>
+              <span className="font-semibold">Status:</span>{" "}
+              <span className="text-green-500">In Stock</span>
+            </p>
+          </div>
+          <div>
+            <span className="mr-5 mb-6">
+              <select
+                className="w-24 rounded border border-gray-400 py-1 px-2 outline-none mt-5 mb-5"
+                id="select-qty-product"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                required
+              >
+                {[...Array(10).keys()].map((i) => (
+                  <option key={i + 1} value={i + 1}>
+                    Qty {i + 1}
+                  </option>
+                ))}
+              </select>
+            </span>
+          </div>
+          <form onSubmit={handleAddToCart}>
+              {userData && (
+                <>
+                  <input type="hidden" name="user_id" value={userData._id} id="user_id" />
+                  <input type="hidden" name="username" value={userData.username} id="username" />
+                  <input type="hidden" name="userphone" value={userData.mobile} id="userphone" />
+                  <input type="hidden" name="useremail" value={userData.email} id="useremail" />
+                </>
+              )}
+              <input type="hidden" name="productType" value="Product" id="productType" />
+              <input type="hidden" name="product_name" value={product.name} id="product_name" />
+              <input type="hidden" name="quantity" value={quantity} id="quantity" />
+              <input type="hidden" name="product_id" value={product._id} id="product_id" />
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <button
+                  type="submit"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white p-2 rounded"
+                >
+                  Add to Cart
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white p-2 rounded"
+                >
+                  Book Now
+                </button>
+              </div>
+          </form>
+          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+            <p className="text-sm font-medium mb-4">Get it in 7 days</p>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <MapPin className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Store Pickup:</p>
+                  <p className="text-sm text-gray-600">Order now for pickup on Wed, Jul 7 at Noida Store.</p>
+                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                    Discover all pickup locations
+                  </Link>
                 </div>
-                <div id="sponsoredItems">
-                    <div className="mt-7 space-y-1">
-                        <h1 className="text-sm font-semibold sm:text-2xl">Related Items currently viewing</h1>
-                        <p className="cursor-pointer text-xs hover:underline">
-                            sponsored <span><i className="fas fa-info-circle"></i></span>
-                        </p>
-                        <div>
-                            <a href="./shop-product.html"><img src={imgUrl + '/assets/img/banners/banner1.png'} alt="" /></a>
-                        </div>
-                    </div>
+              </div>
+
+              <div className="flex items-start">
+                <Truck className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Shipping & Delivery:</p>
+                  <p className="text-sm text-gray-600">Available to your area from</p>
+                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                    Enter your location
+                  </Link>
                 </div>
-                <RelatedProduct currentPoojaData={product} />
-            </section>
-        </>
-    );
+              </div>
+
+              <div className="flex items-start">
+                <Info className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Easy Return:</p>
+                  <p className="text-sm text-gray-600">Return this item until Jul 22.</p>
+                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                    Learn more about Return Policy
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <div className="flex items-center justify-center text-sm text-gray-600 mb-6">
+                <img src="/image/trust-symbols_a.webp" className="img-fluid w-fullmax-w-full h-auto" alt="transcation" />
+            </div>
+        </div>
+      </section>
+
+      {/* Product Overview Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-6">Product Overview</h2>
+        <div className="border rounded-lg divide-y">
+          <details className="px-4">
+            <summary className="py-4 font-medium cursor-pointer">Description</summary>
+            <div className="pb-4 text-gray-700">
+              <StringToHTML htmlString={product.description} />
+            </div>
+          </details>
+        </div>
+      </div>
+
+      {/* Related Products Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-6">Related Products</h2>
+        <RelatedProduct currentPoojaData={product} />
+      </div>
+    </div>
+  );
 };
 
 export default EStoreProductDetails;
