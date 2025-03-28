@@ -8,7 +8,7 @@ const Footer = () => {
                     <div class="nk-top-footer">
                         <div class="nk-footer-one">
                         <div class="space-y-3">
-                            <img class="h-40 object-contain" src="https://deificindia.com/namonamah/assets/image/logo/namonamah.png" alt=""/>          
+                            <img class="h-40 object-contain" src="/image/logo/final-logo.png" alt=""/>          
                             <p class="text-sm">Subscribe to our newsletter</p>
                             <form class="pr-5">
                             <div class="relative">
@@ -57,39 +57,18 @@ const Footer = () => {
                             <div><a class="nk-footer-nav-link" href="#!">News &amp; Press</a></div>
                             <div><a class="nk-footer-nav-link" href="#!">Store Directory</a></div>
                             <div><a class="nk-footer-nav-link" href="#!">Affiliate Program</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Sell on neytok.com</a></div>
                             <div><a class="nk-footer-nav-link" href="#!">Careers</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Advertise with us</a></div>
-                            <div>
-                            <a class="nk-footer-nav-link" href="#!">Developers <span><i class="fas fa-external-link-alt"></i></span></a>
-                            </div>
                         </div>
                         </div>
                         <div>
                         <div>
                             <h5 class="nk-footer-nav-title">Account</h5>
                             <div class="nk-footer-nav-link-div">
-                            <div><a class="nk-footer-nav-link" href="account-overview.html">Neykart Account</a></div>
-                            <div><a class="nk-footer-nav-link" href="account-orders-purchase.html">View Orders</a></div>
-                            <div><a class="nk-footer-nav-link" href="track-order.html">Track Order</a></div>
-                            <div><a class="nk-footer-nav-link" href="account-offers-deals.html">Offers &amp; Deals</a></div>
-                            <div><a class="nk-footer-nav-link" href="account-buy-it-again.html">Buy It Again</a></div>
-                            <div><a class="nk-footer-nav-link" href="account-wishlist.html">Wishlist &amp; Saved Items</a></div>
-                            <div>
-                                <a class="nk-footer-nav-link" href="shop-product.html#recently-viewed-items">Browsing History</a>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                        <div>
-                        <div>
-                            <h5 class="nk-footer-nav-title">Neykart Card</h5>
-                            <div class="nk-footer-nav-link-div">
-                            <div><a class="nk-footer-nav-link" href="#!">Apply for a Card</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Credit Card Offers</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Neykart Pay</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Check Requirements</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Other Services</a></div>
+                                <div><a class="nk-footer-nav-link" href="account-overview.html">Sanskaar Account</a></div>
+                                <div><a class="nk-footer-nav-link" href="account-orders-purchase.html">View Orders</a></div>
+                                <div><a class="nk-footer-nav-link" href="track-order.html">Track Order</a></div>
+                                <div><a class="nk-footer-nav-link" href="account-offers-deals.html">Offers &amp; Deals</a></div>
+                                <div><a class="nk-footer-nav-link" href="account-buy-it-again.html">Buy It Again</a></div>
                             </div>
                         </div>
                         </div>
@@ -103,8 +82,6 @@ const Footer = () => {
                             <div><a class="nk-footer-nav-link" href="#!">Return &amp; Refund Policy</a></div>
                             <div><a class="nk-footer-nav-link" href="#!">Shop with an Expert</a></div>
                             <div><a class="nk-footer-nav-link" href="#!">Contact Us</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Protection &amp; Support Plans</a></div>
-                            <div><a class="nk-footer-nav-link" href="#!">Send us feedback</a></div>
                             </div>
                         </div>
                         </div>

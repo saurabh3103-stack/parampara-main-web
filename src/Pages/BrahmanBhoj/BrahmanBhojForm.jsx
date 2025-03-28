@@ -65,7 +65,7 @@ export default function BrahmanBhojForm() {
   };
 
   const reverseGeocode = async (latitude, longitude) => {
-    const apiKey = "AIzaSyCiLRwm29ghwbDc1MrJ9svjNDg-NmQFx5A"; // Replace with your Google Maps API key
+    const apiKey = "AIzaSyDsvrX6D9H25sj_3k3ZVcaOVy2F0L3TodY"; // Replace with your Google Maps API key
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
 
     try {
@@ -130,7 +130,7 @@ export default function BrahmanBhojForm() {
     try {
       // Make the API call
       const response = await fetch(
-        "http://localhost:3000/api/brahman-bhoj/create-request",
+        "http://34.131.41.101:3000/api/brahman-bhoj/create-request",
         {
           method: "POST",
           headers: {

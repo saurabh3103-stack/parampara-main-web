@@ -8,7 +8,7 @@ import ShippingInfo from "./ShippingInfo";
 const ShippingAddress = () => {
     const breadcrumbLinks = [
         { label: "Home", url: "/" },
-        { label: "User", url: "/user/profile" },
+        { label: "User", url: "/user/dashboard" },
         { label: "Shipping & Billing", url: "javascript:void(0)" },
         { pagename: "Shipping & Billing" },
     ];

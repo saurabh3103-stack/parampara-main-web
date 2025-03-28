@@ -11,6 +11,7 @@ import AvailableCities from "../../Component/Data/AvailableCities";
 import FeaturedPoojas from "./FeaturedPoojas";
 import WhyChooseUs from "../../Component/WhyChooseUs";
 import Horoscope from "./Horoscope";
+import SahityaSangrah from "../../Component/Data/SahityaSangrah";
 
 const HomePage = () => {
     return(
@@ -29,6 +30,7 @@ const HomePage = () => {
             <Horoscope/>
             <TopDeals/>
             <WhyChooseUs/>
+            <SahityaSangrah/>
         </>
     );
 }

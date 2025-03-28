@@ -8,7 +8,7 @@ import axios from "axios";
 
 export default function UserSignIn() {
   const navigate = useNavigate();
-  const APIURL = "http://34.131.10.8:3000/api/";
+  const APIURL = "http://34.131.41.101:3000/api/";
   const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -208,7 +208,7 @@ export default function UserSignIn() {
             <p className="text-sm text-orange-700">
               Don&apos;t have an account?{" "}
               <Link
-                to="/signup"
+                to="/sign-up"
                 className="font-medium text-orange-600 hover:text-orange-800 hover:underline"
               >
                 Create Account

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link , useNavigate } from "react-router-dom";
 import { fetchProductDetails } from "./EStoreService";
 import { ToastContainer, toast } from "react-toastify";
 import { getUserByEmail } from "../PoojaBooking/getUserByEmail";
@@ -12,8 +12,9 @@ import TranscationSecurity from "../../Component/TranscationSecurity";
 
 const EStoreProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const currencySymbol = "₹";
-  const imgUrl = "http://34.131.10.8:3000/";
+  const imgUrl = "http://34.131.41.101:3000/";
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -26,6 +27,7 @@ const EStoreProductDetails = () => {
     const loadProduct = async () => {
       try {
         const data = await fetchProductDetails(id);
+        console.log("Product data:", data?.data);  // Properly log the object
         setProduct(data?.data || {});
       } catch (error) {
         console.error("Failed to load product", error);
@@ -36,7 +38,8 @@ const EStoreProductDetails = () => {
     };
     loadProduct();
   }, [id]);
-
+  
+  console.log(product);
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -52,7 +55,6 @@ const EStoreProductDetails = () => {
     };
     fetchUser();
   }, []);
-
   const handleAddToCart = async (e) => {
     e.preventDefault();
     if (!userData || !product) {
@@ -73,7 +75,7 @@ const EStoreProductDetails = () => {
 
     try {
       const response = await axios.post(
-        "http://34.131.10.8:3000/api/product/add-cart",
+        "http://34.131.41.101:3000/api/product/add-cart",
         cartData,
         {
           headers: {
@@ -83,7 +85,16 @@ const EStoreProductDetails = () => {
         }
       );
       if (response.status === 200) {
-        toast.success("Product added to cart successfully!");
+        toast.success("Product added to cart successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => setTimeout(() => navigate("/e-store/cart"), 100),
+        });
       } else {
         toast.error("Failed to add product to cart.");
       }

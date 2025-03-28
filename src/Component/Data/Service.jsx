@@ -140,7 +140,7 @@ const Service = () => {
               <motion.div
                 className={`bg-white rounded-2xl p-3 sm:p-4 border-2 ${
                   service.featured ? "border-orange-500" : "border-orange-300"
-                } w-2/3 aspect-square flex flex-col justify-center items-center relative overflow-hidden shadow-md`}
+                } w-2/3  aspect-square flex flex-col justify-center items-center relative overflow-hidden shadow-md`}
                 variants={cardVariants}
                 whileHover="hover"
                 animate={service.featured ? floatingAnimation : {}}

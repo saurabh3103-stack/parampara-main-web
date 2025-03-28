@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Calendar,
   ChevronRight,
@@ -13,27 +13,27 @@ import {
   Truck,
 } from "lucide-react";
 import { fetchPujaDetails } from './PoojaService';
-import TranscationSecurity from "../../Component/TranscationSecurity";
 import PoojaSamagri from "./poojaSamagri";
 import RelatedPooja from "./RelatedPooja";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
+import 'react-toastify/dist/ReactToastify.css';
+import { getUserByEmail } from './getUserByEmail.js';
 
 export default function PujaDetailContent({ id }) {
   const navigate = useNavigate();
-  const [pujaDetails, setPujaDetails] = useState([]);
+  const [pujaDetails, setPujaDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState("with-samagri");
   const [pujaDate, setPujaDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
-  const [productAmount, setProductAmount] = useState(null);
+  const [productAmount, setProductAmount] = useState(0);
   const [samagriStatus, setSamagriStatus] = useState(1);
-  const imgUrl = "http://34.131.10.8:3000";
-  const [userData, setUserData] = useState(null); // Assuming userData is fetched from context or API
-  const ApiUrl = "YOUR_API_URL"; // Replace with your actual API URL
-  const tokken = "YOUR_AUTH_TOKEN"; // Replace with your actual auth token
+  const imgUrl = "http://34.131.41.101:3000";
+  const [userData, setUserData] = useState(null);
+  const ApiUrl = "http://34.131.41.101:3000/api"; // Replace with your actual API URL
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8'; // Replace with your actual auth token
 
   useEffect(() => {
     async function loadPujaDetails() {
@@ -43,7 +43,7 @@ export default function PujaDetailContent({ id }) {
         setPujaDetails(data.data);
         setProductAmount(data.data.price_withSamagri);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setError(err instanceof Error ? err.message : "Failed to load puja details");
       } finally {
         setLoading(false);
@@ -51,7 +51,21 @@ export default function PujaDetailContent({ id }) {
     }
     loadPujaDetails();
   }, [id]);
+ useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      const { data, error } = await getUserByEmail();
 
+      if (data) {
+        setUserData(data);
+      } else {
+        setUserData(null);
+        setError(error || "No user data found.");
+      }
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
   const generateTimeOptions = () => {
     const times = [];
     const startHour = 4;
@@ -64,17 +78,13 @@ export default function PujaDetailContent({ id }) {
     }
     return times;
   };
-
   const timeOptions = generateTimeOptions();
   const today = new Date().toISOString().split("T")[0];
 
-  const handleAmountChange = (e) => {
-    setProductAmount(e.target.value);
-  };
-
   const handleSamagriChange = (e) => {
-    setSelectedPackage(e.target.value);
-    if (e.target.value === "with-samagri") {
+    const value = e.target.value;
+    setSelectedPackage(value);
+    if (value === "with-samagri") {
       setProductAmount(pujaDetails.price_withSamagri);
       setSamagriStatus(1);
     } else {
@@ -85,44 +95,57 @@ export default function PujaDetailContent({ id }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = {
-      user_id: formData.get('user_id'),
-      username: formData.get('username'),
-      userphone: formData.get('userphone'),
-      productType: formData.get('productType'),
-      product_id: formData.get('product_id'),
-      product_name: formData.get('product_name'),
+    
+    if (!pujaDate || !preferredTime) {
+      toast.error("Please select required fields: Puja date and preferred time.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
+    const formData = {
+      user_id: userData?._id || "default_user_id", // Provide a default if userData is null
+      username: userData?.username || "default_username",
+      userphone: userData?.mobile || "0000000000",
+      productType: "Pooja",
+      product_id: pujaDetails._id,
+      product_name: pujaDetails.pooja_name,
       product_amount: productAmount,
       isSamagri: samagriStatus,
-      quantity: formData.get('quantity'),
-      pooja_date: formData.get('pooja_date'),
-      pooja_time: formData.get('pooja_time'),
+      quantity: 1,
+      pooja_date: pujaDate,
+      pooja_time: preferredTime,
     };
 
     try {
-      const response = await axios.post(`${ApiUrl}/cart/addCart`, data, {
+      const response = await axios.post(`${ApiUrl}/cart/addCart`, formData, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: tokken,
+          Authorization: `Bearer ${token}`,
         },
       });
+      
       if (response.data.success) {
         toast.success("Item added to cart!", {
           position: "top-right",
-          autoClose: 3000,  
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          onClose: () => setTimeout(() => navigate("/e-store/cart")),
-
+          onClose: () => setTimeout(() => navigate("/cart"), 100),
         });
       } else {
-        toast.error("Failed to add item to cart.", {
+        toast.error(response.data.message || "Failed to add item to cart.", {
           position: "top-right",
-          autoClose: 3000,  // 3 seconds
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -132,15 +155,14 @@ export default function PujaDetailContent({ id }) {
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      toast.error("An error occurred while adding to cart.", {
+      toast.error(error.response?.data?.message || "An error occurred while adding to cart.", {
         position: "top-right",
-        autoClose: 3000,  // 3 seconds
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        
       });
     }
   };
@@ -171,47 +193,21 @@ export default function PujaDetailContent({ id }) {
     });
   };
 
-  const handleBookNow = () => {
-    if (!pujaDate || !preferredTime) {
-      toast.error("Please select required fields: Puja date and preferred time.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      return;
-    }
-
-    toast.success("Booking initiated. You will be redirected to complete your booking.", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-
-  if (loading) return null;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!pujaDetails) return <div>No puja details found</div>;
 
   return (
     <>
-      {/* Toast Container */}
       <ToastContainer />
 
       <nav className="flex items-center text-sm mb-6">
-        <Link href="/" className="flex items-center text-gray-500 hover:text-gray-700">
+        <Link to="/" className="flex items-center text-gray-500 hover:text-gray-700">
           <Home className="h-4 w-4 mr-1" />
           Home
         </Link>
         <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
-        <Link href="/puja" className="text-gray-500 hover:text-gray-700">
+        <Link to="/puja" className="text-gray-500 hover:text-gray-700">
           Puja
         </Link>
         <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
@@ -222,10 +218,9 @@ export default function PujaDetailContent({ id }) {
         <div className="bg-gray-50 rounded-lg overflow-hidden">
           <div className="relative aspect-square">
             <img
-              src={imgUrl + '' + pujaDetails.pooja_image}
+              src={`${imgUrl}${pujaDetails.pooja_image}`}
               alt={pujaDetails.pooja_name}
-              fill
-              className="object-cover"
+              className="object-cover w-full h-full"
             />
           </div>
         </div>
@@ -252,14 +247,16 @@ export default function PujaDetailContent({ id }) {
           </div>
 
           <div className="flex items-center gap-2 mb-6">
-            <span className="text-2xl font-bold">₹{pujaDetails.price_withoutSamagri.toLocaleString()}</span> -
-            <span className="text-2xl font-bold">₹{pujaDetails.price_withSamagri.toLocaleString()}</span>
+            <span className="text-2xl font-bold">₹{pujaDetails.price_withoutSamagri?.toLocaleString() || '0'}</span> -
+            <span className="text-2xl font-bold">₹{pujaDetails.price_withSamagri?.toLocaleString() || '0'}</span>
           </div>
+          
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm font-medium">{pujaDetails.short_discription}</span>
             </div>
           </div>
+          
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="h-3 w-3 rounded-full bg-green-500"></div>
@@ -280,14 +277,15 @@ export default function PujaDetailContent({ id }) {
                         name="package"
                         value="with-samagri"
                         checked={selectedPackage === "with-samagri"}
-                        onChange={(e) => handleSamagriChange(e)}
+                        onChange={handleSamagriChange}
                         className="form-radio h-4 w-4 text-blue-600"
+                        required
                       />
                       <label htmlFor="with-samagri" className="font-medium">
                         With Samagri
                       </label>
                     </div>
-                    <span className="font-semibold">₹{pujaDetails.price_withSamagri.toLocaleString()}</span>
+                    <span className="font-semibold">₹{pujaDetails.price_withSamagri?.toLocaleString() || '0'}</span>
                   </div>
                   <div className="flex items-center justify-between border p-3 rounded-md">
                     <div className="flex items-center space-x-2">
@@ -297,14 +295,14 @@ export default function PujaDetailContent({ id }) {
                         name="package"
                         value="without-samagri"
                         checked={selectedPackage === "without-samagri"}
-                        onChange={(e) => handleSamagriChange(e)}
+                        onChange={handleSamagriChange}
                         className="form-radio h-4 w-4 text-blue-600"
                       />
                       <label htmlFor="without-samagri" className="font-medium">
                         Without Samagri
                       </label>
                     </div>
-                    <span className="font-semibold">₹{pujaDetails.price_withoutSamagri.toLocaleString()}</span>
+                    <span className="font-semibold">₹{pujaDetails.price_withoutSamagri?.toLocaleString() || '0'}</span>
                   </div>
                 </div>
               </div>
@@ -319,10 +317,12 @@ export default function PujaDetailContent({ id }) {
                   <input
                     id="puja-date"
                     type="date"
+                    name="pooja_date"
                     min={today}
                     value={pujaDate}
                     onChange={(e) => setPujaDate(e.target.value)}
                     className="pl-10 w-full p-2 border rounded"
+                    required
                   />
                   <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -334,9 +334,11 @@ export default function PujaDetailContent({ id }) {
                 <div className="relative">
                   <select
                     id="preferred-time"
+                    name="pooja_time"
                     value={preferredTime}
                     onChange={(e) => setPreferredTime(e.target.value)}
                     className="pl-10 w-full p-2 border rounded"
+                    required
                   >
                     <option value="">--Choose Time--</option>
                     {timeOptions.map((time, index) => (
@@ -348,24 +350,10 @@ export default function PujaDetailContent({ id }) {
               </div>
             </div>
 
-            {userData && (
-              <>
-                <input type="hidden" name="user_id" value={userData._id} />
-                <input type="hidden" name="username" value={userData.username} />
-                <input type="hidden" name="userphone" value={userData.mobile} />
-                <input type="hidden" name="useremail" value={userData.email} />
-              </>
-            )}
-            <input type="hidden" name="productType" value="Puja" />
-            <input type="hidden" name="product_name" value={pujaDetails.pooja_name} />
-            <input type="hidden" name="quantity" value="1" />
-            <input type="hidden" name="product_id" value={pujaDetails._id} />
-
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <button
-                type="button"
+                type="submit"
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white p-2 rounded"
-                onClick={handleAddToCart}
               >
                 Add to Cart
               </button>
@@ -386,7 +374,7 @@ export default function PujaDetailContent({ id }) {
                 <div>
                   <p className="text-sm font-medium">Store Pickup:</p>
                   <p className="text-sm text-gray-600">Order now for pickup on Wed, Jul 7 at Noida Store.</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                  <Link to="#" className="text-sm text-blue-600 hover:underline">
                     Discover all pickup locations
                   </Link>
                 </div>
@@ -397,7 +385,7 @@ export default function PujaDetailContent({ id }) {
                 <div>
                   <p className="text-sm font-medium">Shipping & Delivery:</p>
                   <p className="text-sm text-gray-600">Available to your area from</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                  <Link to="#" className="text-sm text-blue-600 hover:underline">
                     Enter your location
                   </Link>
                 </div>
@@ -408,7 +396,7 @@ export default function PujaDetailContent({ id }) {
                 <div>
                   <p className="text-sm font-medium">Easy Return:</p>
                   <p className="text-sm text-gray-600">Return this item until Jul 22.</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
+                  <Link to="#" className="text-sm text-blue-600 hover:underline">
                     Learn more about Return Policy
                   </Link>
                 </div>
@@ -417,7 +405,7 @@ export default function PujaDetailContent({ id }) {
           </div>
 
           <div className="flex items-center justify-center text-sm text-gray-600 mb-6">
-            <img src="/image/trust-symbols_a.webp" className="img-fluid w-fullmax-w-full h-auto" alt="transcation" />
+            <img src="/image/trust-symbols_a.webp" className="img-fluid w-fullmax-w-full h-auto" alt="transaction" />
           </div>
         </div>
       </div>

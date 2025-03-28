@@ -27,7 +27,7 @@ const WishList = () => {
     
     const breadcrumbLinks = [
         { label: "Home", url: "/" },
-        { label: "User", url: "/user/profile" },
+        { label: "User", url: "/user/dashboard" },
         { label: "Wishlist & Saved Items", url: "javascript:void(0)" },
         { pagename: "Wishlist & Saved Items" },
     ];

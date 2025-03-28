@@ -1,7 +1,7 @@
 // api.js - API call handling
 import axios from "axios";
 
-const ApiUrl = "http://34.131.10.8:3000/api";
+const ApiUrl = "http://34.131.41.101:3000/api";
 const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
 const generatePaymentId = () => {
     return "NAMO" + new Date().toISOString().replace(/[-T:.Z]/g, "");
@@ -23,6 +23,28 @@ export const fetchBhajanByCategory = async (categoryId) => {
     }
 };
 
+export const fetchPoojaEssenceData = async () => {
+    try {
+      const response = await fetch('http://34.131.41.101:3000/api/product/get-all', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8',
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data; // Ensure the API returns an array of products
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+      throw error;
+    }
+  };
+
 export const fetchProductDetails = async (id) => {
     try{
         const url = `${ApiUrl}/product/product-details/${id}`;
@@ -30,6 +52,7 @@ export const fetchProductDetails = async (id) => {
             headers:{Authorization:token},
         });
         return response.data;
+        // return response.data;
     }
     catch(err){
         console.log("Error in finding Data",err);
@@ -123,7 +146,7 @@ export const submitOrder = async (formData) => {
         console.log("Submitting Order:", orderPayload);
 
         // Step 1: Submit Order
-        const orderResponse = await fetch('http://34.131.10.8:3000/api/e-store/create-order', {
+        const orderResponse = await fetch('http://34.131.41.101:3000/api/e-store/create-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -162,7 +185,7 @@ export const submitOrder = async (formData) => {
         };
 
         console.log("Submitting Address:", addressData);
-        const addressResponse = await fetch('http://34.131.10.8:3000/api/order/delivery-address', {
+        const addressResponse = await fetch('http://34.131.41.101:3000/api/order/delivery-address', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -179,7 +202,7 @@ export const submitOrder = async (formData) => {
         // Step 3: Clear Multiple Products from Cart
         console.log("Clearing Cart...");
         const deleteRequests = formData.products.map(async (product) => {
-            const cartClearResponse = await fetch(`http://34.131.10.8:3000/api/product/cart/${formData.userId}/${product.product_id}`, {
+            const cartClearResponse = await fetch(`http://34.131.41.101:3000/api/product/cart/${formData.userId}/${product.product_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

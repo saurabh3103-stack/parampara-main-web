@@ -1,7 +1,7 @@
 import React from "react";
 
 const CustomerReview = () => {
-    const imgUrl = 'http://34.131.10.8:5173/';
+    const imgUrl = 'http://localhost:5173/';
     return (
         <>
             <div>

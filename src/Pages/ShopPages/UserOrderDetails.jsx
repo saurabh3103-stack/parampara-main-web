@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { submitOrder, submitBhajanBooking } from './OrderPlace';
 import { useNavigate, Link } from 'react-router-dom';
@@ -7,11 +7,13 @@ import { ArrowLeft, Gift, MapPin, CreditCard, NotebookIcon as Lotus, Info, Calen
 
 const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
   const navigate = useNavigate();
-  const cartUserData = JSON.stringify(cartItems, null, 2);
+  const mapRef = useRef(null);
   const userEmail = localStorage.getItem("userEmail");
   const [isTermsChecked, setIsTermsChecked] = useState(false);
   const [isOffersChecked, setIsOffersChecked] = useState(false);
-  console.log(cartItems['0']);
+  const [mapLoading, setMapLoading] = useState(false);
+  const [addressLoading, setAddressLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     cartId: cartItems[0]?._id,
     userId: cartItems[0]?.user_id || "",
@@ -36,6 +38,16 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
     latitude: "",
     longitude: "",
   });
+
+  const [showMap, setShowMap] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: "AIzaSyDsvrX6D9H25sj_3k3ZVcaOVy2F0L3TodY",
+    libraries: ["places", "geocoding"]
+  });
+
   useEffect(() => {
     if (cartItems.length > 0) {
       setFormData((prev) => ({
@@ -54,14 +66,8 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
         time: cartItems[0]?.pooja_time || "",
       }));
     }
-  }, [cartItems]); 
+  }, [cartItems]);
 
-  const [showMap, setShowMap] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyCiLRwm29ghwbDc1MrJ9svjNDg-NmQFx5A", // Replace with your API key
-  });
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -73,137 +79,163 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let response;
+    
     if (formData.poojaType === "Pooja") {
       response = await submitOrder(formData);
-      console.log("Pooja Response:", response); // Debugging
-      if (response && response.orderData && response.orderData.poojaBooking) {
-        toast.success("Order place successfully!");
+      if (response?.orderData?.poojaBooking) {
+        toast.success("Order placed successfully!");
         navigate("/order-preview/" + response.orderData.poojaBooking.bookingId);
       } else {
         toast.error("Failed to submit order. Please try again.");
       }
     } else if (formData.poojaType === "Bhajan Mandali") {
       response = await submitBhajanBooking(formData);
-      console.log("Bhajan Response:", response); // Debugging
-      if (response && response.orderData && response.orderData.bhajanbooking) {
+      if (response?.orderData?.bhajanbooking) {
         toast.success("Order submitted successfully!");
-        // navigate("/order-preview/" + response.orderData.bhajanbooking.bookingId);
+        navigate("/order-preview/" + response.orderData.bhajanbooking.bookingId);
       } else {
         toast.error("Failed to submit order. Please try again.");
       }
     } else {
       toast.error("Invalid Pooja Type!");
-      return;
     }
   };
 
   const handleMapClick = async (e) => {
     const { lat, lng } = e.latLng.toJSON();
-    setSelectedLocation({ lat, lng });
-    setFormData((prevState) => ({
-      ...prevState,
-      latitude: lat,
-      longitude: lng,
-    }));
-    setShowMap(false);
-
-    // Reverse geocode the selected location to fill in the address fields
-    const address = await getAddressFromLatLng(lat, lng);
-    if (address) {
-      setFormData((prevState) => ({
-        ...prevState,
-        streetAddress: address.street,
-        aptSuite: address.suite,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zip,
-        country: address.country,
-      }));
-    }
+    await updateLocation(lat, lng);
   };
 
   const handleMarkerDragEnd = async (e) => {
-    const { latLng } = e;
-    const lat = latLng.lat();
-    const lng = latLng.lng();
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
+    await updateLocation(lat, lng);
+  };
+
+  const updateLocation = async (lat, lng) => {
     setSelectedLocation({ lat, lng });
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData(prev => ({
+      ...prev,
       latitude: lat,
       longitude: lng,
     }));
 
-    // Reverse geocode the dragged marker location
-    const address = await getAddressFromLatLng(lat, lng);
-    if (address) {
-      setFormData((prevState) => ({
-        ...prevState,
-        streetAddress: address.street,
-        aptSuite: address.suite,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zip,
-        country: address.country,
-      }));
+    try {
+      setAddressLoading(true);
+      const address = await getAddressFromLatLng(lat, lng);
+      if (address) {
+        setFormData(prev => ({
+          ...prev,
+          streetAddress: address.street,
+          aptSuite: address.suite,
+          city: address.city,
+          state: address.state,
+          zipCode: address.zip,
+          country: address.country,
+        }));
+      }
+    } catch (error) {
+      toast.error("Could not fetch address details");
+    } finally {
+      setAddressLoading(false);
     }
   };
 
-  // Get address from latitude and longitude using Google Maps Geocoding API
   const getAddressFromLatLng = async (lat, lng) => {
-    const geocoder = new window.google.maps.Geocoder();
-    const latLng = new window.google.maps.LatLng(lat, lng);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+      if (!window.google) return resolve(null);
+      
+      const geocoder = new window.google.maps.Geocoder();
+      const latLng = new window.google.maps.LatLng(lat, lng);
+      
       geocoder.geocode({ location: latLng }, (results, status) => {
         if (status === "OK" && results[0]) {
-          const addressComponents = results[0].address_components;
-          const address = {
-            street: "",
-            suite: "",
-            city: "",
-            state: "",
-            zip: "",
-            country: "",
-          };
-          // Extract address components
-          addressComponents.forEach((component) => {
-            if (component.types.includes("street_number") || component.types.includes("route")) {
-              address.street += component.long_name + " ";
-            }
-            if (component.types.includes("sublocality_level_1") || component.types.includes("locality")) {
-              address.city = component.long_name;
-            }
-            if (component.types.includes("administrative_area_level_1")) {
-              address.state = component.long_name;
-            }
-            if (component.types.includes("postal_code")) {
-              address.zip = component.long_name;
-            }
-            if (component.types.includes("country")) {
-              address.country = component.long_name;
-            }
-          });
+          const address = parseAddressComponents(results[0].address_components);
           resolve(address);
         } else {
-          reject("Unable to retrieve address.");
+          resolve(null);
         }
       });
     });
   };
 
-  useEffect(() => {
+  const parseAddressComponents = (components) => {
+    const address = {
+      street: "",
+      suite: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+    };
+
+    components.forEach(component => {
+      if (component.types.includes("street_number")) {
+        address.street = component.long_name;
+      }
+      if (component.types.includes("route")) {
+        address.street += ` ${component.long_name}`;
+      }
+      if (component.types.includes("sublocality")) {
+        address.suite = component.long_name;
+      }
+      if (component.types.includes("locality")) {
+        address.city = component.long_name;
+      }
+      if (component.types.includes("administrative_area_level_1")) {
+        address.state = component.long_name;
+      }
+      if (component.types.includes("postal_code")) {
+        address.zip = component.long_name;
+      }
+      if (component.types.includes("country")) {
+        address.country = component.long_name;
+      }
+    });
+
+    return address;
+  };
+
+  const handleGetCurrentLocation = () => {
+    setMapLoading(true);
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation({ lat: latitude, lng: longitude });
-        setSelectedLocation({ lat: latitude, lng: longitude });
-      });
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation({ lat: latitude, lng: longitude });
+          setSelectedLocation({ lat: latitude, lng: longitude });
+          await updateLocation(latitude, longitude);
+          setMapLoading(false);
+        },
+        (error) => {
+          toast.error("Could not get your location. Please enable location services.");
+          setMapLoading(false);
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser");
+      setMapLoading(false);
     }
-  }, []);
+  };
+
+  const toggleMap = () => {
+    if (!showMap && !selectedLocation) {
+      handleGetCurrentLocation();
+    }
+    setShowMap(!showMap);
+  };
+
+  const onMapLoad = (map) => {
+    mapRef.current = map;
+    if (selectedLocation) {
+      map.panTo(selectedLocation);
+    }
+  };
 
   return (
     <>
       <ToastContainer />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} method="post">
         {/* Customer Details */}
         <div className="mb-6 border border-orange-200 rounded-lg shadow-sm">
           <div className="bg-orange-50 border-b border-orange-100 p-4">
@@ -234,8 +266,8 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
                   Phone <span className="text-red-500">*</span>
                 </label>
                 <input
-                  id="phone"
-                  name="phone"
+                  id="contactNumber"
+                  name="contactNumber"
                   value={formData.contactNumber}
                   onChange={handleChange}
                   className="w-full border border-orange-200 rounded-md p-2 focus:border-orange-400"
@@ -287,37 +319,68 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
                   name="aptSuite"
                   value={formData.aptSuite}
                   onChange={handleChange}
-                  onClick={() => setShowMap(true)} // Show map when input is clicked
                   className="w-full border border-orange-200 rounded-md p-2 focus:border-orange-400 pr-10"
                   required
                 />
-                {/* Map Pin Icon Button */}
                 <button
                   type="button"
-                  onClick={() => setShowMap(!showMap)} // Toggle map visibility
+                  onClick={toggleMap}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                  disabled={mapLoading}
                 >
-                  <MapPin className="h-5 w-5 text-orange-600" />
+                  {mapLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
+                  ) : (
+                    <MapPin className="h-5 w-5 text-orange-600" />
+                  )}
                 </button>
               </div>
             </div>
 
             {showMap && isLoaded && (
-              <div className="mt-4">
-                <GoogleMap
-                  mapContainerStyle={{ height: "300px", width: "100%" }}
-                  zoom={15}
-                  center={currentLocation || { lat: 0, lng: 0 }}
-                  onClick={handleMapClick}
-                >
-                  {selectedLocation && (
-                    <Marker
-                      position={selectedLocation}
-                      draggable={true}
-                      onDragEnd={handleMarkerDragEnd}
-                    />
-                  )}
-                </GoogleMap>
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-orange-600">
+                    {selectedLocation ? 
+                      "Click on the map or drag the marker to update location" : 
+                      "Getting your current location..."}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleGetCurrentLocation}
+                    className="text-sm text-orange-600 hover:text-orange-800 flex items-center"
+                    disabled={mapLoading}
+                  >
+                    {mapLoading ? "Locating..." : "Use Current Location"}
+                  </button>
+                </div>
+                
+                <div className="relative h-64 md:h-80 w-full rounded-lg overflow-hidden border border-orange-200">
+                  <GoogleMap
+                    mapContainerStyle={{ height: "100%", width: "100%" }}
+                    zoom={15}
+                    center={selectedLocation || { lat: 0, lng: 0 }}
+                    onClick={handleMapClick}
+                    onLoad={onMapLoad}
+                    options={{
+                      streetViewControl: false,
+                      mapTypeControl: false,
+                      fullscreenControl: false
+                    }}
+                  >
+                    {selectedLocation && (
+                      <Marker
+                        position={selectedLocation}
+                        draggable={true}
+                        onDragEnd={handleMarkerDragEnd}
+                        icon={{
+                          url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                          scaledSize: new window.google.maps.Size(32, 32)
+                        }}
+                      />
+                    )}
+                  </GoogleMap>
+                </div>
               </div>
             )}
 
@@ -408,11 +471,11 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
           <div className="p-6">
             <div className="space-y-2">
               <textarea
-                id="specialNotes"
-                name="specialNotes"
-                value={formData.specialNotes}
+                id="specialNote"
+                name="specialNote"
+                value={formData.specialNote}
                 onChange={handleChange}
-                className="w-full form-control border-orange-200 focus:border-orange-400 min-h-[100px]"
+                className="w-full border border-orange-200 rounded-md p-2 focus:border-orange-400 min-h-[100px]"
                 placeholder="Any special requirements for your pooja..."
               />
             </div>
@@ -420,7 +483,7 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
         </div>
 
         {/* Terms and Conditions */}
-        <div className="mb-6 border-orange-200 shadow-sm">
+        <div className="mb-6">
           <div className="p-6 space-y-4">
             <div className="flex items-center space-x-2">
               <input
@@ -428,7 +491,8 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
                 id="terms"
                 checked={isTermsChecked}
                 onChange={(e) => setIsTermsChecked(e.target.checked)}
-                className="text-orange-600 border-orange-300"
+                className="text-orange-600 border-orange-300 rounded"
+                required
               />
               <label htmlFor="terms" className="text-sm cursor-pointer">
                 I agree to the{" "}
@@ -444,7 +508,7 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
                 id="offers"
                 checked={isOffersChecked}
                 onChange={(e) => setIsOffersChecked(e.target.checked)}
-                className="text-orange-600 border-orange-300"
+                className="text-orange-600 border-orange-300 rounded"
               />
               <label htmlFor="offers" className="text-sm cursor-pointer">
                 I would like to receive offers and updates
@@ -456,10 +520,14 @@ const UserOrderDetails = ({ cartItems = [], currencySymbol }) => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 text-lg"
-          disabled={!isTermsChecked}
+          className={`w-full py-3 text-lg rounded-md font-medium ${
+            isTermsChecked 
+              ? "bg-orange-600 hover:bg-orange-700 text-white" 
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
+          disabled={!isTermsChecked || addressLoading}
         >
-          Place Order
+          {addressLoading ? "Processing..." : "Place Order"}
         </button>
       </form>
     </>

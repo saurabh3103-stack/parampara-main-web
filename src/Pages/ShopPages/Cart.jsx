@@ -21,7 +21,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currencySymbol = "₹";
-  const imgUrl = "http://34.131.10.8:3000";
+  const imgUrl = "http://34.131.41.101:3000";
 
   // Fetch cart data
   const fetchData = async () => {

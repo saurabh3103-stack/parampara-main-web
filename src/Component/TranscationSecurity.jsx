@@ -26,7 +26,7 @@ const TranscationSecurity = () => {
                     </div>
                 </div>
             </div>
-            <img src="http://34.131.10.8:5173/image/trust-symbols_a.webp" className="img-fluid w-fullmax-w-full h-auto" alt="transcation"/>                        
+            <img src="http://localhost:5173/image/trust-symbols_a.webp" className="img-fluid w-fullmax-w-full h-auto" alt="transcation"/>                        
             <div>
                 <p className="text-xs">
                     <span><i className="fas fa-lock"></i></span> This is the secure transaction.

@@ -60,12 +60,12 @@ const Authentication = () => {
                             userData && userData.username ? (
                                 <ul>
                                     <li>
-                                        <Link className="nk-account-link" to={'/user/profile'}>
+                                        <Link className="nk-account-link" to={'/user/dashboard'}>
                                             <span className="nk-account-link-span">Hi, {userData.username}</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link className="nk-account-a" to={'/user/edit'}>
+                                        <Link className="nk-account-a" to={'/user/profile'}>
                                             <span className="nk-account-pl"><i className="fas fa-user"></i></span>
                                             <span>Account Setting</span>
                                         </Link>
@@ -73,7 +73,7 @@ const Authentication = () => {
                                             <span className="nk-account-pl"><i className="fas fa-shopping-bag"></i></span>
                                             <span>Orders & Purchase</span>
                                         </Link>
-                                        <Link className="nk-account-a" to={'/user/profile'}>
+                                        <Link className="nk-account-a" to={'/user/dashboard'}>
                                             <span className="nk-account-pl"><i className="fas fa-truck"></i></span>
                                             <span>Track Order</span>
                                         </Link>

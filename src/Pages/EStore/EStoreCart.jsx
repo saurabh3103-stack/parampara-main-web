@@ -13,7 +13,7 @@ const EStoreCart = () => {
   const [promoCode, setPromoCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const currencySymbol = "₹";
-  const imgUrl = "http://34.131.10.8:3000/";
+  const imgUrl = "http://34.131.41.101:3000/";
 
   // Fetch cart data
   const fetchData = async () => {
@@ -55,7 +55,7 @@ const EStoreCart = () => {
   // Handle checkout
   const handleCheckout = () => {
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call or any processing
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Proceed to checkout!", {
@@ -66,14 +66,13 @@ const EStoreCart = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        onClose: () => navigate("/e-store/check-out"),
+        onClose: () => navigate("/e-store/check-out"), // Navigate after toast closes
       });
     }, 1000);
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Toast Container */}
       <ToastContainer />
 
       {/* Special Offers Banner */}
@@ -276,6 +275,7 @@ const EStoreCart = () => {
                   <button
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded"
                     onClick={handleCheckout}
+                    type="submit"
                     disabled={cartItems.length === 0 || isLoading}
                   >
                     {isLoading ? "Processing..." : "Proceed to Checkout"}

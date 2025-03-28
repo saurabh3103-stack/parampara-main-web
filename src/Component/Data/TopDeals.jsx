@@ -1,709 +1,149 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-const TopDeals = () =>{
-    const titleVariants = {
-        hidden: { opacity: 0, y: -20 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.6,
-            ease: "easeOut",
-          },
-        },
+import 'swiper/swiper-bundle.css'; // Import Swiper styles
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+
+import { fetchPoojaEssenceData } from '../../Pages/EStore/EStoreService';
+
+const TopDeals = () => {
+  const [essence, setEssence] = useState([]);
+  const imgUrl = "http://34.131.41.101:3000/"; // Base URL for images
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchPoojaEssenceData();
+        console.log("Fetched Data:", data); // Debugging: Check fetched data
+        if (Array.isArray(data.data)) { // Ensure data is an array
+          setEssence(data.data);
+        } else {
+          console.error("Fetched data is not an array:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching pooja essence data:", error);
       }
-    return(
-        <>
-            <section className="bg-white px-5 rashi_wrapper" id="zodiac_Sign" >
-                <div className="mx-auto w-full py-3 px-4 text-sm md:px-6 xl:max-w-7xl xl:px-4">
-                <div class="justify-center sm:justify-between md:flex-row md:items-center">
-                <motion.div className="text-center mb-12" initial="hidden" animate="visible" variants={titleVariants}>
-            <div className="inline-block mb-3">
-                <span className="block h-1.5 w-12 bg-orange-500 rounded-full mb-1.5 mx-auto"></span>
-                <span className="block h-1.5 w-24 bg-orange-500 rounded-full"></span>
-            </div>
-            <h2 className="text-4xl font-bold text-gray-800 mb-2">Top Deals
-            </h2>
-            <p className="max-w-2xl mx-auto mt-4 text-gray-600">
-            Explore our wide range of spiritual services designed to meet all your devotional needs
-            </p>
-            </motion.div>
-            </div>
-                    <Swiper 
-                        autoplay={{ delay: 2500, disableOnInteraction: true, }}
-                        spaceBetween={50}
-                        slidesPerView={5}
-                        onSlideChange={() => console.log('slide change')}onSwiper={(swiper) => console.log(swiper)}>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
+    };
 
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                                <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                    <img
-                                    class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                    src="assets/img/products/fashion/women/2.jpg"
-                                    alt="Item 1"
-                                    />
-                                    <div
-                                    class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                    >
-                                    <div
-                                        class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                    >
-                                        <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                        <a href="account-wishlist.html">
-                                            <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                            <i class="far fa-heart"></i>
-                                            </span>
-                                        </a>
-                                        <div
-                                            data-modal-toggle="nk-modal-quick-view"
-                                            class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                        >
-                                            <i class="fa-regular fa-eye"></i>
-                                        </div>
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
+console.log(essence);
+    const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
-                                        <a href="compare-items.html"
-                                            ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                            <i class="fas fa-exchange-alt"></i></span
-                                        ></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="xs:text-sm text-left text-xs">
-                                    <div class="space-y-1">
-                                        <div class="mt-2">
-                                        <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                            <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                        </h5>
-                                        </div>
-                                        <div class="font-semibold">
-                                        <span class="text-lg text-gray-900">$199</span>
-                                        <span class="text-xs text-gray-400 line-through">$299</span>
-                                        </div>
-                                        <div>
-                                        <a
-                                            class="flex items-center justify-between"
-                                            href="shop-product.html#customers-rating-reviews"
-                                        >
-                                            <span class="text-yellow-400">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            </span>
-                                            <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                        </a>
-                                        </div>
-                                        <div class="text-xs font-semibold text-green-500">
-                                        <p>Get it in 2 days</p>
-                                        </div>
-                                        <div>
-                                        <p>
-                                            <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                            <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                            >Elkhart, IN</span
-                                            >
-                                        </p>
-                                        </div>
-                                        <div class="py-1">
-                                        <a href="cart.html"
-                                            ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                        </a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <div class="group rounded border-gray-400 pb-0 lg:pb-3">
-                            <div class="relative w-full cursor-pointer lg:h-[16.25rem]">
-                                <img
-                                class="mx-auto my-auto h-full w-full object-contain text-xs"
-                                src="assets/img/products/fashion/women/2.jpg"
-                                alt="Item 1"
-                                />
-                                <div
-                                class="bg-primary/30 absolute inset-0 opacity-0 backdrop-blur-sm backdrop-filter transition duration-300 ease-in-out group-hover:opacity-100"
-                                >
-                                <div
-                                    class="my-auto mx-auto flex h-full w-full flex-col items-center justify-center space-y-3 px-3"
-                                >
-                                    <div class="flex flex-row items-center justify-center space-x-2 px-2 text-center">
-                                    <a href="account-wishlist.html">
-                                        <span class="hover:bg-primary inline-block h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="far fa-heart"></i>
-                                        </span>
-                                    </a>
-                                    <div
-                                        data-modal-toggle="nk-modal-quick-view"
-                                        class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </div>
-
-                                    <a href="compare-items.html"
-                                        ><span class="hover:bg-primary h-10 w-10 bg-white p-2 hover:text-gray-50">
-                                        <i class="fas fa-exchange-alt"></i></span
-                                    ></a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="xs:text-sm text-left text-xs">
-                                <div class="space-y-1">
-                                    <div class="mt-2">
-                                    <h5 class="line-clamp-1 mb-0 cursor-pointer font-normal text-blue-700 hover:underline">
-                                        <a href="shop-product.html">Long multi-color dress event fashion</a>
-                                    </h5>
-                                    </div>
-                                    <div class="font-semibold">
-                                    <span class="text-lg text-gray-900">$199</span>
-                                    <span class="text-xs text-gray-400 line-through">$299</span>
-                                    </div>
-                                    <div>
-                                    <a
-                                        class="flex items-center justify-between"
-                                        href="shop-product.html#customers-rating-reviews"
-                                    >
-                                        <span class="text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="text-xs text-blue-700 hover:underline">(12)</span>
-                                    </a>
-                                    </div>
-                                    <div class="text-xs font-semibold text-green-500">
-                                    <p>Get it in 2 days</p>
-                                    </div>
-                                    <div>
-                                    <p>
-                                        <span class="font-semibold">Shipping:</span> Free Shipping in 2 Days to
-                                        <span class="cursor-pointer font-semibold text-blue-900 hover:underline"
-                                        >Elkhart, IN</span
-                                        >
-                                    </p>
-                                    </div>
-                                    <div class="py-1">
-                                    <a href="cart.html"
-                                        ><span class="btn btn-bg-slide btn-full inline-block text-center">Add to Cart</span>
-                                    </a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        </SwiperSlide>
-                    </Swiper>
-                </div>
-            </section>  
-        </>
+    return (
+      <>
+        {[...Array(fullStars)].map((_, i) => <FaStar key={i} className="text-yellow-400" />)}
+        {halfStar && <FaStarHalfAlt className="text-yellow-400" />}
+        {[...Array(emptyStars)].map((_, i) => <FaRegStar key={i} className="text-yellow-400" />)}
+      </>
     );
-}
+  };
+
+  const titleVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  return (
+    <section className="bg-white px-5 rashi_wrapper mt-2" id="pooja_essence">
+      <div className="container mx-auto px-12">
+        <div className="heading_wrapper" style={{ marginBottom: "40px" }}>
+          <motion.div className="text-center mb-12" initial="hidden" animate="visible" variants={titleVariants}>
+            <div className="inline-block mb-3">
+              <span className="block h-1.5 w-12 bg-orange-500 rounded-full mb-1.5 mx-auto"></span>
+              <span className="block h-1.5 w-24 bg-orange-500 rounded-full"></span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-2">Top Deals</h2>
+            <p className="max-w-2xl mx-auto mt-4 text-gray-600">
+              Discover the essence of our spiritual services designed to enhance your devotional experience.
+            </p>
+          </motion.div>
+        </div>
+
+        <Swiper
+          spaceBetween={30}
+          slidesPerView={4}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            320: {
+              slidesPerView: 1,
+              spaceBetween: 10,
+            },
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            768: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+            1024: {
+              slidesPerView: 4,
+              spaceBetween: 40,
+            },
+          }}
+        >
+          {Array.isArray(essence) && essence.length > 0 ? (
+            essence.map((item, index) => {
+              const words = item.name ? item.name.split(" ") : []; 
+              return (
+                <SwiperSlide key={index}>
+                  <Link to={`/e-store/product/${item.slug}`} className="block"> 
+                    <div className="rashi_sign_box bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300"
+                      style={{ borderRadius: "20px", border: "1px #ff7e00 solid" }}>
+
+                      {/* Image Section */}
+                      <div className="sign_box_img flex justify-center">
+                        <img
+                          src={imgUrl + item.featuredImage} 
+                          alt={item.name || "Pooja Essence"}
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="sign_box_cont text-center p-1">
+                        <h4 className="text-xl font-semibold mb-2 mb-1">
+                          {words.length > 4 ? `${words.slice(0, 2).join(" ")}` : item.name}
+                        </h4>
+
+                        <div className="flex justify-center items-center gap-1 mt-2">
+                          {renderStars(item.rating || 4.2)}
+                        </div>
+
+                        <p className="text-gray-600 mb-1">Price: ₹{item.sellingPrice}</p> {/* Use `sellingPrice` */}
+                      <p className="text-gray-600 mb-1">Category: {item.category}</p> {/* Use `category` */}
+
+                        <Link
+                          to={`/e-store/product/${item.slug}`}
+                          className="inline-block bg-[#ff7e00] text-white px-6 py-2 rounded-lg uppercase hover:bg-[#e66a00] transition-colors duration-300"
+                        >
+                          View
+                        </Link>
+                      </div>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              );
+            })
+          ) : (
+            <p className="text-center text-gray-600">No Pooja Essence data available.</p>
+          )}
+        </Swiper>
+      </div>
+    </section>
+  );
+};
 
 export default TopDeals;

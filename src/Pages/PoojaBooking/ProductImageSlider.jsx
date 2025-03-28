@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 const ProductImageGallery = ({slider}) => {
-  const IMGURL="http://34.131.10.8:3000";
+  const IMGURL="http://34.131.41.101:3000";
   const image= slider ;
   // const images = [
-  //   "http://34.131.10.8:5173/assets/img/products/fashion/women/18.jpg",
-  //   "http://34.131.10.8:5173/assets/img/products/fashion/women/19.jpg",
-  //   "http://34.131.10.8:5173/assets/img/products/fashion/women/20.jpg",
+  //   "http://localhost:5173/assets/img/products/fashion/women/18.jpg",
+  //   "http://localhost:5173/assets/img/products/fashion/women/19.jpg",
+  //   "http://localhost:5173/assets/img/products/fashion/women/20.jpg",
   // ];
 
   // const [currentImage, setCurrentImage] = useState(images[0]);

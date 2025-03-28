@@ -27,8 +27,8 @@ export default function PoojaBooking() {
   const [error, setError] = useState(null);
   const isMobile = useMobile();
   const currencySymbol = "₹";
-  const imgUrl = "http://34.131.10.8:3000";
-  const ApiUrl = "http://34.131.10.8:3000/api";
+  const imgUrl = "http://34.131.41.101:3000";
+  const ApiUrl = "http://34.131.41.101:3000/api";
   const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
   useEffect(() => {
     const fetchCategories = async () => {

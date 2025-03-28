@@ -1,5 +1,6 @@
 import React from 'react';
 import NabMenu from './NavMenu';
+import {Link} from 'react-router-dom';
 import "./globals.css";
 import { PhoneCall, Mail, MessageCircle, ShoppingCart, User, Heart } from "lucide-react";
 
@@ -34,7 +35,7 @@ const Navbar = () => {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <img
-              src="/image/logo/logo1.png"
+              src="/image/logo/final-logo.png"
               alt="Dial4Iyer Logo"
               width={300}
               height={80}
@@ -52,28 +53,28 @@ const Navbar = () => {
             </div>
             <div className="flex space-x-4">
               {/* Book Pooja Button */}
-              <button className="bg-[#FF6B00] hover:bg-[#e05f00] text-white px-4 py-2 rounded-lg lg:text-lg md:text-lg sm:text-base transition-transform transform hover:scale-105">
+              <Link to={'/pooja'} className="bg-[#FF6B00] hover:bg-[#e05f00] text-white px-4 py-2 rounded-lg lg:text-lg md:text-lg sm:text-base transition-transform transform hover:scale-105">
                 <span className="mr-1">★</span> Book Pooja
-              </button>
+              </Link>
               {/* Book Mandali Button */}
-              <button className="bg-[#8B1914] hover:bg-[#761410] text-white px-4 py-2 rounded-lg lg:text-lg md:text-lg sm:text-base transition-transform transform hover:scale-105">
+              <Link to={'/bhajan-mandal'} className="bg-[#8B1914] hover:bg-[#761410] text-white px-4 py-2 rounded-lg lg:text-lg md:text-lg sm:text-base transition-transform transform hover:scale-105">
                 <span className="mr-1">★</span> Book Mandali
-              </button>
+              </Link>
               {/* Profile Button with Enhanced Animation */}
-              <button className="relative rounded-lg flex items-center transition-transform transform hover:scale-110 group">
+              <Link to={'user/dashboard'} className="relative rounded-lg flex items-center transition-transform transform hover:scale-110 group">
                 <User size={20} className="text-[#8B1914] group-hover:text-[#761410] transition-colors duration-300" />
-              </button>
+              </Link>
               {/* Wishlist Button with Enhanced Animation */}
               <button className="relative rounded-lg flex items-center transition-transform transform hover:scale-110 group">
                 <Heart size={20} className="text-[#8B1914] group-hover:text-[#761410] transition-colors duration-300" />
               </button>
               {/* Cart Button with Enhanced Animation */}
-              <button className="relative rounded-lg flex items-center transition-transform transform hover:scale-110 group">
+              <Link to={'/cart'}className="relative rounded-lg flex items-center transition-transform transform hover:scale-110 group">
                 <ShoppingCart size={20} className="text-[#8B1914] group-hover:text-[#761410] transition-colors duration-300" />
                 <span className="absolute -top-2 -right-2 bg-[#FF6B00] text-white text-xs rounded-full px-1.5 py-0.5 group-hover:bg-[#e05f00] transition-colors duration-300">
                   5
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
