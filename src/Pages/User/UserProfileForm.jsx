@@ -97,7 +97,7 @@ const UserProfileForm = ({
       </div>
     );
   };
-  const imgURL = 'http://34.131.41.101:3000/'
+  const imgURL = 'http://localhost:3000/'
 
   return (
     <div className="bg-white rounded-xl border border-orange-200 shadow-md overflow-hidden">

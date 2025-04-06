@@ -360,8 +360,8 @@ const NavMenu = () => {
 
   return (
     <>
-      {/* Desktop Menu */}
-      <div className="bg-gradient-to-r from-[#FF6B00] to-[#FF9248] text-white hidden md:block">
+      {/* Desktop Menu - Show only on large screens (lg and up) */}
+      <div className="bg-gradient-to-r from-[#FF6B00] to-[#FF9248] text-white hidden lg:block">
         <div className="container mx-auto">
           <nav className="flex justify-between items-center font-semibold">
             <div className="flex">
@@ -424,15 +424,28 @@ const NavMenu = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className="bg-[#FF6B00] md:hidden">
-        <MobileMenu
-          isLoggedIn={isLoggedIn}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-          poojaName={poojaName}
-          bhajanName={bhajanName}
-        />
+      {/* Mobile/Tablet Header - Show on medium (md) and small screens */}
+      <div className="bg-[#FF6B00] lg:hidden">
+        <div className="container mx-auto flex justify-between items-center py-3 px-4">
+          {/* Book Pooja Button on Left */}
+          <Link 
+            to="/pooja" 
+            className="bg-white text-[#FF6B00] px-4 py-2 rounded-lg font-medium flex items-center"
+          >
+            <span className="mr-1">★</span> Book Pooja
+          </Link>
+          
+          {/* Menu Toggle Button on Right */}
+          <div className="flex items-center">
+            <MobileMenu
+              isLoggedIn={isLoggedIn}
+              onLogin={handleLogin}
+              onLogout={handleLogout}
+              poojaName={poojaName}
+              bhajanName={bhajanName}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

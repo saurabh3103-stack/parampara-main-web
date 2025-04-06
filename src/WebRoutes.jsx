@@ -29,8 +29,10 @@ import EStoreCart from "./Pages/EStore/EStoreCart";
 import EStoreCheckOut from "./Pages/EStore/EStoreCheckOut";
 import EStoreOrderPreview from "./Pages/EStore/EStoreOrderPreview";
 import EStoreOrderReceipt from "./Pages/EStore/EStoreOrderReceipt";
-import PartnerRegistration from "./Pages/PartnerRegistration/PartnerRegistration";
 import BhavyaAyojan from "./Pages/BhavyaAyojan/BhavyaAyojan";
+import AboutUs from "./Pages/About/AboutUs";
+import PartnerRegistration from "./Pages/PartnerRegistration/PartnerRegistration";
+import Horoscope from "./Pages/Horoscope/Horoscope";
 
 const WebRoutes = () => {
   
@@ -62,6 +64,7 @@ const WebRoutes = () => {
           <Route path="/e-store/order-receipt/:id" element={<EStoreOrderReceipt/>}/>
           <Route path="/location" element={<LocationFetcher/>}/>
           <Route path="/partner-register" element={<PartnerRegistration/>}/>
+          <Route path="/horoscope" element={<Horoscope/>}/>
           {/* Check notifiction */}
           {/* <Route path="/notification" element={<CheckNotificationofSocket/>}/> */}
           <Route path="/accordian" element={<Accordion/>}/>
@@ -69,6 +72,7 @@ const WebRoutes = () => {
           <Route path="/bhajan-mandal/:slug_url"element={<SingleBhajanMandal/>}/>
           <Route path="/brahman-bhoj" element={<BrahmanBhoj/>}/>
           <Route path="/contact-us" element={<ContactUs/>}/>
+          <Route path="/about-us" element={<AboutUs/>}/>
         </Routes>
         </>
     );

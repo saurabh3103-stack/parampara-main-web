@@ -14,7 +14,7 @@ const EStoreProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const currencySymbol = "₹";
-  const imgUrl = "http://34.131.41.101:3000/";
+  const imgUrl = "http://localhost:3000/";
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -75,7 +75,7 @@ const EStoreProductDetails = () => {
 
     try {
       const response = await axios.post(
-        "http://34.131.41.101:3000/api/product/add-cart",
+        "http://localhost:3000/api/product/add-cart",
         cartData,
         {
           headers: {

@@ -22,7 +22,7 @@ const UserSetting = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const imgURL = 'http://34.131.41.101:3000/'
+  const imgURL = 'http://localhost:3000/'
   const breadcrumbLinks = [
     { label: "Home", url: "/" },
     { label: "User", url: "/user/dashboard" },
@@ -145,7 +145,7 @@ const UserSetting = () => {
         }
       });
   
-      const response = await fetch(`http://34.131.41.101:3000/api/user/update-user/${userData._id}`, {
+      const response = await fetch(`http://localhost:3000/api/user/update-user/${userData._id}`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -173,7 +173,7 @@ const UserSetting = () => {
       
       // Update image preview
       if (updatedUser.image) {
-        setImagePreview(`http://34.131.41.101:3000/${updatedUser.image}`);
+        setImagePreview(`http://localhost:3000/${updatedUser.image}`);
       } else {
         setImagePreview(null);
       }

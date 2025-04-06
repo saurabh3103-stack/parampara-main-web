@@ -32,10 +32,10 @@ const BhajanMandalContainer = () => {
   const [userData, setUserData] = useState(null);
   const [pujaDate, setPujaDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
-  const ApiUrl = "http://34.131.41.101:3000/api";
+  const ApiUrl = "http://localhost:3000/api";
   const tokken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
   const currencySymbol = "₹";
-  const imgUrl = 'http://34.131.41.101:3000';
+  const imgUrl = 'http://localhost:3000';
 
   useEffect(() => {
     const getBhajanDetails = async () => {

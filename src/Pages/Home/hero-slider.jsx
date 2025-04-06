@@ -6,10 +6,9 @@ import { Check } from "lucide-react";
 import React from "react";
 
 export default function HeroSlider() {
-  const APIURL = "http://34.131.41.101:3000/api/slider/get-slider";
-  const IMGURL = "http://34.131.41.101:3000";
+  const APIURL = "http://localhost:3000/api/slider/get-slider";
+  const IMGURL = "http://localhost:3000";
   const [slides, setSlides] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -26,7 +25,6 @@ export default function HeroSlider() {
             },
           }
         );
-
         if (response.data && response.data.data) {
           setSlides(response.data.data);
         } else {
@@ -34,17 +32,11 @@ export default function HeroSlider() {
         }
       } catch (err) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchSlides();
   }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">Error fetching slides: {error}</div>;
-
   return (
     <div className="relative h-[400px] md:h-[500px] overflow-hidden">
       <Swiper autoplay={{ delay: 5000, disableOnInteraction: false }} spaceBetween={50} slidesPerView={1} loop>
@@ -53,7 +45,7 @@ export default function HeroSlider() {
             <div className="relative h-[400px] md:h-[500px]">
               <div className="absolute inset-0 bg-black/40 z-10"></div>
               <img
-                src={slide.image ? `${IMGURL}${slide.image}` : "/placeholder.svg"}
+                src={`${IMGURL}${slide.image}`}
                 alt={slide.title || "Slide Image"}
                 className="object-cover w-full h-full"
                 loading="lazy"

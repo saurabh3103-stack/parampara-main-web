@@ -8,7 +8,7 @@ const Footer = () => {
                     <div class="nk-top-footer">
                         <div class="nk-footer-one">
                         <div class="space-y-3">
-                            <img class="h-40 object-contain" src="/image/logo/final-logo.png" alt=""/>          
+                            <img class="h-40 object-contain" src="/image/logo/logo6.png" alt=""/>          
                             <p class="text-sm">Subscribe to our newsletter</p>
                             <form class="pr-5">
                             <div class="relative">

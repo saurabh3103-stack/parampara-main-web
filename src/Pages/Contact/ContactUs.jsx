@@ -106,7 +106,6 @@ const ContactUs = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <OmIcon className="h-16 w-16 text-amber-200 mb-4" />
             <h1 className="text-4xl md:text-5xl font-bold text-center text-amber-50">
               संपर्क करें
             </h1>

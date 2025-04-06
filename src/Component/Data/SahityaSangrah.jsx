@@ -9,7 +9,7 @@ import { fetchPoojaEssenceData } from '../../Pages/EStore/EStoreService';
 
 const SahityaSangrah = () => {
   const [essence, setEssence] = useState([]);
-  const imgUrl = "http://34.131.41.101:3000/"; // Base URL for images
+  const imgUrl = "http://localhost:3000/"; // Base URL for images
 
   useEffect(() => {
     const fetchData = async () => {

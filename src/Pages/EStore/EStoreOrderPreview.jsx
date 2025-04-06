@@ -35,14 +35,14 @@ const EStoreOrderPreview = () => {
       setLoading(true);
       // Fetch order and delivery address simultaneously
       const [orderResponse, addressResponse] = await Promise.all([
-        fetch(`http://34.131.41.101:3000/api/e-store/orders/${id}`, {
+        fetch(`http://localhost:3000/api/e-store/orders/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }),
-        fetch(`http://34.131.41.101:3000/api/order/delivery-address/${id}`, {
+        fetch(`http://localhost:3000/api/order/delivery-address/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -80,7 +80,7 @@ const EStoreOrderPreview = () => {
       const combinedPaymentId = orderData?.order?.combinedPaymentId;
       if (!combinedPaymentId) throw new Error("Combined Payment ID not found");
 
-      const updateUrl = `http://34.131.41.101:3000/api/e-store/update-order/${combinedPaymentId}`;
+      const updateUrl = `http://localhost:3000/api/e-store/update-order/${combinedPaymentId}`;
       const orderDetails = {
         transactionId: "TXN123456",
         transactionStatus: "completed",

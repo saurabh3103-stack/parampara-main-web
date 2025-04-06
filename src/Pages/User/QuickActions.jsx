@@ -9,9 +9,9 @@ import {
 export default function QuickActions() {
     const quickActions = [
         { id: "pooja", label: "Book Puja", icon: <Calendar className="h-5 w-5" />, color: "bg-orange-100 text-orange-600" },
-        { id: "orders", label: "My Orders", icon: <ShoppingBag className="h-5 w-5" />, color: "bg-blue-100 text-blue-600" },
-        { id: "wishlist", label: "Wishlist", icon: <Heart className="h-5 w-5" />, color: "bg-red-100 text-red-600" },
-        { id: "account", label: "Settings", icon: <Settings className="h-5 w-5" />, color: "bg-gray-100 text-gray-600" },
+        { id: "user/orders", label: "My Orders", icon: <ShoppingBag className="h-5 w-5" />, color: "bg-blue-100 text-blue-600" },
+        { id: "", label: "Wishlist", icon: <Heart className="h-5 w-5" />, color: "bg-red-100 text-red-600" },
+        { id: "", label: "Settings", icon: <Settings className="h-5 w-5" />, color: "bg-gray-100 text-gray-600" },
       ]
   return (
   <div className="mb-8">

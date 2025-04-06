@@ -1,13 +1,15 @@
+// AppContext.js
 import React, { createContext, useState } from "react";
 
-// Create the context
 export const AppContext = createContext();
 
-// Create the provider component
 export const AppProvider = ({ children }) => {
-  // Define your shared states
-  const [filtercategoryID, setFilterCategoryID] = useState("All"); // Default to "All"
-  const [categoryData, setCategoryData] = useState([]);
+  const [filtercategoryID, setFilterCategoryID] = useState(null); // Changed to null for "All" categories
+  const [categoryData, setCategoryData] = useState({
+    status: 0,
+    data: [],
+    message: ""
+  });
 
   return (
     <AppContext.Provider
@@ -15,7 +17,7 @@ export const AppProvider = ({ children }) => {
         filtercategoryID,
         setFilterCategoryID,
         categoryData,
-        setCategoryData,
+        setCategoryData
       }}
     >
       {children}

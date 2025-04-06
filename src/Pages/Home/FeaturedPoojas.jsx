@@ -11,7 +11,7 @@ import { fetchPoojaData } from './PoojaAPIService';
 const FeaturedPoojas = () => {
 
   const [pooja, setPooja] = useState([]);
-  const imgUrl = "http://34.131.41.101:3000";
+  const imgUrl = "http://localhost:3000";
 
   useEffect(() => {
     const fetchData = async () => {

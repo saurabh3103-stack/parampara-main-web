@@ -30,9 +30,9 @@ export default function PujaDetailContent({ id }) {
   const [preferredTime, setPreferredTime] = useState("");
   const [productAmount, setProductAmount] = useState(0);
   const [samagriStatus, setSamagriStatus] = useState(1);
-  const imgUrl = "http://34.131.41.101:3000";
+  const imgUrl = "http://localhost:3000";
   const [userData, setUserData] = useState(null);
-  const ApiUrl = "http://34.131.41.101:3000/api"; // Replace with your actual API URL
+  const ApiUrl = "http://localhost:3000/api"; // Replace with your actual API URL
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8'; // Replace with your actual auth token
 
   useEffect(() => {

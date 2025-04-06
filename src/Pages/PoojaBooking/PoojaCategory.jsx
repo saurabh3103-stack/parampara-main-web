@@ -1,18 +1,20 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+// PoojaCategory.jsx
+import React, { useState } from "react";
 import { Search } from "lucide-react";
 
-const PoojaCategory = ({ selectedCategory, setSelectedCategory }) => {
-  const { categoryData } = useContext(AppContext);
-  const categoryArray = categoryData?.data ? Object.values(categoryData.data) : [];
+const PoojaCategory = ({ 
+  categoryData = [], 
+  selectedCategory, 
+  onSelectCategory 
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
+    onSelectCategory(prev => prev === categoryId ? null : categoryId);
   };
 
-  const filteredCategories = categoryArray.filter((val) => 
-    val?.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = categoryData.filter(category => 
+    category?.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -32,32 +34,59 @@ const PoojaCategory = ({ selectedCategory, setSelectedCategory }) => {
       </div>
 
       {/* Categories List */}
-      <div className="space-y-2">
+      <div className="space-y-2 max-h-96 overflow-y-auto">
         {/* "All" Category */}
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="all-category"
-            checked={selectedCategory === null}
-            onChange={() => handleCategoryClick(null)}
-            className="accent-primary"
-          />
-          <label htmlFor="all-category" className="text-sm font-medium">All Categories</label>
+        <div 
+          className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
+            selectedCategory === null 
+              ? 'bg-blue-50 border border-blue-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handleCategoryClick(null)}
+        >
+          <div className={`w-4 h-4 rounded-sm border flex items-center justify-center ${
+            selectedCategory === null ? 'bg-blue-500 border-blue-500' : 'border-gray-400'
+          }`}>
+            {selectedCategory === null && (
+              <svg className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            )}
+          </div>
+          <span className="text-sm font-medium">All Categories</span>
         </div>
 
-        {/* Dynamic Categories */}
-        {filteredCategories.map((val) => (
-          <div key={val._id} className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id={`category-${val._id}`}
-              checked={selectedCategory === val._id}
-              onChange={() => handleCategoryClick(val._id)}
-              className="accent-primary"
-            />
-            <label htmlFor={`category-${val._id}`} className="text-sm">{val.category}</label>
+        {/* Category List */}
+        {filteredCategories.length > 0 ? (
+          filteredCategories.map((category) => (
+            <div 
+              key={category._id} 
+              className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${
+                selectedCategory === category._id 
+                  ? 'bg-blue-50 border border-blue-200' 
+                  : 'hover:bg-gray-100'
+              }`}
+              onClick={() => handleCategoryClick(category._id)}
+            >
+              <div className={`w-4 h-4 rounded-sm border flex items-center justify-center ${
+                selectedCategory === category._id ? 'bg-blue-500 border-blue-500' : 'border-gray-400'
+              }`}>
+                {selectedCategory === category._id && (
+                  <svg className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-sm">{category.category}</span>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-4 text-gray-500">
+            {categoryData.length === 0 
+              ? "No categories available" 
+              : `No categories found matching "${searchTerm}"`}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Phone } from "lucide-react";
+import { Phone, Check, Star } from "lucide-react";
 
 export default function AboutDetails() {
-  const cities = ["Kanpur.", "Noida.", "Delhi.", "Mumbai.", "Pune."];
+  const cities = ["Kanpur", "Noida", "Delhi", "Mumbai", "Pune"];
   const [currentCity, setCurrentCity] = useState("");
   const [index, setIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -30,112 +30,119 @@ export default function AboutDetails() {
   }, [charIndex, isDeleting, index, cities]);
 
   return (
-    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header with logo */}
-      <header>
-        <div className="text-orange-500 font-bold text-2xl">PanditJi</div>
-      </header>
-
-      {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-        {/* Left side content */}
-        <div className="space-y-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            <span className="text-slate-700">Book Pandit</span>{" "}
-            <span className="text-orange-500">For Pooja</span>{" "}
-            <br />
-            <span className="text-slate-700">
-              In <span className="text-orange-500">{currentCity}</span>
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-50">
+      <div className="container mx-auto px-4">
+          {/* Header with logo */}
+        <header className="mb-8">
+          <div className="text-orange-500 font-bold text-3xl flex items-center">
+            <span className="bg-orange-500 text-white p-2 rounded-lg mr-2">
+              <Phone size={24} />
             </span>
-          </h1>
+            PanditJi
+          </div>
+        </header>
 
-          <div className="text-slate-600 space-y-4">
-            <p>
-              Our experienced <span className="font-semibold">Hindi Pandits</span> and{" "}
-              <span className="font-semibold">North Indian Pandits</span> in Bangalore
-              specialize in various pujas, including Griha Pravesh,
-              Satyanarayan Puja, marriage ceremonies, and more. We also have{" "}
-              <span className="font-semibold">
-                Bengali, Marathi, Odia, Kannada, Tamil, and Telugu Pandits
-              </span>{" "}
-              who perform pujas according to regional rituals. You are only one click
-              away from making a booking. Feel free to enjoy our Pandit booking service.
-            </p>
+        {/* Main content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
+          {/* Left side content */}
+          <div className="space-y-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+              <span className="text-gray-800">Connecting You With</span>{" "}
+              <span className="text-orange-500">Trusted Pandits</span>{" "}
+              <br />
+              {/* <span className="text-gray-800">
+                Across <span className="text-orange-500">{currentCity}</span>
+              </span> */}
+            </h1>
+
+            <div className="text-gray-600 space-y-4">
+              <p className="text-lg">
+                PanditJi is your premier online platform for booking qualified and experienced 
+                pandits for all your religious ceremonies and pujas. We bridge the gap between 
+                traditional religious services and modern convenience.
+              </p>
+
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <Check className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span>Verified and experienced pandits for all types of pujas</span>
+                </div>
+                <div className="flex items-start">
+                  <Check className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span>Transparent pricing with no hidden charges</span>
+                </div>
+                <div className="flex items-start">
+                  <Check className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span>Available in multiple languages and traditions</span>
+                </div>
+                <div className="flex items-start">
+                  <Check className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span>Easy online booking and scheduling</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="bg-orange-500 flex items-center justify-center hover:bg-orange-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition-all">
+                <Phone className="mr-2 h-5 w-5" /> Book a Pandit Now
+              </button>
+              <button className="border-2 border-orange-500 flex items-center justify-center hover:bg-orange-50 text-orange-500 px-6 py-3 rounded-lg text-lg font-medium transition-all">
+                Learn More
+              </button>
+            </div>
+
+            {/* Testimonials */}
+            <div className="mt-8 p-6 bg-white rounded-xl shadow-sm">
+              <div className="flex items-center mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="text-yellow-400 fill-yellow-400 w-5 h-5" />
+                ))}
+                <span className="ml-2 text-gray-700 font-medium">4.9/5 (1200+ reviews)</span>
+              </div>
+              <p className="text-gray-600 italic">
+                "PanditJi made finding the perfect pandit for our housewarming so easy. 
+                The service was professional and the puja was conducted beautifully."
+              </p>
+              <p className="text-gray-800 font-medium mt-2">- Rajesh K., Mumbai</p>
+            </div>
           </div>
 
-          <button className="bg-orange-500 flex hover:bg-orange-600 text-white px-3 py-1 rounded-md text-lg w-full sm:w-auto">
-            <Phone className="mr-2 h-5 w-5 mt-1" /> Book now
-          </button>
-
-          {/* Stats section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-slate-700 text-white p-1 rounded-md flex flex-col items-center justify-center text-center">
-              <div className="mb-2">
-                <img 
-                  src="https://pujapurohit.in/assets/images/home-icon/2.webp" 
-                  alt="Pandit icon" 
-                  width={40} 
-                  height={40} 
-                  className="mx-auto"
-                />
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">1600+</div>
-              <div className="text-xs sm:text-sm">PANDIT</div>
+          {/* Right side img */}
+          <div className="hidden lg:block relative">
+            <img
+              src="https://pujapurohit.in/assets/gif/pandit3.webp"
+              alt="Pandit performing pooja ceremony"
+              className="w-full h-auto object-contain rounded-xl shadow-lg"
+            />
+            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-md">
+              <div className="text-3xl font-bold text-orange-500">1600+</div>
+              <div className="text-gray-600">Verified Pandits</div>
             </div>
-
-            <div className="bg-slate-700 text-white p-1 rounded-md flex flex-col items-center justify-center text-center border-2 border-orange-500">
-              <div className="mb-2">
-                <img 
-                  src="https://pujapurohit.in/assets/images/home-icon/1.webp" 
-                  alt="Puja type icon" 
-                  width={40} 
-                  height={40} 
-                  className="mx-auto"
-                />
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">150+</div>
-              <div className="text-xs sm:text-sm">PUJA TYPE</div>
-            </div>
-
-            <div className="bg-slate-700 text-white p-1 rounded-md flex flex-col items-center justify-center text-center">
-              <div className="mb-2">
-                <img 
-                  src="https://pujapurohit.in/assets/images/home-icon/3.webp" 
-                  alt="City icon" 
-                  width={40} 
-                  height={40} 
-                  className="mx-auto"
-                />
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">11</div>
-              <div className="text-xs sm:text-sm">CITY</div>
-            </div>
-
-            <div className="bg-slate-700 text-white p-1 rounded-md flex flex-col items-center justify-center text-center">
-              <div className="mb-2">
-                <img 
-                  src="https://pujapurohit.in/assets/images/home-icon/4.webp" 
-                  alt="Puja served icon" 
-                  width={40} 
-                  height={40} 
-                  className="mx-auto"
-                />
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">3100+</div>
-              <div className="text-xs sm:text-sm">PUJA SERVED</div>
+            <div className="absolute -top-6 -right-6 bg-orange-500 text-white p-4 rounded-xl shadow-md">
+              <div className="text-3xl font-bold">11</div>
+              <div>Cities Served</div>
             </div>
           </div>
         </div>
 
-        {/* Right side img - hidden on mobile, visible on larger screens */}
-        <div className="hidden md:block">
-          <img
-            src="https://pujapurohit.in/assets/gif/pandit3.webp"
-            alt="Pandit performing pooja ceremony"
-            width={600}
-            height={600}
-            className="ml-auto w-3/4 h-auto object-contain float-end"
-          />
+        {/* Stats section - for mobile */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 lg:hidden">
+          <div className="bg-white p-4 rounded-lg shadow-sm text-center border-t-4 border-orange-500">
+            <div className="text-2xl font-bold text-gray-800">1600+</div>
+            <div className="text-gray-600 text-sm">Verified Pandits</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm text-center border-t-4 border-orange-500">
+            <div className="text-2xl font-bold text-gray-800">150+</div>
+            <div className="text-gray-600 text-sm">Puja Types</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm text-center border-t-4 border-orange-500">
+            <div className="text-2xl font-bold text-gray-800">11</div>
+            <div className="text-gray-600 text-sm">Cities</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm text-center border-t-4 border-orange-500">
+            <div className="text-2xl font-bold text-gray-800">3100+</div>
+            <div className="text-gray-600 text-sm">Pujas Served</div>
+          </div>
         </div>
       </div>
     </div>

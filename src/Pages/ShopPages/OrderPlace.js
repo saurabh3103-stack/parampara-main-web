@@ -1,8 +1,8 @@
-export const submitOrder = async (formData) => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
-  
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
+
+export const submitOrder = async (formData) => {  
   try {
-      const orderResponse = await fetch('http://34.131.41.101:3000/api/order/pooja-booking', {
+      const orderResponse = await fetch('http://localhost:3000/api/order/pooja-booking', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const submitOrder = async (formData) => {
               Country: formData.country,
           }
       };
-      const addressResponse = await fetch('http://34.131.41.101:3000/api/order/delivery-address', {
+      const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const submitOrder = async (formData) => {
       if (!addressResponse.ok) {
           return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
       }
-      const cartClearResponse = await fetch(`http://34.131.41.101:3000/api/cart/remove/${formData.poojaId}/${formData.userId}`, {
+      const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${formData.poojaId}/${formData.userId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -65,7 +65,6 @@ export const submitOrder = async (formData) => {
 
 
 export const submitBhajanBooking = async (formData) => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8';
     try {
     const {
         poojaId: mandaliId,
@@ -79,7 +78,7 @@ export const submitBhajanBooking = async (formData) => {
         mandaliName,
         mandaliType
     };
-        const orderResponse = await fetch('http://34.131.41.101:3000/api/order/bhajan-mandali', {
+        const orderResponse = await fetch('http://localhost:3000/api/order/bhajan-mandali', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +107,7 @@ export const submitBhajanBooking = async (formData) => {
                 Country: formData.country,
             }
         };
-        const addressResponse = await fetch('http://34.131.41.101:3000/api/order/delivery-address', {
+        const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +119,7 @@ export const submitBhajanBooking = async (formData) => {
         if (!addressResponse.ok) {
             return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
         }
-        const cartClearResponse = await fetch(`http://34.131.41.101:3000/api/cart/remove/${mandaliId}/${formData.userId}`, {
+        const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${mandaliId}/${formData.userId}`, {
           method: 'DELETE',
           headers: {
               'Authorization': `Bearer ${token}`,
@@ -138,3 +137,35 @@ export const submitBhajanBooking = async (formData) => {
     }
   };
   
+  export const fetchOrderReceipt = async (orderID) => {
+    try {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
+
+        const urls = [
+            `http://localhost:3000/api/orders/${orderID}`,
+            `http://localhost:3000/api/order/delivery-address/${orderID}`
+        ];
+
+        const requests = urls.map(url =>
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).catch(() => null) // Handle failed requests gracefully
+        );
+
+        const [orderReceipt, deliveryAddress] = await Promise.all(requests);
+
+        if (!orderReceipt) {
+            return { error: "No order details found" };
+        }
+
+        return { orderReceipt, deliveryAddress };
+
+    } catch (error) {
+        console.error("Error fetching booking receipt:", error);
+        return { error: "Failed to fetch booking receipt" };
+    }
+};
