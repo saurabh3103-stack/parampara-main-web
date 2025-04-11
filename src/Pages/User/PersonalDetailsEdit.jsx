@@ -20,7 +20,7 @@ const PersonalDetailsEdit = ({ userData }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:3000/api/user/update-user", {
+            const response = await fetch("http://192.168.1.36:3000/api/user/update-user", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

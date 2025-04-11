@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const ProductImageGallery = ({slider}) => {
-  const IMGURL="http://localhost:3000";
+  const IMGURL="http://192.168.1.36:3000";
   const image= slider ;
   // const images = [
   //   "http://localhost:5173/assets/img/products/fashion/women/18.jpg",

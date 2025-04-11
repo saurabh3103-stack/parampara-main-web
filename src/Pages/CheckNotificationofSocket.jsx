@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 // Connect to the WebSocket server
-const socket = io('http://localhost:3000'); // Adjust the URL if needed
+const socket = io('http://192.168.1.36:3000'); // Adjust the URL if needed
 
 function CheckNotificationofSocket() {
   const [notifications, setNotifications] = useState([]);

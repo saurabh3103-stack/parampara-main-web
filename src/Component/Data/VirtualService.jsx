@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination, EffectCards } from "swiper/modules"

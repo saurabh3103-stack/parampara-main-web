@@ -394,7 +394,7 @@ const NavMenu = () => {
                 <Link to="/bhavya-ayojan" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Bhavya Ayojan</Link>
                 <Link to="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Darshan Booking</Link>
               </NavItem>
-              <NavItem href="/contact-us" text="Virtual Services" />
+              <NavItem href="/virtual-service" text="Virtual Services" />
               <NavItem href="/contact-us" text="Contact Us" />
             </div>
 

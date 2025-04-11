@@ -2,7 +2,7 @@ const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNo
 
 export const submitOrder = async (formData) => {  
   try {
-      const orderResponse = await fetch('http://localhost:3000/api/order/pooja-booking', {
+      const orderResponse = await fetch('http://192.168.1.36:3000/api/order/pooja-booking', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const submitOrder = async (formData) => {
               Country: formData.country,
           }
       };
-      const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
+      const addressResponse = await fetch('http://192.168.1.36:3000/api/order/delivery-address', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const submitOrder = async (formData) => {
       if (!addressResponse.ok) {
           return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
       }
-      const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${formData.poojaId}/${formData.userId}`, {
+      const cartClearResponse = await fetch(`http://192.168.1.36:3000/api/cart/remove/${formData.poojaId}/${formData.userId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -78,7 +78,7 @@ export const submitBhajanBooking = async (formData) => {
         mandaliName,
         mandaliType
     };
-        const orderResponse = await fetch('http://localhost:3000/api/order/bhajan-mandali', {
+        const orderResponse = await fetch('http://192.168.1.36:3000/api/order/bhajan-mandali', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export const submitBhajanBooking = async (formData) => {
                 Country: formData.country,
             }
         };
-        const addressResponse = await fetch('http://localhost:3000/api/order/delivery-address', {
+        const addressResponse = await fetch('http://192.168.1.36:3000/api/order/delivery-address', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export const submitBhajanBooking = async (formData) => {
         if (!addressResponse.ok) {
             return { success: false, message: addressDataResponse.message || 'Failed to save delivery address' };
         }
-        const cartClearResponse = await fetch(`http://localhost:3000/api/cart/remove/${mandaliId}/${formData.userId}`, {
+        const cartClearResponse = await fetch(`http://192.168.1.36:3000/api/cart/remove/${mandaliId}/${formData.userId}`, {
           method: 'DELETE',
           headers: {
               'Authorization': `Bearer ${token}`,
@@ -142,8 +142,8 @@ export const submitBhajanBooking = async (formData) => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
 
         const urls = [
-            `http://localhost:3000/api/orders/${orderID}`,
-            `http://localhost:3000/api/order/delivery-address/${orderID}`
+            `http://192.168.1.36:3000/api/orders/${orderID}`,
+            `http://192.168.1.36:3000/api/order/delivery-address/${orderID}`
         ];
 
         const requests = urls.map(url =>

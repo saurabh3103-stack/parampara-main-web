@@ -107,7 +107,7 @@ const ContactUs = () => {
             className="flex flex-col items-center"
           >
             <h1 className="text-4xl md:text-5xl font-bold text-center text-amber-50">
-              संपर्क करें
+              Contact Us
             </h1>
             <motion.p 
               initial={{ opacity: 0, y: -10 }}

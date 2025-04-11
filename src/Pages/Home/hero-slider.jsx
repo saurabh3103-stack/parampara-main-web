@@ -6,8 +6,8 @@ import { Check } from "lucide-react";
 import React from "react";
 
 export default function HeroSlider() {
-  const APIURL = "http://localhost:3000/api/slider/get-slider";
-  const IMGURL = "http://localhost:3000";
+  const APIURL = "http://192.168.1.36:3000/api/slider/get-slider";
+  const IMGURL = "http://192.168.1.36:3000";
   const [slides, setSlides] = useState([]);
   const [error, setError] = useState(null);
 

@@ -21,7 +21,7 @@ const Bhajan = () => {
   const [showFilters, setShowFilters] = useState(false);
   const isMobile = useMobile();
   const currencySymbol = "₹";
-  const imgUrl = "http://localhost:3000";
+  const imgUrl = "http://192.168.1.36:3000";
 
   // State for filters
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });

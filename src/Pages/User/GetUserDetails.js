@@ -3,7 +3,7 @@ import axios from "axios";
 const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8";
 
 export const getUserByEmail = async (navigate) => {
-  const APIURL = "http://localhost:3000/api/user/get-user/";
+  const APIURL = "http://192.168.1.36:3000/api/user/get-user/";
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const userEmail = localStorage.getItem("userEmail");
   
@@ -38,7 +38,7 @@ export const getUserByEmail = async (navigate) => {
 
 export const fetchPoojaOrders = async (userId) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/orders/user/${userId}`, {
+    const response = await fetch(`http://192.168.1.36:3000/api/orders/user/${userId}`, {
       headers: {
         'Authorization': TOKEN,
         'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ export const fetchPoojaOrders = async (userId) => {
 
 export const fetchBhajanOrders = async (userId) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/bhajan-mandali/booking-user/${userId}`, {
+    const response = await fetch(`http://192.168.1.36:3000/api/bhajan-mandali/booking-user/${userId}`, {
       headers: {
         'Authorization': TOKEN,
         'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ export const fetchBhajanOrders = async (userId) => {
 
 export const fetchEcommerceOrders = async (userId) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/e-stroe/user-order/${userId}`, {
+    const response = await fetch(`http://192.168.1.36:3000/api/e-stroe/user-order/${userId}`, {
       headers: {
         'Authorization': TOKEN,
         'Content-Type': 'application/json'

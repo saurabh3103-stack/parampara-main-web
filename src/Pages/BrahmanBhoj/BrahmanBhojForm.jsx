@@ -130,7 +130,7 @@ export default function BrahmanBhojForm() {
     try {
       // Make the API call
       const response = await fetch(
-        "http://localhost:3000/api/brahman-bhoj/create-request",
+        "http://192.168.1.36:3000/api/brahman-bhoj/create-request",
         {
           method: "POST",
           headers: {

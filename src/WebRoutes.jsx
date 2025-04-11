@@ -33,6 +33,8 @@ import BhavyaAyojan from "./Pages/BhavyaAyojan/BhavyaAyojan";
 import AboutUs from "./Pages/About/AboutUs";
 import PartnerRegistration from "./Pages/PartnerRegistration/PartnerRegistration";
 import Horoscope from "./Pages/Horoscope/Horoscope";
+import Service from "./Pages/Service/Service";
+import VirtualService from "./Pages/VirtualService/VirtualService";
 
 const WebRoutes = () => {
   
@@ -71,6 +73,8 @@ const WebRoutes = () => {
           <Route path="/bhajan-mandal" element={<Bhajan/>}/>
           <Route path="/bhajan-mandal/:slug_url"element={<SingleBhajanMandal/>}/>
           <Route path="/brahman-bhoj" element={<BrahmanBhoj/>}/>
+          <Route path="/service" element={<Service/>}/>
+          <Route path="/virtual-service" element={<VirtualService/>}/>
           <Route path="/contact-us" element={<ContactUs/>}/>
           <Route path="/about-us" element={<AboutUs/>}/>
         </Routes>

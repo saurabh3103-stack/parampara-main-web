@@ -30,7 +30,7 @@ const Dashboard = () => {
   const [userData, setUserData] = useState({})
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
-  const imgUrl = 'http://localhost:3000/'
+  const imgUrl = 'http://192.168.1.36:3000/'
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true)

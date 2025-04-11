@@ -87,11 +87,13 @@ const Footer = () => {
                         </div>
                     </div>
                     <div class="nk-middle-footer mt-4">
-                        <div class="nk-app-footer">
+                    <img src='/image/Google-Play.png'  className='img-fluid'/> 
+
+                        {/* <div class="nk-app-footer">
                         <h5 class="nk-app-title">Shop faster with our App:</h5>
                         <a class="nk-hover-link" href="#!"><i class="fab fa-google-play fa-2x"></i></a>
                         <a class="nk-hover-link" href="#!"><i class="fab fa-apple fa-2x"></i></a>
-                        </div>
+                        </div> */}
                     </div>
                     <div class="nk-border-footer"></div>
                     <div class="nk-bottom-footer">

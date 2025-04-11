@@ -13,7 +13,7 @@ const EStoreCart = () => {
   const [promoCode, setPromoCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const currencySymbol = "₹";
-  const imgUrl = "http://localhost:3000/";
+  const imgUrl = "http://192.168.1.36:3000/";
 
   // Fetch cart data
   const fetchData = async () => {

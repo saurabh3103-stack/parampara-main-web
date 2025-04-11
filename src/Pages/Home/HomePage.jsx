@@ -19,9 +19,10 @@ const HomePage = () => {
             <div className="relative">
                 <HeroSlider />
             </div>
-            <AboutDetails/>
-            <AvailableCities/>
             <Service/>
+
+            <AvailableCities/>
+            <AboutDetails/>
             <Achievement/>
             <FeaturedPoojas/>
             <VirtualService/>

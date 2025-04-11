@@ -3,8 +3,8 @@ import React from "react";
 const TranscationSecurity = () => {
     return(
         <>
-        <div className="bg-primary-100 space-y-3 p-3 text-xs">
-            <p className="text-primary font-semibold">Get it in 7 days</p>
+            <div className="bg-primary-100 space-y-3 p-3 text-xs">
+                <p className="text-primary font-semibold">Get it in 7 days</p>
                 <div className="space-y-2">
                     <div>
                         <span><i className="fas fa-store"></i></span>

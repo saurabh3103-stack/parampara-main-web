@@ -24,14 +24,14 @@ const EStoreOrderReceipt = () => {
   const fetchOrderData = async () => {
     try {
       const [orderResponse, addressResponse] = await Promise.all([
-        fetch(`http://localhost:3000/api/e-store/orders/${id}`, {
+        fetch(`http://192.168.1.36:3000/api/e-store/orders/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }),
-        fetch(`http://localhost:3000/api/order/delivery-address/${id}`, {
+        fetch(`http://192.168.1.36:3000/api/order/delivery-address/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -14,7 +14,7 @@ const EStoreProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const currencySymbol = "₹";
-  const imgUrl = "http://localhost:3000/";
+  const imgUrl = "http://192.168.1.36:3000/";
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -75,7 +75,7 @@ const EStoreProductDetails = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/product/add-cart",
+        "http://192.168.1.36:3000/api/product/add-cart",
         cartData,
         {
           headers: {
@@ -223,36 +223,39 @@ const EStoreProductDetails = () => {
           </form>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm font-medium mb-4">Get it in 7 days</p>
-            <div className="space-y-3">
-              <div className="flex items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Store Pickup */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <MapPin className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Store Pickup:</p>
-                  <p className="text-sm text-gray-600">Order now for pickup on Wed, Jul 7 at Noida Store.</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
-                    Discover all pickup locations
+                  <p className="text-sm font-medium">Store Pickup</p>
+                  <p className="text-sm text-gray-600 mb-1">Pickup on Wed, Jul 7</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    View locations
                   </Link>
                 </div>
               </div>
 
-              <div className="flex items-start">
+              {/* Shipping */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <Truck className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Shipping & Delivery:</p>
-                  <p className="text-sm text-gray-600">Available to your area from</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
-                    Enter your location
+                  <p className="text-sm font-medium">Shipping</p>
+                  <p className="text-sm text-gray-600 mb-1">Available in your area</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    Enter location
                   </Link>
                 </div>
               </div>
 
-              <div className="flex items-start">
+              {/* Returns */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <Info className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Easy Return:</p>
-                  <p className="text-sm text-gray-600">Return this item until Jul 22.</p>
-                  <Link href="#" className="text-sm text-blue-600 hover:underline">
-                    Learn more about Return Policy
+                  <p className="text-sm font-medium">Easy Returns</p>
+                  <p className="text-sm text-gray-600 mb-1">Until Jul 22</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    Return policy
                   </Link>
                 </div>
               </div>

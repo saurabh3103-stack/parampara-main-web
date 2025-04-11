@@ -60,7 +60,7 @@ export default function UpcommingBooking() {
         <h3 className="text-gray-700 font-medium mb-1">No upcoming poojas</h3>
         <p className="text-gray-500 text-sm mb-4">Book a pooja to see it in your calendar</p>
         <a
-          href="/shop"
+          href="/pooja"
           className="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
         >
           Book Now

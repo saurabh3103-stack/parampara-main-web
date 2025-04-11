@@ -30,9 +30,9 @@ export default function PujaDetailContent({ id }) {
   const [preferredTime, setPreferredTime] = useState("");
   const [productAmount, setProductAmount] = useState(0);
   const [samagriStatus, setSamagriStatus] = useState(1);
-  const imgUrl = "http://localhost:3000";
+  const imgUrl = "http://192.168.1.36:3000";
   const [userData, setUserData] = useState(null);
-  const ApiUrl = "http://localhost:3000/api"; // Replace with your actual API URL
+  const ApiUrl = "http://192.168.1.36:3000/api"; // Replace with your actual API URL
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNoaXZhbnNodSIsImlhdCI6MTczMjE2NTMzOX0.YDu6P4alpQB5QL-74z1jO4LGfEwZA_n_Y29o512FrM8'; // Replace with your actual auth token
 
   useEffect(() => {
@@ -368,36 +368,39 @@ export default function PujaDetailContent({ id }) {
 
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm font-medium mb-4">Get it in 7 days</p>
-            <div className="space-y-3">
-              <div className="flex items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Store Pickup */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <MapPin className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Store Pickup:</p>
-                  <p className="text-sm text-gray-600">Order now for pickup on Wed, Jul 7 at Noida Store.</p>
-                  <Link to="#" className="text-sm text-blue-600 hover:underline">
-                    Discover all pickup locations
+                  <p className="text-sm font-medium">Store Pickup</p>
+                  <p className="text-sm text-gray-600 mb-1">Pickup on Wed, Jul 7</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    View locations
                   </Link>
                 </div>
               </div>
 
-              <div className="flex items-start">
+              {/* Shipping */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <Truck className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Shipping & Delivery:</p>
-                  <p className="text-sm text-gray-600">Available to your area from</p>
-                  <Link to="#" className="text-sm text-blue-600 hover:underline">
-                    Enter your location
+                  <p className="text-sm font-medium">Shipping</p>
+                  <p className="text-sm text-gray-600 mb-1">Available in your area</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    Enter location
                   </Link>
                 </div>
               </div>
 
-              <div className="flex items-start">
+              {/* Returns */}
+              <div className="flex items-start p-3 bg-white rounded-md border border-gray-100">
                 <Info className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Easy Return:</p>
-                  <p className="text-sm text-gray-600">Return this item until Jul 22.</p>
-                  <Link to="#" className="text-sm text-blue-600 hover:underline">
-                    Learn more about Return Policy
+                  <p className="text-sm font-medium">Easy Returns</p>
+                  <p className="text-sm text-gray-600 mb-1">Until Jul 22</p>
+                  <Link href="#" className="text-xs text-blue-600 hover:underline">
+                    Return policy
                   </Link>
                 </div>
               </div>
